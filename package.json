@@ -1,0 +1,35 @@
+{
+  "name": "SpaceCowboys",
+  "version": "1.0.0",
+  "description": "A space cowboy themed battle royale!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PhilipNelson5/SpaceCowboys.git"
+  },
+  "keywords": [
+    "Battle Royale",
+    "Space Cowboys",
+    "Top Down",
+    "Birds Eye",
+    "2D",
+    "Sooter",
+    "Multiplayer",
+    "Online",
+    "Open Source"
+  ],
+  "author": "Ammon Hepworth, Philip Nelson, Hailee Maxwell, Raul Ramirez",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PhilipNelson5/SpaceCowboys/issues"
+  },
+  "homepage": "https://github.com/PhilipNelson5/SpaceCowboys#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.0.4"
+  }
+}
