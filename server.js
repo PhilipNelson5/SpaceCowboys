@@ -1,6 +1,6 @@
 let http = require('http'),
   path = require('path'),
-  fs = require('fs'),
+  fs = require('fs');
   game = require('./scripts/server/game');
 
 let mimeTypes = {
