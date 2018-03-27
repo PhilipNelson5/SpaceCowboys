@@ -3,7 +3,7 @@
 // This is the main game initialization system, it initializes all the screens.
 //
 // -----------------------------------------------------------------------------
-Game.main = (function(screens) {
+Game.main = (function(screens, menu) {
   'use strict'
 
   // -------------------------------------------------------
@@ -16,15 +16,16 @@ Game.main = (function(screens) {
     // Go through each screen and initialize each one
     for (screen in screens) {
       if(screens.hasOwnProperty(screen)) {
-        screen[screen].initialize();
+        console.log("    " + screen);
+        screens[screen].initialize();
       }
     }
 
-    showScreen('main-menu');
+    menu.showScreen('main-menu');
   }
 
   return {
     initialize
   };
 
-}(Game.screens));
+}(Game.screens, Game.menu));

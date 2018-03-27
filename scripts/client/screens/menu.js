@@ -14,14 +14,15 @@ Game.menu = (function(screens) {
     let screen = 0,
       active = null;
 
-    active = document.getElementsByClassname('active');
+    active = document.getElementsByClassName('active');
     for(screen = 0; screen < active.length; ++screen) {
       active[screen].classList.remove('active');
     }
 
+    console.log("running "+id);
     screens[id].run();
 
-    document.getElementsById(id).classList.add('active');
+    document.getElementById(id).classList.add('active');
   }
 
   return {

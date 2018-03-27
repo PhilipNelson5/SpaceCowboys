@@ -2,12 +2,14 @@
 <html>
   <head>
     <title>SPACE...Cowboys!</title>
-    <link rel = "stylesheet" type = "text/css" href = "styles/game.css">
+    <link rel = "stylesheet" type = "text/css" href = "css/style.css">
     <script src = "/socket.io/socket.io.js"></script>
   </head>
 
   <body>
     <div id = "game">
+
+      <!-- Main Menu -->
       <div id = "main-menu" class = "screen">
         <ul class = "menu">
           <li><button id = "id-new-game">New&nbsp;Game</button></li>
@@ -16,9 +18,13 @@
           <li><button id = "id-about">About</button></li>
         </ul>
       </div>
+
+      <!-- Game -->
       <div id = "game-play" class = "screen">
         <canvas id = "canvas-main" width = "350" height = "450"></canvas>
       </div>
+
+      <!-- High Scores -->
       <div id = "high-scores" class = "screen">
         <h1>High Scores</h1>
         <ol>
@@ -31,6 +37,8 @@
           <li><button id = "id-high-scores-back">Back</button></li>
         </ul>
       </div>
+
+      <!-- Help -->
       <div id = "help" class = "screen">
         <h1>Help</h1>
         <p>This is some help on how to play the game</p>
@@ -38,10 +46,15 @@
           <li><button id = "id-help-back">Back</button></li>
         </ul>
       </div>
+
+      <!-- About -->
       <div id = "about" class = "screen">
         <h1>About</h1>
-        <p>Developed by</p>
-        <p>Dr. James Dean Mathias</p>
+        <h2>Developed by</h2>
+        <p>Ammon Hepworth</p>
+        <p>Hailee Maxwell</p>
+        <p>Philip Nelson</p>
+        <p>Raul Ramirez</p>
         <ul class = "menu">
           <li><button id = "id-about-back">Back</button></li>
         </ul>

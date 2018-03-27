@@ -69,6 +69,11 @@ ul.menu li button:active {
   text-align: center;
 }
 
+#game div h2 {
+  font-size: .75em;
+  text-align: center;
+}
+
 #high-scores ol {
   text-align: center;
   padding: 0;

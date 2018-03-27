@@ -1,9 +1,10 @@
 Game = {
-  input: {},
+  assets: {},
   components: {},
+  input: {},
   renderer: {},
+  screens: {},
   utilities: {},
-  assets: {}
 };
 
 //------------------------------------------------------------------
@@ -27,7 +28,15 @@ Game.loader = (function() {
       message: 'Utilities loaded',
       onComplete: null,
     }, {
-      scripts: ['about', 'playgame', 'help', 'highscores', 'menu'],
+      scripts: ['input'],
+      message: 'Input loaded',
+      onComplete: null
+    }, {
+      scripts: ['rendering/renderer'],
+      message: 'Renderers loaded',
+      onComplete: null
+    }, {
+      scripts: ['screens/menu', 'screens/about', 'screens/playgame', 'screens/help', 'screens/highscores', 'screens/mainmenu'],
       message: 'Screens loaded',
       onComplete: null,
     }, {
@@ -35,20 +44,12 @@ Game.loader = (function() {
       message: 'Game model loaded',
       onComplete: null,
     // }, {
-      // scripts: ['input'],
-      // message: 'Input loaded',
-      // onComplete: null
-    // }, {
       // scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
       // message: 'Player models loaded',
       // onComplete: null
     // }, {
       // scripts: ['rendering/graphics'],
       // message: 'Graphics loaded',
-      // onComplete: null
-    // }, {
-      // scripts: ['rendering/player', 'rendering/player-remote', 'rendering/missile', 'rendering/animated-sprite'],
-      // message: 'Renderers loaded',
       // onComplete: null
     }], // end scriptOrder
 

@@ -1,4 +1,4 @@
-MyGame.screens['game-play'] = (function(game, graphics, input) {
+Game.screens['game-play'] = (function(menu, graphics, input, assets) {
   'use strict';
 
   var mouseCapture = false,
@@ -9,15 +9,15 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
     lastTimeStamp;
 
   function initialize() {
-    console.log('game initializing...');
+    console.log('        game initializing...');
 
     myTexture = graphics.Texture( {
-      image : 'images/USU-Logo.png',
+      image : assets['player-self'],
       center : { x : 100, y : 100 },
       width : 100, height : 100,
       rotation : 0,
-      moveRate : 200,			// pixels per second
-      rotateRate : 3.14159	// Radians per second
+      moveRate : 200,       // pixels per second
+      rotateRate : 3.14159  // Radians per second
     });
 
     //
@@ -34,7 +34,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
       cancelNextRequest = true;
       //
       // Then, return to the main menu
-      game.showScreen('main-menu');
+      menu.showScreen('main-menu');
     });
 
     //
@@ -92,7 +92,8 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
   }
 
   return {
-    initialize : initialize,
-    run : run
+    initialize,
+    run
   };
-}(MyGame.game, MyGame.graphics, MyGame.input));
+
+}(Game.menu, Game.graphics, Game.input, Game.assets));
