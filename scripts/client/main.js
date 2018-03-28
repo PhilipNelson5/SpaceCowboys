@@ -21,7 +21,7 @@ Game.main = (function(screens, menu) {
       }
     }
 
-    menu.showScreen('main-menu');
+    menu.showScreen('login');
   }
 
   return {

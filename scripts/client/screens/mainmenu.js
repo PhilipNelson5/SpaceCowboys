@@ -3,11 +3,11 @@ Game.screens['main-menu'] = (function(menu) {
 
   function initialize() {
     const main = document.getElementById('game');
-    const container = document.createElement('div');
-    container.setAttribute('id', 'main-menu');
-    container.setAttribute('class', 'screen');
+    const screen = document.createElement('div');
+    screen.setAttribute('id', 'main-menu');
+    screen.setAttribute('class', 'screen');
 
-    container.innerHTML =
+    screen.innerHTML =
       `
         <ul class = "menu">
           <li><button id = "id-new-game">New&nbsp;Game</button></li>
@@ -16,7 +16,7 @@ Game.screens['main-menu'] = (function(menu) {
           <li><button id = "id-about">About</button></li>
         </ul>
       `
-    main.appendChild(container);
+    main.appendChild(screen);
 
     // Setup each of menu events for the screens
     document.getElementById('id-new-game').addEventListener(

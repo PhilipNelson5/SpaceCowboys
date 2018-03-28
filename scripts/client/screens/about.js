@@ -3,11 +3,11 @@ Game.screens['about'] = (function(menu) {
 
   function initialize() {
     const main = document.getElementById('game');
-    const container = document.createElement('div');
-    container.setAttribute('id', 'about');
-    container.setAttribute('class', 'screen');
+    const screen = document.createElement('div');
+    screen.setAttribute('id', 'about');
+    screen.setAttribute('class', 'screen');
 
-    container.innerHTML =
+    screen.innerHTML =
       `
       <h1>About</h1>
       <h2>Developed by</h2>
@@ -16,10 +16,10 @@ Game.screens['about'] = (function(menu) {
       <p>Philip Nelson</p>
       <p>Raul Ramirez</p>
       <ul class = "menu">
-      <li><button id = "id-about-back">Back</button></li>
+        <li><button id = "id-about-back">Back</button></li>
       </ul>
       `
-    main.appendChild(container);
+    main.appendChild(screen);
 
     document.getElementById('id-about-back').addEventListener(
       'click',

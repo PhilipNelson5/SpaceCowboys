@@ -3,11 +3,11 @@ Game.screens['high-scores'] = (function(menu) {
 
   function initialize() {
     const main = document.getElementById('game');
-    const container = document.createElement('div');
-    container.setAttribute('id', 'high-scores');
-    container.setAttribute('class', 'screen');
+    const screen = document.createElement('div');
+    screen.setAttribute('id', 'high-scores');
+    screen.setAttribute('class', 'screen');
 
-    container.innerHTML =
+    screen.innerHTML =
       `
         <h1>High Scores</h1>
         <ol id = "scores"></ol>
@@ -15,7 +15,7 @@ Game.screens['high-scores'] = (function(menu) {
           <li><button id = "id-high-scores-back">Back</button></li>
         </ul>
       `
-    main.appendChild(container);
+    main.appendChild(screen);
 
     document.getElementById('id-high-scores-back').addEventListener(
       'click',

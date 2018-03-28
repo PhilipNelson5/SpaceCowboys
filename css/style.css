@@ -8,9 +8,9 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 350px;
-  height: 450px;
-  background-color: rgb(239,239,251);
+  width: 500px;
+  height: 750px;
+  background-color: #aaf1a9;
   font-size: 40px;
 }
 
@@ -28,7 +28,7 @@ body {
 
 #main-menu {
   padding-top: 1em;
-  cursor: pointer;
+  cursor: default;
   font-size: 0.75em;
 }
 
@@ -49,18 +49,18 @@ ul.menu li button {
   color: #CECEF6;
   width: 10em;
   height: 1.5em;
-  background: #0404B4;
-  border: 0.1em solid rgb(255, 0, 0);
-  border-radius: 0.5em;
-  box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
+  background: #005DB3;
+  /* border: 0.1em solid rgba(223, 249, 245, 0.52); */
+  border-radius: 7px;
+  box-shadow: 0.2em 0.2em 0.3em #000000;
 }
 
 ul.menu li button:hover {
-  background: #2E2EFE;
+  background: #007FD0;
 }
 
 ul.menu li button:active {
-  color: #CECEF6;
+  color: #005DB3;
   background: rgb(0, 0, 0);
 }
 
@@ -87,4 +87,44 @@ ul.menu li button:active {
 
 #about p {
   text-align: center;
+}
+
+.form {
+  width: 340px;
+  margin: 0 auto;
+  margin-top: 50px;
+  border-top: 1px solid #d8dee2;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 25px;
+  background-color: #fff;
+  border: 1px solid #d8dee2;
+}
+
+label {
+  text-align: center;
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 600;
+  box-sizing: border-box;
+  cursor: default;
+}
+
+input {
+  display: block;
+  width: 90%;
+  margin: auto;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 16px;
+  line-height: 20px;
+  color: #24292e;
+  vertical-align: middle;
+  background-color: #fff;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
 }

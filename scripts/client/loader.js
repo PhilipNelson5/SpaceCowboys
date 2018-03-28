@@ -36,7 +36,7 @@ Game.loader = (function() {
       message: 'Renderers loaded',
       onComplete: null
     }, {
-      scripts: ['screens/menu', 'screens/about', 'screens/playgame', 'screens/help', 'screens/highscores', 'screens/mainmenu'],
+      scripts: ['screens/menu', 'screens/login', 'screens/about', 'screens/playgame', 'screens/help', 'screens/highscores', 'screens/mainmenu'],
       message: 'Screens loaded',
       onComplete: null,
     }, {

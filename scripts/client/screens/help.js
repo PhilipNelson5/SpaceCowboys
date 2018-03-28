@@ -3,11 +3,11 @@ Game.screens['help'] = (function(menu) {
 
   function initialize() {
     const main = document.getElementById('game');
-    const container = document.createElement('div');
-    container.setAttribute('id', 'help');
-    container.setAttribute('class', 'screen');
+    const screen = document.createElement('div');
+    screen.setAttribute('id', 'help');
+    screen.setAttribute('class', 'screen');
 
-    container.innerHTML =
+    screen.innerHTML =
       `
         <h1>Help</h1>
         <p>This is some help on how to play the game</p>
@@ -16,7 +16,7 @@ Game.screens['help'] = (function(menu) {
           <li><button id = "id-help-back">Back</button></li>
         </ul>
       `
-    main.appendChild(container);
+    main.appendChild(screen);
 
     document.getElementById('id-help-back').addEventListener(
       'click',
