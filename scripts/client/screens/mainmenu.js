@@ -2,7 +2,22 @@ Game.screens['main-menu'] = (function(menu) {
   'use strict';
 
   function initialize() {
-    //
+    const main = document.getElementById('game');
+    const container = document.createElement('div');
+    container.setAttribute('id', 'main-menu');
+    container.setAttribute('class', 'screen');
+
+    container.innerHTML =
+      `
+        <ul class = "menu">
+          <li><button id = "id-new-game">New&nbsp;Game</button></li>
+          <li><button id = "id-high-scores">High&nbsp;Scores</button></li>
+          <li><button id = "id-help">Help</button></li>
+          <li><button id = "id-about">About</button></li>
+        </ul>
+      `
+    main.appendChild(container);
+
     // Setup each of menu events for the screens
     document.getElementById('id-new-game').addEventListener(
       'click',
@@ -22,8 +37,7 @@ Game.screens['main-menu'] = (function(menu) {
   }
 
   function run() {
-    //
-    // I know this is empty, there isn't anything to do.
+    // This is empty, there isn't anything to do.
   }
 
   return {

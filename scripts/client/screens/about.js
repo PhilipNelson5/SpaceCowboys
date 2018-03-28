@@ -2,14 +2,32 @@ Game.screens['about'] = (function(menu) {
   'use strict';
 
   function initialize() {
+    const main = document.getElementById('game');
+    const container = document.createElement('div');
+    container.setAttribute('id', 'about');
+    container.setAttribute('class', 'screen');
+
+    container.innerHTML =
+      `
+      <h1>About</h1>
+      <h2>Developed by</h2>
+      <p>Ammon Hepworth</p>
+      <p>Hailee Maxwell</p>
+      <p>Philip Nelson</p>
+      <p>Raul Ramirez</p>
+      <ul class = "menu">
+      <li><button id = "id-about-back">Back</button></li>
+      </ul>
+      `
+    main.appendChild(container);
+
     document.getElementById('id-about-back').addEventListener(
       'click',
       function() { menu.showScreen('main-menu'); });
   }
 
   function run() {
-    //
-    // I know this is empty, there isn't anything to do.
+    // This is empty, there isn't anything to do.
   }
 
   return {
