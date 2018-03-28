@@ -10,7 +10,7 @@ Game.screens['main-menu'] = (function(menu) {
     screen.innerHTML =
       `
         <ul class = "menu">
-          <li><button id = "id-new-game">New&nbsp;Game</button></li>
+          <li><button id = "id-new-game">Join&nbsp;Game&nbsp;Lobby</button></li>
           <li><button id = "id-high-scores">High&nbsp;Scores</button></li>
           <li><button id = "id-help">Help</button></li>
           <li><button id = "id-about">About</button></li>
@@ -21,7 +21,7 @@ Game.screens['main-menu'] = (function(menu) {
     // Setup each of menu events for the screens
     document.getElementById('id-new-game').addEventListener(
       'click',
-      function() {menu.showScreen('game-play'); });
+      function() {menu.showScreen('gamelobby'); });
 
     document.getElementById('id-high-scores').addEventListener(
       'click',
