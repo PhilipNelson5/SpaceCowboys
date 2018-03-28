@@ -2,21 +2,15 @@ Game.screens['help'] = (function(menu) {
   'use strict';
 
   function initialize() {
-    const main = document.getElementById('game');
-    const screen = document.createElement('div');
-    screen.setAttribute('id', 'help');
-    screen.setAttribute('class', 'screen');
-
-    screen.innerHTML =
+    menu.addScreen('help',
       `
-        <h1>Help</h1>
-        <p>This is some help on how to play the game</p>
-        <ul id = "controls"></ul>
-        <ul class = "menu">
-          <li><button id = "id-help-back">Back</button></li>
-        </ul>
-      `
-    main.appendChild(screen);
+      <h1>Help</h1>
+      <p>This is some help on how to play the game</p>
+      <ul id = "controls"></ul>
+      <ul class = "menu">
+        <li><button id = "id-help-back">Back</button></li>
+      </ul>
+    `);
 
     document.getElementById('id-help-back').addEventListener(
       'click',

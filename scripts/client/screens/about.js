@@ -2,12 +2,7 @@ Game.screens['about'] = (function(menu) {
   'use strict';
 
   function initialize() {
-    const main = document.getElementById('game');
-    const screen = document.createElement('div');
-    screen.setAttribute('id', 'about');
-    screen.setAttribute('class', 'screen');
-
-    screen.innerHTML =
+    menu.addScreen('about',
       `
       <h1>About</h1>
       <h2>Developed by</h2>
@@ -18,8 +13,7 @@ Game.screens['about'] = (function(menu) {
       <ul class = "menu">
         <li><button id = "id-about-back">Back</button></li>
       </ul>
-      `
-    main.appendChild(screen);
+    `);
 
     document.getElementById('id-about-back').addEventListener(
       'click',

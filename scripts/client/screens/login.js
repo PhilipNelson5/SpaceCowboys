@@ -2,34 +2,27 @@ Game.screens['login'] = (function(menu) {
   'use strict';
 
   function initialize() {
-    const main = document.getElementById('game');
-    const screen = document.createElement('div');
-    screen.setAttribute('id', 'login');
-    screen.setAttribute('class', 'screen');
-
-    screen.innerHTML =
+    menu.addScreen('login',
       `
-        <div class="form">
+      <div class="form">
 
-          <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="name">
-          </div>
-
-          <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password">
-          </div>
-
+        <div>
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="name">
         </div>
 
-          <ul class = "menu">
-            <li><button id = "id-login-login">Login</button></li>
-            <li><button id = "id-login-create-user">Create User</button></li>
-          </ul>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password">
+        </div>
 
-      `
-    main.appendChild(screen);
+      </div>
+
+        <ul class = "menu">
+          <li><button id = "id-login-login">Login</button></li>
+          <li><button id = "id-login-create-user">Create User</button></li>
+        </ul>
+    `);
 
     document.getElementById('id-login-login').addEventListener(
       'click',

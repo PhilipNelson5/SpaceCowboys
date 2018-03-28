@@ -25,8 +25,19 @@ Game.menu = (function(screens) {
     document.getElementById(id).classList.add('active');
   }
 
+  function addScreen(id, html) {
+    const main = document.getElementById('game');
+    const screen = document.createElement('div');
+    screen.setAttribute('id', id);
+    screen.setAttribute('class', 'screen');
+
+    screen.innerHTML = html;
+    main.appendChild(screen);
+  }
+
   return {
-    showScreen
+    showScreen,
+    addScreen
   };
 
 }(Game.screens));
