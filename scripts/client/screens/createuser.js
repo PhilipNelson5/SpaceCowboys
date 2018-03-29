@@ -78,7 +78,8 @@ Game.screens['create-user'] = (function(menu, socket) {
       if(data.success) {
         document.getElementById('create-user-warning')
           .innerText='';
-        console.log('user creation success');
+        Game.user.username = data.username;
+        console.log('Welcome ' + Game.user.username);
         menu.showScreen('main-menu');
       }
       else {

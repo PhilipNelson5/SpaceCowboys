@@ -55,11 +55,12 @@ Game.screens['login'] = (function(menu, socket) {
      */
     socket.on(NetworkIds.LOGIN_RESPONSE, data => {
       if(data.success) {
-        console.log('login success');
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
         document.getElementById('login-warning')
           .innerText='';
+        Game.user.username = data.username;
+        console.log('Welcome ' + Game.user.username);
         menu.showScreen('main-menu');
       }
       else {
