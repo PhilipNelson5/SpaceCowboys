@@ -6,7 +6,7 @@ Game.screens['config'] = (function(menu) {
       `
       <h1>Configs</h1>
       <ul class = "menu">
-        <li><button id = "id-about-back">Back</button></li>
+        <li><button id = "id-config-back">Back</button></li>
       </ul>
     `);
 
