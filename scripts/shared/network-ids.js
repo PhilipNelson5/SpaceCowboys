@@ -32,6 +32,10 @@
             value: 'fire',
             writable: false
         },
+        'CONNECT': {
+            value: 'connection',
+            writable: false
+        },
         'CONNECT_ACK': {
             value: 'connect-ack',
             writable: false
@@ -40,8 +44,28 @@
             value: 'connect-other',
             writable: false
         },
+        'DISCONNECT': {
+            value: 'disconnect',
+            writable: false
+        },
         'DISCONNECT_OTHER': {
             value: 'disconnect-other',
+            writable: false
+        },
+        'LOGIN_REQUEST': {
+            value: 'login-request',
+            writable: false
+        },
+        'LOGIN_RESPONSE': {
+            value: 'login-response',
+            writable: false
+        },
+        'CREATE_USER_REQUEST': {
+            value: 'create-user-request',
+            writable: false
+        },
+        'CREATE_USER_RESPONSE': {
+            value: 'create-user-response',
             writable: false
         },
         'UPDATE_SELF': {

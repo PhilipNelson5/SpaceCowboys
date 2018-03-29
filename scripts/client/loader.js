@@ -28,6 +28,10 @@ Game.loader = (function() {
       message: 'Utilities loaded',
       onComplete: null,
     }, {
+      scripts: ['../client/network'],
+      message: 'Network loaded',
+      onComplete: null,
+    }, {
       scripts: ['input'],
       message: 'Input loaded',
       onComplete: null
@@ -36,7 +40,7 @@ Game.loader = (function() {
       message: 'Renderers loaded',
       onComplete: null
     }, {
-      scripts: ['screens/menu', 'screens/login', 'screens/gamelobby', 'screens/about', 'screens/playgame', 'screens/help', 'screens/highscores', 'screens/mainmenu'],
+      scripts: ['screens/menu', 'screens/login', 'screens/createuser', 'screens/gamelobby', 'screens/about', 'screens/playgame', 'screens/help', 'screens/highscores', 'screens/mainmenu'],
       message: 'Screens loaded',
       onComplete: null,
     }, {

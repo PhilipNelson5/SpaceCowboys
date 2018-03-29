@@ -1,4 +1,4 @@
-Game.screens['login'] = (function(menu) {
+Game.screens['login'] = (function(menu, socket) {
   'use strict';
 
   function initialize() {
@@ -24,20 +24,45 @@ Game.screens['login'] = (function(menu) {
         </ul>
     `);
 
+    //----------------------------------------------------------
+    // Request to login
+    //----------------------------------------------------------
     document.getElementById('id-login-login').addEventListener(
       'click',
       function() { //TODO: verify with server that the user is registered
-        menu.showScreen('main-menu');
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+        socket.emit(NetworkIds.LOGIN_REQUEST, {username, password});
       });
+
+    //----------------------------------------------------------
+    // Go to create-user screen
+    //----------------------------------------------------------
     document.getElementById('id-login-create-user').addEventListener(
       'click',
       function() { //TODO: Create new user
-        menu.showScreen('main-menu');
+        menu.showScreen('create-user');
       });
+
+    //----------------------------------------------------------
+    // Receive server response to LOGIN_REQUEST
+    //----------------------------------------------------------
+    socket.on(NetworkIds.LOGIN_RESPONSE, data => {
+      if(data === 'success') {
+        console.log('login success');
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        menu.showScreen('main-menu');
+      }
+      else if (data === 'failure') {
+        console.log('login failure');
+      }
+    });
+
   }
 
   function run() {
-    // TODO: Query the game and get the key bindings
+    // Nothing to do
   }
 
   return {
@@ -45,4 +70,4 @@ Game.screens['login'] = (function(menu) {
     run
   };
 
-}(Game.menu));
+}(Game.menu, Game.network.socket));
