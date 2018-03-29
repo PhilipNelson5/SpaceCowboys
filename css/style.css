@@ -8,8 +8,10 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 500px;
-  height: 750px;
+	width: 100%;
+	height: 100%;
+  /*width: 1000px;
+  height: 600px;*/
   background-color: #aaf1a9;
   font-size: 40px;
 }
@@ -127,4 +129,88 @@ input {
   border-radius: 3px;
   outline: none;
   box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
+}
+
+#lobby-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	align-times: stretch;
+	justify-content: flex-end;
+}
+
+#lobby-container > div {
+	background-color: #f1f1f1;
+	margin: 10px;
+}
+
+#message-body {
+	width: 75%;
+}
+
+#lobby-body {
+	width: 25%;
+}
+
+#message-body, #lobby-body {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+#message-body > div {
+	margin: 5px;
+}
+
+#read-messages {
+	overflow: auto;
+	scroll-behavior: auto;
+	height: 90%;
+}
+
+#enter-messages {
+	height: 10%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-end;
+}
+
+#msg {
+	position: left;
+	width: 90%;
+	margin: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	min-height: 25px;
+	padding: 0px;
+	line-height: 15px;
+	vertical-align: left;
+	border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
+  padding: 5px 5px;
+  font-size: 12px; 
+}
+
+#msg-enter-btn {
+	position: right;
+	width: 10%;
+	height: 37px;
+	vertical-align: right;
+}
+
+#messages { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	font-size: 12px;
+}
+
+#messages li { 
+	padding: 5px 10px; 
+}
+
+#messages li:nth-child(odd) { 
+	background: #FFFFFF; 
 }
