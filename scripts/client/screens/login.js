@@ -16,6 +16,8 @@ Game.screens['login'] = (function(menu, socket) {
           <input type="password" id="password" name="password">
         </div>
 
+        <p id="login-warning" class="red-text"></p>
+
       </div>
 
         <ul class = "menu">
@@ -24,38 +26,46 @@ Game.screens['login'] = (function(menu, socket) {
         </ul>
     `);
 
-    //----------------------------------------------------------
-    // Request to login
-    //----------------------------------------------------------
+    /**
+     * Request server to login
+     */
     document.getElementById('id-login-login').addEventListener(
       'click',
       function() { //TODO: verify with server that the user is registered
-        let username = document.getElementById('username').value;
-        let password = document.getElementById('password').value;
+        let username = document.getElementById('username').value.toLowerCase();
+        let password = document.getElementById('password').value.toLowerCase();
+        if( username.value === '' || password.value === '') {
+          document.getElementById('login-warning')
+            .innerText='All fields must be filled.';
+        }
         socket.emit(NetworkIds.LOGIN_REQUEST, {username, password});
       });
 
-    //----------------------------------------------------------
-    // Go to create-user screen
-    //----------------------------------------------------------
+    /**
+     * Go to create-user screen
+     */
     document.getElementById('id-login-create-user').addEventListener(
       'click',
       function() { //TODO: Create new user
         menu.showScreen('create-user');
       });
 
-    //----------------------------------------------------------
-    // Receive server response to LOGIN_REQUEST
-    //----------------------------------------------------------
+    /**
+     * Receive server response to LOGIN_REQUEST
+     */
     socket.on(NetworkIds.LOGIN_RESPONSE, data => {
-      if(data === 'success') {
+      if(data.success) {
         console.log('login success');
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
+        document.getElementById('login-warning')
+          .innerText='';
         menu.showScreen('main-menu');
       }
-      else if (data === 'failure') {
-        console.log('login failure');
+      else {
+        document.getElementById('login-warning')
+          .innerText="Incorrect username or password.";
+        console.log(data.message);
       }
     });
 
