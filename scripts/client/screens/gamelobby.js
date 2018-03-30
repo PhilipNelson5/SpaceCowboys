@@ -44,7 +44,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 		document.getElementById('msg-enter-btn').addEventListener(
 			'click',
 			function() {
-				let user = socket.id; // TODO: get current user
+				let user = Game.user.username;
 				socket.emit(NetworkIds.CHAT_MESSAGE, user, $('#msg').val());
 				$('#msg').val('');				
 		});

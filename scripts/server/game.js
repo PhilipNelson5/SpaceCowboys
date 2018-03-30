@@ -116,7 +116,6 @@ function initializeSocketIO(httpServer) {
 			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length);
 		});
 
-    notifyConnect(socket);
     // notify other clients about new client if needed
     //socket.broadcast.emit(NetworkIds.id, data)
   });
