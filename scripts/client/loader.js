@@ -20,43 +20,54 @@ Game.loader = (function() {
   'use strict';
   // The file paths are from the client directory
   let scriptOrder = [
-    {
-      scripts: ['../shared/network-ids'],
-      message: 'Network Ids loaded',
-      onComplete: null,
-    }, {
-      scripts: ['../shared/queue'],
-      message: 'Utilities loaded',
-      onComplete: null,
-    }, {
-      scripts: ['../client/network'],
-      message: 'Network loaded',
-      onComplete: null,
-    }, {
-      scripts: ['input'],
-      message: 'Input loaded',
-      onComplete: null
-    }, {
-      scripts: ['rendering/renderer'],
-      message: 'Renderers loaded',
-      onComplete: null
-    }, {
-      scripts: ['screens/menu', 'screens/login', 'screens/createuser', 'screens/gamelobby','screens/config', 'screens/about', 'screens/gameplay', 'screens/help', 'screens/highscores', 'screens/mainmenu'],
-      message: 'Screens loaded',
-      onComplete: null,
-    }, {
-      scripts: ['main'],
-      message: 'Game model loaded',
-      onComplete: null,
-    // }, {
+      {
+        scripts: ['../shared/network-ids'],
+        message: 'Network Ids loaded',
+        onComplete: null,
+      }, {
+        scripts: ['../shared/queue'],
+        message: 'Utilities loaded',
+        onComplete: null,
+      }, {
+        scripts: ['../client/network'],
+        message: 'Network loaded',
+        onComplete: null,
+      }, {
+        scripts: ['input'],
+        message: 'Input loaded',
+        onComplete: null
+      }, {
+        scripts: ['rendering/renderer'],
+        message: 'Renderers loaded',
+        onComplete: null
+      }, {
+        scripts: [
+          'screens/menu',
+          'screens/login',
+          'screens/createuser',
+          'screens/gamelobby',
+          'screens/config',
+          'screens/about',
+          'screens/gameplay',
+          'screens/help',
+          'screens/highscores',
+          'screens/mainmenu'
+        ],
+        message: 'Screens loaded',
+        onComplete: null,
+      }, {
+        scripts: ['main'],
+        message: 'Game model loaded',
+        onComplete: null,
+        // }, {
       // scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
       // message: 'Player models loaded',
       // onComplete: null
-    // }, {
+        // }, {
       // scripts: ['rendering/graphics'],
       // message: 'Graphics loaded',
       // onComplete: null
-    }], // end scriptOrder
+      }], // end scriptOrder
 
     assetOrder = [{
       key: 'player-self',

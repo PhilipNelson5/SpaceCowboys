@@ -65,7 +65,7 @@ Game.screens['login'] = (function(menu, socket) {
       }
       else {
         document.getElementById('login-warning')
-          .innerText="Incorrect username or password.";
+          .innerText='Incorrect username or password.';
         console.log(data.message);
       }
     });

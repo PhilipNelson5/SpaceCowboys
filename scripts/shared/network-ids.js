@@ -9,81 +9,81 @@
 //
 // ------------------------------------------------------------------
 (function(exports) {
-    'use strict';
+  'use strict';
 
-    Object.defineProperties(exports, {
-        'INPUT': {
-            value: 'input',
-            writable: false
-        },
-        'INPUT_MOVE': {
-            value: 'move',
-            writable: false
-        },
-        'INPUT_ROTATE_LEFT': {
-            value: 'rotate-left',
-            writable: false
-        },
-        'INPUT_ROTATE_RIGHT': {
-            value: 'rotate-right',
-            writable: false
-        },
-        'INPUT_FIRE': {
-            value: 'fire',
-            writable: false
-        },
-        'CONNECT': {
-            value: 'connection',
-            writable: false
-        },
-        'CONNECT_ACK': {
-            value: 'connect-ack',
-            writable: false
-        },
-        'CONNECT_OTHER': {
-            value: 'connect-other',
-            writable: false
-        },
-        'DISCONNECT': {
-            value: 'disconnect',
-            writable: false
-        },
-        'DISCONNECT_OTHER': {
-            value: 'disconnect-other',
-            writable: false
-        },
-        'LOGIN_REQUEST': {
-            value: 'login-request',
-            writable: false
-        },
-        'LOGIN_RESPONSE': {
-            value: 'login-response',
-            writable: false
-        },
-        'CREATE_USER_REQUEST': {
-            value: 'create-user-request',
-            writable: false
-        },
-        'CREATE_USER_RESPONSE': {
-            value: 'create-user-response',
-            writable: false
-        },
-        'UPDATE_SELF': {
-            value: 'update-self',
-            writable: false
-        },
-        'UPDATE_OTHER': {
-            value: 'update-other',
-            writable: false
-        },
-        'MISSILE_NEW': {
-            value: 'missile-new',
-            writable: false
-        },
-        'MISSILE_HIT': {
-            value: 'missile-hit',
-            writable: false
-        }
-    });
+  Object.defineProperties(exports, {
+    'INPUT': {
+      value: 'input',
+      writable: false
+    },
+    'INPUT_MOVE': {
+      value: 'move',
+      writable: false
+    },
+    'INPUT_ROTATE_LEFT': {
+      value: 'rotate-left',
+      writable: false
+    },
+    'INPUT_ROTATE_RIGHT': {
+      value: 'rotate-right',
+      writable: false
+    },
+    'INPUT_FIRE': {
+      value: 'fire',
+      writable: false
+    },
+    'CONNECT': {
+      value: 'connection',
+      writable: false
+    },
+    'CONNECT_ACK': {
+      value: 'connect-ack',
+      writable: false
+    },
+    'CONNECT_OTHER': {
+      value: 'connect-other',
+      writable: false
+    },
+    'DISCONNECT': {
+      value: 'disconnect',
+      writable: false
+    },
+    'DISCONNECT_OTHER': {
+      value: 'disconnect-other',
+      writable: false
+    },
+    'LOGIN_REQUEST': {
+      value: 'login-request',
+      writable: false
+    },
+    'LOGIN_RESPONSE': {
+      value: 'login-response',
+      writable: false
+    },
+    'CREATE_USER_REQUEST': {
+      value: 'create-user-request',
+      writable: false
+    },
+    'CREATE_USER_RESPONSE': {
+      value: 'create-user-response',
+      writable: false
+    },
+    'UPDATE_SELF': {
+      value: 'update-self',
+      writable: false
+    },
+    'UPDATE_OTHER': {
+      value: 'update-other',
+      writable: false
+    },
+    'MISSILE_NEW': {
+      value: 'missile-new',
+      writable: false
+    },
+    'MISSILE_HIT': {
+      value: 'missile-hit',
+      writable: false
+    }
+  });
 
 })(typeof exports === 'undefined' ? this['NetworkIds'] = {} : exports);

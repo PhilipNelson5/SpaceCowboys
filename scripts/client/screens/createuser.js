@@ -55,9 +55,9 @@ Game.screens['create-user'] = (function(menu, socket) {
           confirm.value = '';
         }
         else {
-        document.getElementById('create-user-warning')
-          .innerText='Passwords do not match.';
-          console.log("Passwords do not match");
+          document.getElementById('create-user-warning')
+            .innerText='Passwords do not match.';
+          console.log('Passwords do not match');
         }
       });
 

@@ -30,7 +30,7 @@ function initializeSocketIO(httpServer) {
     activeClients[socket.id] = {
       socket: socket,
       player: null
-    }
+    };
     ++activeClients.length;
     console.log(activeClients.length + ' active clients');
 
@@ -52,7 +52,7 @@ function initializeSocketIO(httpServer) {
       delete activeClients[socket.id];
       --activeClients.length;
 
-      console.log("DISCONNECT: " + activeClients.length + ' active clients');
+      console.log('DISCONNECT: ' + activeClients.length + ' active clients');
 
       // notify other clients about disconnect if needed
       //socket.broadcast.emit(NetworkIds.id, data)
@@ -64,7 +64,7 @@ function initializeSocketIO(httpServer) {
      * Responds with success or failure.
      */
     socket.on(NetworkIds.LOGIN_REQUEST, data => {
-      console.log("request login: " + data.username);
+      console.log('request login: ' + data.username);
 
       login.verify(data.username, data.password).then(
         () => socket.emit(NetworkIds.LOGIN_RESPONSE, {
@@ -82,7 +82,7 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => { //TODO make a promise
 
-      if(login.registerNewUser(data.username, data.password))
+      if (login.registerNewUser(data.username, data.password))
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: true, message: 'new user registered', username: data.username
         });

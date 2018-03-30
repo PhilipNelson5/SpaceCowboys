@@ -46,7 +46,7 @@ function createPlayer() {
 
   Object.defineProperty(that, 'speed', {
     get: () => speed
-  })
+  });
 
   Object.defineProperty(that, 'rotateRate', {
     get: () => rotateRate
