@@ -84,7 +84,7 @@ ul.menu li button:active {
 }
 
 #game div p {
-  font-size: 0.5em;
+  /* font-size: 0.5em; */
 }
 
 #about p {
@@ -228,4 +228,11 @@ input {
 
 #messages li:nth-child(odd) { 
 	background: #FFFFFF; 
+
+.red-text {
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  color: #ff0000;
+  text-align: center;
 }

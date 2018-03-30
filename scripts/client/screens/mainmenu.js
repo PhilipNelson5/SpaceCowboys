@@ -7,6 +7,7 @@ Game.screens['main-menu'] = (function(menu) {
         <ul class = "menu">
           <li><button id = "id-new-game">Join&nbsp;Game&nbsp;Lobby</button></li>
           <li><button id = "id-high-scores">High&nbsp;Scores</button></li>
+          <li><button id = "id-config">Configurations</button></li>
           <li><button id = "id-help">Help</button></li>
           <li><button id = "id-about">About</button></li>
         </ul>
@@ -20,6 +21,10 @@ Game.screens['main-menu'] = (function(menu) {
     document.getElementById('id-high-scores').addEventListener(
       'click',
       function() { menu.showScreen('high-scores'); });
+
+    document.getElementById('id-config').addEventListener(
+      'click',
+      function() { menu.showScreen('config'); });
 
     document.getElementById('id-help').addEventListener(
       'click',
