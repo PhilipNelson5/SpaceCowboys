@@ -15,7 +15,7 @@ Game.menu = (function(screens) {
       active = null;
 
     active = document.getElementsByClassName('active');
-    for(screen = 0; screen < active.length; ++screen) {
+    for (screen = 0; screen < active.length; ++screen) {
       active[screen].classList.remove('active');
     }
 
