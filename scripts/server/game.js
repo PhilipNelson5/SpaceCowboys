@@ -13,6 +13,7 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
+const TIMER_MS = 15000;
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
@@ -22,6 +23,7 @@ const user_list = {}; // TODO: unless otherwise dictated elsewhere, users are he
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
+	var end;
 
   /**
    * When a new client connects
@@ -103,22 +105,44 @@ function initializeSocketIO(httpServer) {
 			io.emit(NetworkIds.CHAT_MESSAGE, user + ': ' + msg);
 		});
 
-		socket.on(NetworkIds.LEAVE_LOBBY, function(user) {
-			delete lobbyClients[socket.id];
+		socket.on(NetworkIds.LEAVE_LOBBY, function(user, id) {
+			delete lobbyClients[id];
 			--lobbyClients.length;
 			delete user_list[user];
 			io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length, user);
 		});
 
-		socket.on(NetworkIds.ENTER_LOBBY, function(user) {
-			lobbyClients[socket.id] = {}
+		socket.on(NetworkIds.ENTER_LOBBY, function(user, id) {
+			lobbyClients[id] = {}
 			++lobbyClients.length;
 			user_list[user] = {};
+
+			if (lobbyClients.length > 2) {
+				io.emit(NetworkIds.START_TIMER);
+			}
 			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, user);
 		});
 
 		socket.on(NetworkIds.REQUEST_USERS, function(id) {
 			io.to(id).emit(NetworkIds.REQUEST_USERS, user_list);
+		});
+
+		socket.on(NetworkIds.START_TIMER, function() {
+			end = new Date().getTime() + TIMER_MS;
+			let time = TIMER_MS;
+			socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);		
+		});
+
+		socket.on(NetworkIds.REQUEST_TIMER, function() {
+			let time = new Date().getTime();
+			if ((end - time) < 0) {
+				for (let id in lobbyClients) {
+					console.log(id);
+					io.to(id).emit(NetworkIds.START_GAME);
+				}
+			} else {
+				socket.emit(NetworkIds.REQUEST_TIMER, end-time);
+			}
 		});
 
     // notify other clients about new client if needed

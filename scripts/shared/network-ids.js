@@ -99,6 +99,18 @@
 				'REQUEST_USERS': {
 						value: 'request_users',
 						writable: false
+				},
+				'START_TIMER': {
+						value: 'start_timer',
+						writable: false
+				},
+				'REQUEST_TIMER': {
+						value: 'request_timer',
+						writable: false
+				},
+				'START_GAME': {
+						value: 'start_game',
+						writable: false
 				}
     });
 
