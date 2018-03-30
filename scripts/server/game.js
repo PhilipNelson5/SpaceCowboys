@@ -20,7 +20,6 @@ const quit = false;
 const activeClients = { length:0 };
 const lobbyClients = { length:0 };
 const inputQueue = Queue.create();
-const user_list = {}; // TODO: unless otherwise dictated elsewhere, users are here
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -33,6 +32,7 @@ function initializeSocketIO(httpServer) {
     console.log('Connection established => ' + socket.id);
 
     activeClients[socket.id] = {
+			username: undefined,
       socket: socket,
       player: null
     }
@@ -77,9 +77,12 @@ function initializeSocketIO(httpServer) {
       console.log("request login: " + data.username);
 
       login.verify(data.username, data.password).then(
-        () => socket.emit(NetworkIds.LOGIN_RESPONSE, {
-          success: true, message: 'verification success', username: data.username
-        }),
+        () => { 
+					activeClients[socket.id].username = data.username;
+					socket.emit(NetworkIds.LOGIN_RESPONSE, {
+          	success: true, message: 'verification success', username: data.username
+        	})
+				},
         () => socket.emit(NetworkIds.LOGIN_RESPONSE, {
           success: false, message: 'verification failed'
         }));
@@ -106,8 +109,8 @@ function initializeSocketIO(httpServer) {
      * When the client emits a new chat message
      * Send message to all clients
      */
-		socket.on(NetworkIds.CHAT_MESSAGE, function(user, msg) {
-			io.emit(NetworkIds.CHAT_MESSAGE, user + ': ' + msg);
+		socket.on(NetworkIds.CHAT_MESSAGE, function(msg) {
+			io.emit(NetworkIds.CHAT_MESSAGE, lobbyClients[socket.id] + ': ' + msg);
 		});
 
 		/**
@@ -115,10 +118,10 @@ function initializeSocketIO(httpServer) {
 		 * Removes from lobbyClient list and sends user
 		 * removal update to all clients
 		 */
-		socket.on(NetworkIds.LEAVE_LOBBY, function(user, id) {
-			delete lobbyClients[id];
+		socket.on(NetworkIds.LEAVE_LOBBY, function() {
+			let user = lobbyClients[socket.id];
+			delete lobbyClients[socket.id];
 			--lobbyClients.length;
-			delete user_list[user];
 			io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length, user);
 		});
 
@@ -129,12 +132,11 @@ function initializeSocketIO(httpServer) {
 		 * Also attempts to start the timer if a certain
 		 * length of people are in the lobby
 		 */
-		socket.on(NetworkIds.ENTER_LOBBY, function(user, id) {
-			lobbyClients[id] = {}
+		socket.on(NetworkIds.ENTER_LOBBY, function() {
+			lobbyClients[socket.id] = activeClients[socket.id].username;
 			++lobbyClients.length;
-			user_list[user] = {};
 
-			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, user);
+			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, lobbyClients[socket.id]);
 			if (lobbyClients.length >= LOBBY_MAX) {
 				io.emit(NetworkIds.START_TIMER);
 			}
@@ -145,8 +147,12 @@ function initializeSocketIO(httpServer) {
 		 * Attempts to return list of users back to the
 		 * client that requested
 		 */
-		socket.on(NetworkIds.REQUEST_USERS, function(id) {
-			io.to(id).emit(NetworkIds.REQUEST_USERS, user_list);
+		socket.on(NetworkIds.REQUEST_USERS, function() {
+			let user_list = [];
+			for (let key in lobbyClients) {
+				if (key != "length") user_list.push(lobbyClients[key]);
+			}
+			socket.emit(NetworkIds.REQUEST_USERS, user_list);
 		});
 
 		/**
@@ -170,7 +176,6 @@ function initializeSocketIO(httpServer) {
 			let time = new Date().getTime();
 			if ((end - time) < 0) {
 				for (let id in lobbyClients) {
-					console.log(id);
 					io.to(id).emit(NetworkIds.START_GAME);
 				}
 			} else {

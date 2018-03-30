@@ -41,7 +41,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     document.getElementById('id-gamelobby-back').addEventListener(
       'click',
       function() { 
-				socket.emit(NetworkIds.LEAVE_LOBBY, Game.user.username, socket.id);	
+				socket.emit(NetworkIds.LEAVE_LOBBY);	
 				menu.showScreen('main-menu'); 
 			});	
 		
@@ -52,7 +52,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 			'click',
 			function() {
 				let user = Game.user.username;
-				socket.emit(NetworkIds.CHAT_MESSAGE, user, $('#msg').val());
+				socket.emit(NetworkIds.CHAT_MESSAGE, $('#msg').val());
 				$('#msg').val('');				
 		});
 	
@@ -70,9 +70,9 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 		//----------------------------------------------------------
 		socket.on(NetworkIds.ENTER_LOBBY, function(number, user) {	
 			$('#announce-tag').append($('<li>').text(user + " connected... users in lobby: " + number));
-			$('#users-tag').append($('<li id=user-' + user +'>').text(user));
 			let scroller = document.getElementById('lobby-announcements');
 			scroller.scrollTop = scroller.scrollHeight;
+			socket.emit(NetworkIds.REQUEST_USERS);
 		});
 
 		//----------------------------------------------------------
@@ -80,18 +80,19 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 		//----------------------------------------------------------
 		socket.on(NetworkIds.LEAVE_LOBBY, function(number, user) {
 			$('#announce-tag').append($('<li>').text(user + " disconnected... users in lobby: " + number));
-			$('#users-tag #user-'+user).remove();
 			let scroller = document.getElementById('lobby-announcements');
 			scroller.scrollTop = scroller.scrollHeight;
+			socket.emit(NetworkIds.REQUEST_USERS);
 		});
 
 		//----------------------------------------------------------
 		// request user list from server
 		//----------------------------------------------------------
 		socket.on(NetworkIds.REQUEST_USERS, function(user_list) {
-			for (let key in user_list) {
-				$('#users-tag #user-'+key).remove();
-				$('#users-tag').append($('<li id=user-' + key +'>').text(key));
+			$('#users-tag').empty();
+			for (let i = 0; i < user_list.length; i++) {	
+				let val = user_list[i];
+				$('#users-tag').append($('<li id=user-' + val +'>').text(val));
 			}
 		});
 		
@@ -123,8 +124,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 	}
 
   function run() {
-    socket.emit(NetworkIds.ENTER_LOBBY, Game.user.username, socket.id);
-		socket.emit(NetworkIds.REQUEST_USERS, socket.id);
+    socket.emit(NetworkIds.ENTER_LOBBY);
   }
 
   return {
