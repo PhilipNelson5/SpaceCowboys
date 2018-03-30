@@ -95,6 +95,10 @@
 				'ENTER_LOBBY': {
 						value: 'enter_lobby',
 						writable: false
+				},
+				'REQUEST_USERS': {
+						value: 'request_users',
+						writable: false
 				}
     });
 

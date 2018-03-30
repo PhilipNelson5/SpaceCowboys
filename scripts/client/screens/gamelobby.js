@@ -18,6 +18,10 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 				<div id="lobby-announcements">
 					<ul id="announce-tag"></ul>
 				</div>
+				<div id="lobby-users">
+					<p style="font-size:14px; text-align: center;">Users Currently Connected</p>
+					<ul id="users-tag"></ul>
+				</div>
 				<div id="exit-lobby">
     		  <ul class = "menu">
        			<li><button id = "id-gamelobby-back">Back</button></li>
@@ -28,13 +32,15 @@ Game.screens['gamelobby'] = (function(menu, socket) {
    	  `
 		);
 
+		var users = {};
+
 		//----------------------------------------------------------
 		// Go Back to Menu
 		//----------------------------------------------------------
     document.getElementById('id-gamelobby-back').addEventListener(
       'click',
       function() { 
-				socket.emit(NetworkIds.LEAVE_LOBBY);	
+				socket.emit(NetworkIds.LEAVE_LOBBY, Game.user.username);	
 				menu.showScreen('main-menu'); 
 			});	
 		
@@ -61,8 +67,9 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 		//----------------------------------------------------------
 		// User enters lobby
 		//----------------------------------------------------------
-		socket.on(NetworkIds.ENTER_LOBBY, function(users) {	
-			$('#announce-tag').append($('<li>').text("user connected... users in lobby: " + users));
+		socket.on(NetworkIds.ENTER_LOBBY, function(number, user) {	
+			$('#announce-tag').append($('<li>').text(user + " connected... users in lobby: " + number));
+			$('#users-tag').append($('<li id=user-' + user +'>').text(user));
 			let scroller = document.getElementById('lobby-announcements');
 			scroller.scrollTop = scroller.scrollHeight;
 		});
@@ -70,16 +77,27 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 		//----------------------------------------------------------
 		// User leaves lobby
 		//----------------------------------------------------------
-		socket.on(NetworkIds.LEAVE_LOBBY, function(users) {
-			$('#announce-tag').append($('<li>').text("user disconnected... users in lobby: " + users));
+		socket.on(NetworkIds.LEAVE_LOBBY, function(number, user) {
+			$('#announce-tag').append($('<li>').text(user + " disconnected... users in lobby: " + number));
+			$('#users-tag #user-'+user).remove();
 			let scroller = document.getElementById('lobby-announcements');
 			scroller.scrollTop = scroller.scrollHeight;
 		});
 
+		//----------------------------------------------------------
+		// request user list from server
+		//----------------------------------------------------------
+		socket.on(NetworkIds.REQUEST_USERS, function(user_list) {
+			for (let key in user_list) {
+				$('#users-tag #user-'+key).remove();
+				$('#users-tag').append($('<li id=user-' + key +'>').text(key));
+			}
+		});
 	}
 
   function run() {
-    socket.emit(NetworkIds.ENTER_LOBBY);
+    socket.emit(NetworkIds.ENTER_LOBBY, Game.user.username);
+		socket.emit(NetworkIds.REQUEST_USERS, socket.id);
   }
 
   return {

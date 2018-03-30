@@ -18,6 +18,7 @@ const quit = false;
 const activeClients = { length:0 };
 const lobbyClients = { length:0 };
 const inputQueue = Queue.create();
+const user_list = {}; // TODO: unless otherwise dictated elsewhere, users are here
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -99,21 +100,25 @@ function initializeSocketIO(httpServer) {
     });
 
 		socket.on(NetworkIds.CHAT_MESSAGE, function(user, msg) {
-			for (var key in activeClients) {
-				io.to(key).emit(NetworkIds.CHAT_MESSAGE, user + ': ' + msg);
-			}
+			io.emit(NetworkIds.CHAT_MESSAGE, user + ': ' + msg);
 		});
 
-		socket.on(NetworkIds.LEAVE_LOBBY, function() {
+		socket.on(NetworkIds.LEAVE_LOBBY, function(user) {
 			delete lobbyClients[socket.id];
 			--lobbyClients.length;
-			io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length);
+			delete user_list[user];
+			io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length, user);
 		});
 
-		socket.on(NetworkIds.ENTER_LOBBY, function() {
+		socket.on(NetworkIds.ENTER_LOBBY, function(user) {
 			lobbyClients[socket.id] = {}
 			++lobbyClients.length;
-			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length);
+			user_list[user] = {};
+			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, user);
+		});
+
+		socket.on(NetworkIds.REQUEST_USERS, function(id) {
+			io.to(id).emit(NetworkIds.REQUEST_USERS, user_list);
 		});
 
     // notify other clients about new client if needed

@@ -181,11 +181,11 @@ input {
 	align-items: flex-end;
 }
 
-#lobby-announcements {
+#lobby-announcements, #lobby-users {
 	padding: 5px;
 	overflow: auto;
 	scroll-behavior: auto;
-	height: 80%;
+	height: 40%;
 }
 
 #exit-lobby {
@@ -215,11 +215,15 @@ input {
 	vertical-align: right;
 }
 
-#messages, #announce-tag { 
+#messages, #announce-tag, #users-tag { 
 	list-style-type: none; 
 	margin: 0; 
 	padding: 0; 
 	font-size: 12px;
+}
+
+#lobby-announcements, #lobby-users {
+	background: #FFFFFF;
 }
 
 #messages li { 
