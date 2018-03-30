@@ -22,7 +22,10 @@
       "always"
     ],
     "keyword-spacing": [
-      "error", { "before": false }
+      "error", {
+        "before": true,
+        "after": true
+      }
     ]
   }
 }
