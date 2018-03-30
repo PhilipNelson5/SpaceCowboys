@@ -95,11 +95,12 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => { //TODO make a promise
 
-      if(login.registerNewUser(data.username, data.password))
+      if(login.registerNewUser(data.username, data.password)) {
+				activeClients[socket.id].username = data.username;
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: true, message: 'new user registered', username: data.username
         });
-      else
+			} else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: false, message: 'username exists'
         });
