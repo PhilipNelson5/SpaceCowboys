@@ -13,8 +13,8 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
-const TIMER_MS = 15000;									// timer countdown in miliseconds
-const LOBBY_MAX = 3;										// max player count for lobby
+const TIMER_MS = 15000;           // timer countdown in milliseconds
+const LOBBY_MAX = 3;              // max player count for lobby
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
@@ -77,11 +77,11 @@ function initializeSocketIO(httpServer) {
       console.log('request login: ' + data.username);
 
       login.verify(data.username, data.password).then(
-        () => { 
+        () => {
           activeClients[socket.id].username = data.username;
           socket.emit(NetworkIds.LOGIN_RESPONSE, {
-          	success: true, message: 'verification success', username: data.username
-        	});
+            success: true, message: 'verification success', username: data.username
+          });
         },
         () => socket.emit(NetworkIds.LOGIN_RESPONSE, {
           success: false, message: 'verification failed'
@@ -95,11 +95,12 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => { //TODO make a promise
 
-      if (login.registerNewUser(data.username, data.password))
+      if (login.registerNewUser(data.username, data.password)) {
+        activeClients[socket.id].username = data.username;
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: true, message: 'new user registered', username: data.username
         });
-      else
+      }else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: false, message: 'username exists'
         });
@@ -114,10 +115,10 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-		 * When the client requests to leave the lobby
-		 * Removes from lobbyClient list and sends user
-		 * removal update to all clients
-		 */
+     * When the client requests to leave the lobby
+     * Removes from lobbyClient list and sends user
+     * removal update to all clients
+     */
     socket.on(NetworkIds.LEAVE_LOBBY, function() {
       let user = lobbyClients[socket.id];
       delete lobbyClients[socket.id];
@@ -126,12 +127,12 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-		 * When the client requests to enter the lobby
-		 * Adds client to lobbyClient list and sends user
-		 * connection update to all clients
-		 * Also attempts to start the timer if a certain
-		 * length of people are in the lobby
-		 */
+     * When the client requests to enter the lobby
+     * Adds client to lobbyClient list and sends user
+     * connection update to all clients
+     * Also attempts to start the timer if a certain
+     * length of people are in the lobby
+     */
     socket.on(NetworkIds.ENTER_LOBBY, function() {
       lobbyClients[socket.id] = activeClients[socket.id].username;
       ++lobbyClients.length;
@@ -143,10 +144,10 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-		 * Requests list of users currently in lobby
-		 * Attempts to return list of users back to the
-		 * client that requested
-		 */
+     * Requests list of users currently in lobby
+     * Attempts to return list of users back to the
+     * client that requested
+     */
     socket.on(NetworkIds.REQUEST_USERS, function() {
       let user_list = [];
       for (let key in lobbyClients) {
@@ -156,10 +157,10 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-		 * Direction to start the timer
-		 * TODO: move to a function instead of dealing with
-		 * on client side as well
-		 */
+     * Direction to start the timer
+     * TODO: move to a function instead of dealing with
+     * on client side as well
+     */
     socket.on(NetworkIds.START_TIMER, function() {
       end = new Date().getTime() + TIMER_MS;
       let time = TIMER_MS;
@@ -167,11 +168,11 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-		 * Requests timer update
-		 * Attempts to return timer update to client and,
-		 * if timer has counted down, starts the game for all
-		 * clients in the lobby
-		 */
+     * Requests timer update
+     * Attempts to return timer update to client and,
+     * if timer has counted down, starts the game for all
+     * clients in the lobby
+     */
     socket.on(NetworkIds.REQUEST_TIMER, function() {
       let time = new Date().getTime();
       if ((end - time) < 0) {
