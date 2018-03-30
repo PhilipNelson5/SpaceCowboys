@@ -5,12 +5,12 @@
 //
 // -----------------------------------------------------------------------------
 Game.network = (function() {
-  'use strict'
+  'use strict';
 
   const socket = io();
 
   socket.on(NetworkIds.CONNECT_ACK, data => {
-    console.log('connection acknowledged', data)
+    console.log('connection acknowledged', data);
   });
 
   function initialize() {}

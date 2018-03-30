@@ -35,7 +35,7 @@ Game.graphics = (function() {
   //
   //------------------------------------------------------------------
   function Texture(spec) {
-    var that = {},
+    let that = {},
       ready = false,
 
       image = spec.image;

@@ -126,7 +126,8 @@ Game.input = (function() {
 
   return {
     Keyboard,
-    Mouse
+    Mouse,
+    KeyEvent,
   };
 }());
 
@@ -135,7 +136,7 @@ Game.input = (function() {
 // Source: http://stackoverflow.com/questions/1465374/javascript-event-keycode-constants
 //
 //------------------------------------------------------------------
-let KeyEvent = {
+const KeyEvent = {
   DOM_VK_CANCEL: 3,
   DOM_VK_HELP: 6,
   DOM_VK_BACK_SPACE: 8,

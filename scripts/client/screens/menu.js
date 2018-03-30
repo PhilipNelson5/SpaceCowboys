@@ -4,7 +4,7 @@
 //
 // -----------------------------------------------------------------------------
 Game.menu = (function(screens) {
-  'use strict'
+  'use strict';
 
   // -------------------------------------------------------
   // showScreen removes the 'active' class from all divs
@@ -15,11 +15,11 @@ Game.menu = (function(screens) {
       active = null;
 
     active = document.getElementsByClassName('active');
-    for(screen = 0; screen < active.length; ++screen) {
+    for (screen = 0; screen < active.length; ++screen) {
       active[screen].classList.remove('active');
     }
 
-    console.log("running "+id);
+    console.log('running '+id);
     screens[id].run();
 
     document.getElementById(id).classList.add('active');

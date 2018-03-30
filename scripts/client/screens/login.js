@@ -34,7 +34,7 @@ Game.screens['login'] = (function(menu, socket) {
       function() { //TODO: verify with server that the user is registered
         let username = document.getElementById('username').value.toLowerCase();
         let password = document.getElementById('password').value.toLowerCase();
-        if( username.value === '' || password.value === '') {
+        if ( username.value === '' || password.value === '') {
           document.getElementById('login-warning')
             .innerText='All fields must be filled.';
         }
@@ -54,7 +54,7 @@ Game.screens['login'] = (function(menu, socket) {
      * Receive server response to LOGIN_REQUEST
      */
     socket.on(NetworkIds.LOGIN_RESPONSE, data => {
-      if(data.success) {
+      if (data.success) {
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
         document.getElementById('login-warning')
@@ -65,7 +65,7 @@ Game.screens['login'] = (function(menu, socket) {
       }
       else {
         document.getElementById('login-warning')
-          .innerText="Incorrect username or password.";
+          .innerText='Incorrect username or password.';
         console.log(data.message);
       }
     });
