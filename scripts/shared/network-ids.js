@@ -83,7 +83,35 @@
         'MISSILE_HIT': {
             value: 'missile-hit',
             writable: false
-        }
+        },
+				'CHAT_MESSAGE': {
+						value: 'chat_message',
+						writable: false
+				},
+				'LEAVE_LOBBY': {
+						value: 'leave_lobby',
+						writable: false
+				},
+				'ENTER_LOBBY': {
+						value: 'enter_lobby',
+						writable: false
+				},
+				'REQUEST_USERS': {
+						value: 'request_users',
+						writable: false
+				},
+				'START_TIMER': {
+						value: 'start_timer',
+						writable: false
+				},
+				'REQUEST_TIMER': {
+						value: 'request_timer',
+						writable: false
+				},
+				'START_GAME': {
+						value: 'start_game',
+						writable: false
+				}
     });
 
 })(typeof exports === 'undefined' ? this['NetworkIds'] = {} : exports);
