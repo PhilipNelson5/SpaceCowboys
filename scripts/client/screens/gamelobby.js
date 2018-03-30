@@ -94,34 +94,37 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 				$('#users-tag').append($('<li id=user-' + key +'>').text(key));
 			}
 		});
-
+		
+		//----------------------------------------------------------
+		// on countdown start
+		//----------------------------------------------------------	
 		socket.on(NetworkIds.START_TIMER, function(time) {
-			console.log("starting timer!");
 			$('#announce-tag').append($('<li>').text("!!"));
 			$('#announce-tag').append($('<li>').text("!! game starting soon !!"));
 			$('#announce-tag').append($('<li>').text("!!"));
 			socket.emit(NetworkIds.START_TIMER);
 		});
 
+		//----------------------------------------------------------
+		// request timer update from server
+		//----------------------------------------------------------	
 		socket.on(NetworkIds.REQUEST_TIMER, function(time) {
 			document.getElementById('timer').innerHTML = "Timer: " + (time/1000).toFixed(1) + " sec";
 			socket.emit(NetworkIds.REQUEST_TIMER);
 		});
 
+		//----------------------------------------------------------
+		// change to gameplay when timer reaches 0
+		//----------------------------------------------------------	
 		socket.on(NetworkIds.START_GAME, function() {
-				menu.showScreen('game-play'); 
+			document.getElementById('timer').innerHTML = "Timer: 0.0 sec";
+			menu.showScreen('game-play'); 
 		});
 	}
 
   function run() {
     socket.emit(NetworkIds.ENTER_LOBBY, Game.user.username, socket.id);
 		socket.emit(NetworkIds.REQUEST_USERS, socket.id);
-
-		/*
-		let time = new Date().getTime();
-		console.log(time);
-		console.log(time + 3000);
-		*/
   }
 
   return {

@@ -13,7 +13,8 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
-const TIMER_MS = 15000;
+const TIMER_MS = 15000;									// timer countdown in miliseconds
+const LOBBY_MAX = 3;										// max player count for lobby
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
@@ -101,10 +102,19 @@ function initializeSocketIO(httpServer) {
         });
     });
 
+		/**
+     * When the client emits a new chat message
+     * Send message to all clients
+     */
 		socket.on(NetworkIds.CHAT_MESSAGE, function(user, msg) {
 			io.emit(NetworkIds.CHAT_MESSAGE, user + ': ' + msg);
 		});
 
+		/**
+		 * When the client requests to leave the lobby
+		 * Removes from lobbyClient list and sends user
+		 * removal update to all clients
+		 */
 		socket.on(NetworkIds.LEAVE_LOBBY, function(user, id) {
 			delete lobbyClients[id];
 			--lobbyClients.length;
@@ -112,27 +122,50 @@ function initializeSocketIO(httpServer) {
 			io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length, user);
 		});
 
+		/**
+		 * When the client requests to enter the lobby
+		 * Adds client to lobbyClient list and sends user
+		 * connection update to all clients
+		 * Also attempts to start the timer if a certain
+		 * length of people are in the lobby
+		 */
 		socket.on(NetworkIds.ENTER_LOBBY, function(user, id) {
 			lobbyClients[id] = {}
 			++lobbyClients.length;
 			user_list[user] = {};
 
-			if (lobbyClients.length > 2) {
+			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, user);
+			if (lobbyClients.length >= LOBBY_MAX) {
 				io.emit(NetworkIds.START_TIMER);
 			}
-			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, user);
 		});
 
+		/**
+		 * Requests list of users currently in lobby
+		 * Attempts to return list of users back to the
+		 * client that requested
+		 */
 		socket.on(NetworkIds.REQUEST_USERS, function(id) {
 			io.to(id).emit(NetworkIds.REQUEST_USERS, user_list);
 		});
 
+		/**
+		 * Direction to start the timer
+		 * TODO: move to a function instead of dealing with
+		 * on client side as well
+		 */
 		socket.on(NetworkIds.START_TIMER, function() {
 			end = new Date().getTime() + TIMER_MS;
 			let time = TIMER_MS;
 			socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);		
 		});
 
+		/**
+		 * Requests timer update
+		 * Attempts to return timer update to client and,
+		 * if timer has counted down, starts the game for all
+		 * clients in the lobby
+		 */
 		socket.on(NetworkIds.REQUEST_TIMER, function() {
 			let time = new Date().getTime();
 			if ((end - time) < 0) {
