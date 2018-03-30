@@ -13,11 +13,11 @@
 
     that.enqueue = function(value) {
       that.push(value);
-    }
+    };
 
     that.dequeue = function() {
       return that.shift();
-    }
+    };
 
     Object.defineProperty(that, 'front', {
       get: () => that[0]

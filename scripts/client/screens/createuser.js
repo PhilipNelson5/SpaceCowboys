@@ -40,11 +40,11 @@ Game.screens['create-user'] = (function(menu, socket) {
         let username = document.getElementById('create-username');
         let password = document.getElementById('create-password');
         let confirm = document.getElementById('create-password-confirm');
-        if( username.value === '' || password.value === '') {
+        if ( username.value === '' || password.value === '') {
           document.getElementById('create-user-warning')
             .innerText='All fields must be filled.';
         }
-        else if(password.value === confirm.value)
+        else if (password.value === confirm.value)
         {
           socket.emit(NetworkIds.CREATE_USER_REQUEST, {
             username: username.value.toLowerCase(),
@@ -55,9 +55,9 @@ Game.screens['create-user'] = (function(menu, socket) {
           confirm.value = '';
         }
         else {
-        document.getElementById('create-user-warning')
-          .innerText='Passwords do not match.';
-          console.log("Passwords do not match");
+          document.getElementById('create-user-warning')
+            .innerText='Passwords do not match.';
+          console.log('Passwords do not match');
         }
       });
 
@@ -75,7 +75,7 @@ Game.screens['create-user'] = (function(menu, socket) {
      * Warns user if the operation failed.
      */
     socket.on(NetworkIds.CREATE_USER_RESPONSE, data => {
-      if(data.success) {
+      if (data.success) {
         document.getElementById('create-user-warning')
           .innerText='';
         Game.user.username = data.username;

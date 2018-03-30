@@ -4,7 +4,7 @@
 //
 // -----------------------------------------------------------------------------
 Game.main = (function(screens, menu) {
-  'use strict'
+  'use strict';
 
   // -------------------------------------------------------
   // initialize performs the one-time initialization for
@@ -15,8 +15,8 @@ Game.main = (function(screens, menu) {
 
     // Go through each screen and initialize each one
     for (screen in screens) {
-      if(screens.hasOwnProperty(screen)) {
-        console.log("    " + screen);
+      if (screens.hasOwnProperty(screen)) {
+        console.log('    ' + screen);
         screens[screen].initialize();
       }
     }
