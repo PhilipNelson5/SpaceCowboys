@@ -100,7 +100,7 @@ function initializeSocketIO(httpServer) {
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: true, message: 'new user registered', username: data.username
         });
-      }else
+      } else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: false, message: 'username exists'
         });
@@ -179,7 +179,7 @@ function initializeSocketIO(httpServer) {
         for (let id in lobbyClients) {
           io.to(id).emit(NetworkIds.START_GAME);
         }
-      }else {
+      } else {
         socket.emit(NetworkIds.REQUEST_TIMER, end-time);
       }
     });

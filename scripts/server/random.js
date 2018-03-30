@@ -73,7 +73,7 @@ function nextGaussian(mean, stdDev) {
     x1 = 2 * Math.random() - 1;
     x2 = 2 * Math.random() - 1;
     z = (x1 * x1) + (x2 * x2);
-  }while (z >= 1);
+  } while (z >= 1);
 
   z = Math.sqrt((-2 * Math.log(z)) / z);
   y1 = x1 * z;
