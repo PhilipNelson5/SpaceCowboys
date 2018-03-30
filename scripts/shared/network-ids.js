@@ -83,7 +83,19 @@
         'MISSILE_HIT': {
             value: 'missile-hit',
             writable: false
-        }
+        },
+				'CHAT_MESSAGE': {
+						value: 'chat_message',
+						writable: false
+				},
+				'LEAVE_LOBBY': {
+						value: 'leave_lobby',
+						writable: false
+				},
+				'ENTER_LOBBY': {
+						value: 'enter_lobby',
+						writable: false
+				}
     });
 
 })(typeof exports === 'undefined' ? this['NetworkIds'] = {} : exports);

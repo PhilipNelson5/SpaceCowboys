@@ -163,6 +163,10 @@ input {
 	margin: 5px;
 }
 
+#lobby-body > div {
+	margin: 5px;
+}
+
 #read-messages {
 	overflow: auto;
 	scroll-behavior: auto;
@@ -175,6 +179,17 @@ input {
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: flex-end;
+}
+
+#lobby-announcements {
+	padding: 5px;
+	overflow: auto;
+	scroll-behavior: auto;
+	height: 80%;
+}
+
+#exit-lobby {
+	height: 20%;
 }
 
 #msg {
@@ -200,7 +215,7 @@ input {
 	vertical-align: right;
 }
 
-#messages { 
+#messages, #announce-tag { 
 	list-style-type: none; 
 	margin: 0; 
 	padding: 0; 

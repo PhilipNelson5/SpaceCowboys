@@ -15,7 +15,8 @@ const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
 const lastUpdate = 0;
 const quit = false;
-const activeClients = {length:0};
+const activeClients = { length:0 };
+const lobbyClients = { length:0 };
 const inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
@@ -46,6 +47,11 @@ function initializeSocketIO(httpServer) {
     socket.on(NetworkIds.DISCONNECT, function() {
       delete activeClients[socket.id];
       --activeClients.length;
+			if (lobbyClients[socket.id] != undefined) {
+				delete lobbyClients[socket.id];
+				--lobbyClients.length;
+				socket.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length);
+			}
       console.log("DISCONNECT: " + activeClients.length + ' active clients');
       notifyDisconnect(socket.id);
     });
@@ -62,6 +68,24 @@ function initializeSocketIO(httpServer) {
       else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, 'failure');
     });
+
+		socket.on(NetworkIds.CHAT_MESSAGE, function(user, msg) {
+			for (var key in activeClients) {
+				io.to(key).emit(NetworkIds.CHAT_MESSAGE, user + ': ' + msg);
+			}
+		});
+
+		socket.on(NetworkIds.LEAVE_LOBBY, function() {
+			delete lobbyClients[socket.id];
+			--lobbyClients.length;
+			io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length);
+		});
+
+		socket.on(NetworkIds.ENTER_LOBBY, function() {
+			lobbyClients[socket.id] = {}
+			++lobbyClients.length;
+			io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length);
+		});
 
     notifyConnect(socket);
   });
