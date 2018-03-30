@@ -16,7 +16,7 @@ const STATE_UPDATE_RATE_MS = 100;
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
-const inputQueue = Queue.create();
+let inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -96,6 +96,87 @@ function initializeSocketIO(httpServer) {
     //socket.broadcast.emit(NetworkIds.id, data)
   });
 }
+
+
+function processInput(elapsedTime) {
+
+	let processMe = inputQueue;
+	inputQueue = Queue.create();
+
+	while(!processMe.empty) {
+		let input =  processMe.dequeue();
+		let client = activeClients[input.clientId];
+		client.lastMessageId = input.message.id;
+			switch (input.message.type) {
+				case NetworkIds.INPUT_MOVE:
+					client.player.move(input.message.elapsedTime);
+					break;
+				case NetworkIds.INPUT_ROTATE_LEFT:
+					client.player.rotateLeft(input.message.elapsedTime);
+					break;
+				case NetworkIds.INPUT_ROTATE_RIGHT:
+					client.player.rotateRight(input.message.elapsedTime);
+					break;
+		}
+	}
+}
+
+
+function update(elapsedTime) {
+	for (let clientId in activeClients) {
+		activeClients[clientId].player.update(currentTime);
+	}
+	//TODO: other things for collisions
+}
+
+function updateClient(elapsedTime) {
+	lastUpdate += elaspedTime;
+	if(lastUpdate < STATE_UPDATE_RATE_MS) {
+		return; 
+	}
+	for (let clicentId in activeClients) {
+		let client = activeClients[clientId];
+		let update = {
+			clientId : clientId,
+			lastMessageId: client.lastMessageId,
+			direction : client.player.direction,
+			position: client.player.position,
+			updateWindow: lastUpdate,
+		};
+
+		if (client.player.reportUpdate) {
+			client.socket.emit(NetworkIds.UPDATE_SELF, update);
+			//
+			//Notify all other connected clients about every
+			//other connected client status .... but only if they are updated.
+			for (let otherId in activeClients) {
+				if (otherId !== clientId) {
+					activeClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
+				}
+			}
+		}
+
+	for (let clientId in activeClients) {
+		activeClients[clientId].player.reportUpdate = false;
+	}
+	
+	//Reset time since last update so we know when to put out next update
+	lastUpdate = 0;
+
+}
+
+function gameLoop(currentTime, elaspedTime) {
+	processInput(elapsedTime);
+	update(elaspedTime,currentTime);
+	updateClients(elapsedTime);
+
+	if(!quit) {
+		setTimeout(() => {
+			let now = present();
+			gameLoop(now, now - currentTime);
+		}, SIMULATION_UPDATE_RATE_MS);
+}
+
 
 /**
  *
