@@ -15,6 +15,7 @@ const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
 const TIMER_MS = 15000;           // timer countdown in milliseconds
 const LOBBY_MAX = 3;              // max player count for lobby
+var inSession = false;
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
@@ -101,10 +102,21 @@ function initializeSocketIO(httpServer) {
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: true, message: 'new user registered', username: data.username
         });
-      }else
+      } else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
           success: false, message: 'username exists'
         });
+    });
+
+    /**
+     * Request to join lobby
+     */
+    socket.on(NetworkIds.JOIN_LOBBY_REQUEST, function() {
+      if (inSession) {
+        socket.emit(NetworkIds.JOIN_LOBBY_RESPONSE, !inSession);
+      } else {
+        socket.emit(NetworkIds.JOIN_LOBBY_RESPONSE, !inSession);
+      }
     });
 
     /**
@@ -163,6 +175,7 @@ function initializeSocketIO(httpServer) {
      * on client side as well
      */
     socket.on(NetworkIds.START_TIMER, function() {
+      inSession = true;
       end = new Date().getTime() + TIMER_MS;
       let time = TIMER_MS;
       socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);		
@@ -180,7 +193,7 @@ function initializeSocketIO(httpServer) {
         for (let id in lobbyClients) {
           io.to(id).emit(NetworkIds.START_GAME);
         }
-      }else {
+      } else {
         socket.emit(NetworkIds.REQUEST_TIMER, end-time);
       }
     });

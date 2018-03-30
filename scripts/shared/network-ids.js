@@ -111,6 +111,14 @@
     'START_GAME': {
       value: 'start_game',
       writable: false
+    },
+    'JOIN_LOBBY_REQUEST': {
+      value: 'joint_lobby_request',
+      writable: false
+    },
+    'JOIN_LOBBY_RESPONSE': {
+      value: 'join_lobby_response',
+      writable: false
     }
   });
 

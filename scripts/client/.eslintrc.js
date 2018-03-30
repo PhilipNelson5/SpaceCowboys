@@ -16,25 +16,28 @@ module.exports = {
     "sourceType": "module"
   },
   "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": 0
-    ,
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
     "no-console": [
       "error", { allow: ["warn", "error", "log"] }
     ],
-    "keyword-spacing": [
-      "error", { "before": false }
-    ],
+      "indent": [
+        "error",
+        2
+      ],
+      "linebreak-style": 0
+      ,
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ],
+      "keyword-spacing": [
+        "error", {
+          "before": true,
+          "after": true
+        }
+      ]
   }
 };

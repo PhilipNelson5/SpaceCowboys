@@ -41,7 +41,7 @@ module.exports = (function() {
    * @param password the password to check
    */
   function verify(username, password) {
-    if (!creds.has(username))return Promise.reject();
+    if (!creds.has(username)) return Promise.reject();
     return pw.verify(creds.get(username), password);
   }
 
@@ -54,7 +54,7 @@ module.exports = (function() {
    * @param password the password to hash
    */
   function registerNewUser(username, password) { // TODO return promise
-    if (creds.has(username))return false;
+    if (creds.has(username)) return false;
     console.log('creating user: ' + username);
     pw.hash(password)
       .then( hash => creds.set(username, hash),

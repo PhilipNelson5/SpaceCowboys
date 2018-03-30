@@ -108,7 +108,7 @@ Game.loader = (function() {
         scripts.splice(0, 1);
         loadScripts(scripts, onComplete);
       });
-    }else {
+    } else {
       onComplete();
     }
   }
@@ -147,7 +147,7 @@ Game.loader = (function() {
           assets.splice(0, 1);
           loadAssets(assets, onSuccess, onError, onComplete);
         });
-    }else {
+    } else {
       onComplete();
     }
   }
@@ -174,9 +174,9 @@ Game.loader = (function() {
         if (xhr.status === 200) {
           if (fileExtension === 'png' || fileExtension === 'jpg') {
             asset = new Image();
-          }else if (fileExtension === 'mp3') {
+          } else if (fileExtension === 'mp3') {
             asset = new Audio();
-          }else {
+          } else {
             if (onError) { onError('Unknown file extension: ' + fileExtension); }
           }
           asset.onload = function() {
@@ -184,11 +184,11 @@ Game.loader = (function() {
           };
           asset.src = window.URL.createObjectURL(xhr.response);
           if (onSuccess) { onSuccess(asset); }
-        }else {
+        } else {
           if (onError) { onError('Failed to retrieve: ' + source); }
         }
       };
-    }else {
+    } else {
       if (onError) { onError('Unknown file extension: ' + fileExtension); }
     }
 

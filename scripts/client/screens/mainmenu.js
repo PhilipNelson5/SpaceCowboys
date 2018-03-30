@@ -1,4 +1,4 @@
-Game.screens['main-menu'] = (function(menu) {
+Game.screens['main-menu'] = (function(menu, socket) {
   'use strict';
 
   function initialize() {
@@ -16,7 +16,9 @@ Game.screens['main-menu'] = (function(menu) {
     // Setup each of menu events for the screens
     document.getElementById('id-new-game').addEventListener(
       'click',
-      function() {menu.showScreen('gamelobby'); });
+      function() {
+        socket.emit(NetworkIds.JOIN_LOBBY_REQUEST);
+      });
 
     document.getElementById('id-high-scores').addEventListener(
       'click',
@@ -33,6 +35,12 @@ Game.screens['main-menu'] = (function(menu) {
     document.getElementById('id-about').addEventListener(
       'click',
       function() { menu.showScreen('about'); });
+
+    socket.on(NetworkIds.JOIN_LOBBY_RESPONSE, function(data) {
+      console.log(data);
+      if (data) menu.showScreen('gamelobby'); 
+      else alert('game lobby full');
+    });
   }
 
   function run() {
@@ -44,4 +52,4 @@ Game.screens['main-menu'] = (function(menu) {
     run
   };
 
-}(Game.menu));
+}(Game.menu, Game.network.socket));
