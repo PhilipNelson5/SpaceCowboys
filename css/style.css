@@ -81,8 +81,8 @@ ul.menu li button:active {
   list-style: none;
 }
 
-#game div p {
-  /* font-size: 0.5em; */
+#about p {
+  font-size: 0.5em;
 }
 
 #about p {
