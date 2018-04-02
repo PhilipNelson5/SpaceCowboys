@@ -15,6 +15,7 @@ const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
 const TIMER_MS = 15000;           // timer countdown in milliseconds
 const LOBBY_MAX = 3;              // max player count for lobby
+const CHAR_LEN = 450;             // max character length for post
 var inSession = false;
 const lastUpdate = 0;
 const quit = false;
@@ -123,7 +124,12 @@ function initializeSocketIO(httpServer) {
      * Send message to all clients
      */
     socket.on(NetworkIds.CHAT_MESSAGE, function(msg) {
-      io.emit(NetworkIds.CHAT_MESSAGE, lobbyClients[socket.id] + ': ' + msg);
+      if (msg.length > CHAR_LEN)
+        socket.emit(NetworkIds.LONG_CHAT_MESSAGE, msg.length);
+      else if (msg == 'clear')
+        socket.emit(NetworkIds.CLEAR_CHAT_MESSAGE);
+      else if (msg.replace(/\s+/g, '') !== '')
+        io.emit(NetworkIds.CHAT_MESSAGE, lobbyClients[socket.id] + ': ' + msg);
     });
 
     /**

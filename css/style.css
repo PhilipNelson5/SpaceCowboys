@@ -169,6 +169,8 @@ input {
 
 #read-messages {
 	overflow: auto;
+  max-width: 100%;
+  overflow-x: hidden;
 	scroll-behavior: auto;
 	height: 90%;
 }
@@ -190,6 +192,13 @@ input {
 
 #exit-lobby {
 	height: 20%;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 #msg {

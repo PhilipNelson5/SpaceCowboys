@@ -10,8 +10,10 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 					<ul id="messages"></ul>
 				</div>
 				<div id="enter-messages">
-					<input type="text" id="msg" name="msg">
-					<button id="msg-enter-btn">Chat</button>
+          <form action="" style="position-bottom=0">
+            <input type="text" id="msg" name="msg" autocomplete="off" />
+            <button id="msg-enter-btn">Chat</button>
+          </form>
 				</div>
 			</div>
 			<div id="lobby-body">
@@ -33,7 +35,8 @@ Game.screens['gamelobby'] = (function(menu, socket) {
    	  `
     );
 
-    var users = {};
+    const MAX_MSG = 500;   // so not too many messages in the scroller
+    var message_count = 0; // current message count being displayed
 
     //----------------------------------------------------------
     // Go Back to Menu
@@ -48,21 +51,39 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     // Send server CHAT_MESSAGE
     //----------------------------------------------------------
-    document.getElementById('msg-enter-btn').addEventListener(
-      'click',
-      function() {
-        let user = Game.user.username;
-        socket.emit(NetworkIds.CHAT_MESSAGE, $('#msg').val());
-        $('#msg').val('');				
-      });
+    $('form').submit(function(){
+      socket.emit(NetworkIds.CHAT_MESSAGE, $('#msg').val());
+      $('#msg').val('');				
+      return false;
+    });
 	
     //----------------------------------------------------------
     // Receive server response to CHAT_MESSAGE
     //----------------------------------------------------------
     socket.on(NetworkIds.CHAT_MESSAGE, function(user, msg) {
+      message_count++;
+      if (message_count > MAX_MSG) {
+        $('#messages li:first').remove()
+        message_count--;
+      }
       $('#messages').append($('<li>').text(user, msg));
       let scroller = document.getElementById('read-messages');
       scroller.scrollTop = scroller.scrollHeight;	
+    });
+
+    //----------------------------------------------------------
+    // clear chat messages
+    //----------------------------------------------------------
+    socket.on(NetworkIds.CLEAR_CHAT_MESSAGE, function() {
+      $('#messages').empty();
+      message_count = 0;
+    });
+    
+    //----------------------------------------------------------
+    // clear chat messages
+    //----------------------------------------------------------
+    socket.on(NetworkIds.LONG_CHAT_MESSAGE, function(len) {
+      alert("Chat message was too long at " + len + "/300 characters.");
     });
 
     //----------------------------------------------------------
@@ -119,12 +140,18 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------	
     socket.on(NetworkIds.START_GAME, function() {
       document.getElementById('timer').innerHTML = 'Timer: 0.0 sec';
+      $('#messages').empty();
+      $('#announce-tag').empty();
       menu.showScreen('game-play'); 
     });
   }
 
   function run() {
-    socket.emit(NetworkIds.ENTER_LOBBY);
+    socket.emit(NetworkIds.ENTER_LOBBY); 
+    $('#announce-tag').append($('<li>').text("!!"));
+    $('#announce-tag').append($('<li>').text("!! Welcome to the Lobby Chat !!"));
+    $('#announce-tag').append($('<li>').text("!! type 'clear' to clear messages !!"));
+    $('#announce-tag').append($('<li>').text("!!"));
   }
 
   return {

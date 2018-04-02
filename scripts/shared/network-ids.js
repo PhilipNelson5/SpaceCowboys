@@ -119,6 +119,14 @@
     'JOIN_LOBBY_RESPONSE': {
       value: 'join_lobby_response',
       writable: false
+    },
+    'CLEAR_CHAT_MESSAGE': {
+      value: 'clear_chat_message',
+      writable: false
+    },
+    'LONG_CHAT_MESSAGE': {
+      value: 'long_chat_message',
+      writable: false
     }
   });
 
