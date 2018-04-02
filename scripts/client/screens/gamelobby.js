@@ -10,6 +10,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 					<ul id="messages"></ul>
 				</div>
 				<div id="enter-messages">
+          <p id="char-count" style="font-size:10px; text-align: left;">Char Count: 0/300</p>
           <form action="" style="position-bottom=0">
             <input type="text" id="msg" name="msg" autocomplete="off" />
             <button id="msg-enter-btn">Chat</button>
@@ -54,9 +55,17 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     $('form').submit(function(){
       socket.emit(NetworkIds.CHAT_MESSAGE, $('#msg').val());
       $('#msg').val('');				
+      document.getElementById('char-count').innerHTML = "Char Count: 0/300";
       return false;
     });
-	
+
+    //----------------------------------------------------------
+    // dynamic character count
+    //----------------------------------------------------------
+    document.getElementById('msg').onkeyup = function(e) {
+      document.getElementById('char-count').innerHTML = "Char Count: " + this.value.length + "/300";
+    }
+
     //----------------------------------------------------------
     // Receive server response to CHAT_MESSAGE
     //----------------------------------------------------------
@@ -82,8 +91,9 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     // clear chat messages
     //----------------------------------------------------------
-    socket.on(NetworkIds.LONG_CHAT_MESSAGE, function(len) {
+    socket.on(NetworkIds.LONG_CHAT_MESSAGE, function(len, msg) {
       alert("Chat message was too long at " + len + "/300 characters.");
+      $('#msg').val(msg);
     });
 
     //----------------------------------------------------------
