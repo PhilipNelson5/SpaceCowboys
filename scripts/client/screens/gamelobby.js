@@ -119,7 +119,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------	
     socket.on(NetworkIds.START_GAME, function() {
       document.getElementById('timer').innerHTML = 'Timer: 0.0 sec';
-      menu.showScreen('game-play'); 
+      menu.showScreen('gameplay'); 
     });
   }
 

@@ -1,4 +1,4 @@
-Game.screens['game-play'] = (function(menu, graphics, input, assets) {
+Game.screens['gameplay'] = (function(menu, input, graphics, assets) {
   'use strict';
 
   var mouseCapture = false,
@@ -8,8 +8,15 @@ Game.screens['game-play'] = (function(menu, graphics, input, assets) {
     cancelNextRequest = false,
     lastTimeStamp;
 
+  console.log(Game.input);
   function initialize() {
-    console.log('        game initializing...');
+    console.log('        gameplay initializing...');
+    menu.addScreen('gameplay',
+      `
+      <canvas id="canvas-main"></canvas>
+			<p> hello </p>
+			`
+    );
 
     myTexture = graphics.Texture( {
       image : assets['player-self'],
@@ -34,7 +41,6 @@ Game.screens['game-play'] = (function(menu, graphics, input, assets) {
       cancelNextRequest = true;
       //
       // Then, return to the main menu
-      menu.showScreen('main-menu');
     });
 
     //
@@ -62,8 +68,8 @@ Game.screens['game-play'] = (function(menu, graphics, input, assets) {
   }
 
   function render() {
-    graphics.clear();
-    myTexture.draw();
+    //graphics.clear();
+    //myTexture.draw();
   }
 
   //------------------------------------------------------------------
@@ -96,4 +102,4 @@ Game.screens['game-play'] = (function(menu, graphics, input, assets) {
     run
   };
 
-}(Game.menu, Game.graphics, Game.input, Game.assets));
+}(Game.menu, Game.input, Game.graphics, Game.assets));
