@@ -55,7 +55,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     $('form').submit(function(){
       socket.emit(NetworkIds.CHAT_MESSAGE, $('#msg').val());
       $('#msg').val('');				
-      document.getElementById('char-count').innerHTML = "Char Count: 0/300";
+      document.getElementById('char-count').innerHTML = 'Char Count: 0/300';
       return false;
     });
 
@@ -63,8 +63,8 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     // dynamic character count
     //----------------------------------------------------------
     document.getElementById('msg').onkeyup = function(e) {
-      document.getElementById('char-count').innerHTML = "Char Count: " + this.value.length + "/300";
-    }
+      document.getElementById('char-count').innerHTML = 'Char Count: ' + this.value.length + '/300';
+    };
 
     //----------------------------------------------------------
     // Receive server response to CHAT_MESSAGE
@@ -72,7 +72,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     socket.on(NetworkIds.CHAT_MESSAGE, function(user, msg) {
       message_count++;
       if (message_count > MAX_MSG) {
-        $('#messages li:first').remove()
+        $('#messages li:first').remove();
         message_count--;
       }
       $('#messages').append($('<li>').text(user, msg));
@@ -92,7 +92,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     // clear chat messages
     //----------------------------------------------------------
     socket.on(NetworkIds.LONG_CHAT_MESSAGE, function(len, msg) {
-      alert("Chat message was too long at " + len + "/300 characters.");
+      alert('Chat message was too long at ' + len + '/300 characters.');
       $('#msg').val(msg);
     });
 
@@ -158,10 +158,10 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 
   function run() {
     socket.emit(NetworkIds.ENTER_LOBBY); 
-    $('#announce-tag').append($('<li>').text("!!"));
-    $('#announce-tag').append($('<li>').text("!! Welcome to the Lobby Chat !!"));
-    $('#announce-tag').append($('<li>').text("!! type 'clear' to clear messages !!"));
-    $('#announce-tag').append($('<li>').text("!!"));
+    $('#announce-tag').append($('<li>').text('!!'));
+    $('#announce-tag').append($('<li>').text('!! Welcome to the Lobby Chat !!'));
+    $('#announce-tag').append($('<li>').text('!! type \'clear\' to clear messages !!'));
+    $('#announce-tag').append($('<li>').text('!!'));
   }
 
   return {
