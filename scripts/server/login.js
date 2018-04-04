@@ -39,10 +39,17 @@ module.exports = (function() {
    *
    * @param username an existing username
    * @param password the password to check
+   * @param notify a callback to respond to the client.
+   *  Callback takes the error and boolean with the result
    */
-  function verify(username, password) {
-    if (!creds.has(username)) return Promise.reject();
-    return pw.verify(creds.get(username), password);
+  function verify(username, password, notify) {
+    pw.verify(creds.get(username), password, notify);
+  }
+
+  function userExists(username) {
+    if (creds.has(username))
+      return true;
+    return false;
   }
 
   /**
@@ -53,18 +60,21 @@ module.exports = (function() {
    * @param username the new username to register
    * @param password the password to hash
    */
-  function registerNewUser(username, password) { // TODO return promise
-    if (creds.has(username)) return false;
+  function registerNewUser(username, password) {
     console.log('creating user: ' + username);
     pw.hash(password)
-      .then( hash => creds.set(username, hash),
-        err  => { throw err; } )
-      .then( () => fs.appendFile(__dirname + '/passwords.db',
+      .then(
+        hash => creds.set(username, hash),
+        err  => { throw err; }
+      )
+      .then( () => fs.appendFile(
+        __dirname + '/passwords.db',
         JSON.stringify({username:username,hash:creds.get(username)})+'\n',
         err => {
           if (err)
             console.log('ERROR! ' + err.toString());
-        }))
+        })
+      )
       .catch(err => console.log('ERROR: ' + err.toString()));
     console.log('user ' + username + ' created');
     return true;
@@ -73,7 +83,8 @@ module.exports = (function() {
   return {
     initialize,
     verify,
-    registerNewUser
+    registerNewUser,
+    userExists
   };
 
 })();
