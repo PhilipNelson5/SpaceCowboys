@@ -126,8 +126,7 @@ Game.input = (function() {
 
   return {
     Keyboard,
-    Mouse,
-    KeyEvent,
+    Mouse
   };
 }());
 
