@@ -40,12 +40,23 @@ Game.screens['create-user'] = (function(menu, socket) {
         let username = document.getElementById('create-username');
         let password = document.getElementById('create-password');
         let confirm = document.getElementById('create-password-confirm');
-        if ( username.value === '' || password.value === '') {
+        if ( username.value === '' || password.value === '' || confirm.value === '') {
           document.getElementById('create-user-warning')
             .innerText='All fields must be filled.';
         }
-        else if (password.value === confirm.value)
-        {
+        else if (username.value.length > 20) {
+          document.getElementById('create-user-warning')
+            .innerText='Maximum username length is 20 characters';
+          console.log('Maximum username length is 20 characters');
+          password.value = '';
+          confirm.value = '';
+        }
+        else if (password.value !== confirm.value) {
+          document.getElementById('create-user-warning')
+            .innerText='Passwords do not match.';
+          console.log('Passwords do not match');
+        }
+        else {
           socket.emit(NetworkIds.CREATE_USER_REQUEST, {
             username: username.value.toLowerCase(),
             password: password.value.toLowerCase()
@@ -53,11 +64,6 @@ Game.screens['create-user'] = (function(menu, socket) {
           username.value = '';
           password.value = '';
           confirm.value = '';
-        }
-        else {
-          document.getElementById('create-user-warning')
-            .innerText='Passwords do not match.';
-          console.log('Passwords do not match');
         }
       });
 
