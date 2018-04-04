@@ -183,7 +183,7 @@ function initializeSocketIO(httpServer) {
       inSession = true;
       end = new Date().getTime() + TIMER_MS;
       let time = TIMER_MS;
-      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);		
+      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);
     });
 
     /**
