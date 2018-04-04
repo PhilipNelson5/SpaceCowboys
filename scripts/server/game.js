@@ -14,12 +14,14 @@ const present = require('present'),
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
 const TIMER_MS = 3000;           // timer countdown in milliseconds
-const LOBBY_MAX = 1;              // max player count for lobby
+const LOBBY_MAX = 2;              // max player count for lobby
 var inSession = false;
 let lastUpdate = 0;
 const quit = false;
-const activeClients = { length:0 };
-const lobbyClients = { length:0 };
+let numActiveClients = 0;
+const activeClients = {};
+let numLobbyClients = 0;
+const lobbyClients = {};
 let inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
@@ -37,8 +39,8 @@ function initializeSocketIO(httpServer) {
       socket: socket,
       player: null
     };
-    ++activeClients.length;
-    console.log(activeClients.length + ' active clients');
+    ++numActiveClients;
+    console.log(numActiveClients + ' active clients');
 
     /**
      * Acknowledges the connection of a new user.
@@ -56,14 +58,14 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.DISCONNECT, function() {
       delete activeClients[socket.id];
-      --activeClients.length;
+      --numActiveClients;
       if (lobbyClients[socket.id] != undefined) {
         delete lobbyClients[socket.id];
-        --lobbyClients.length;
-        socket.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length);
+        --numLobbyClients;
+        socket.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients);
       }
 
-      console.log('DISCONNECT: ' + activeClients.length + ' active clients');
+      console.log('DISCONNECT: ' + numActiveClients + ' active clients');
 
       // notify other clients about disconnect if needed
       //socket.broadcast.emit(NetworkIds.id, data)
@@ -134,8 +136,8 @@ function initializeSocketIO(httpServer) {
     socket.on(NetworkIds.LEAVE_LOBBY, function() {
       let user = lobbyClients[socket.id];
       delete lobbyClients[socket.id];
-      --lobbyClients.length;
-      io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length, user);
+      --numLobbyClients;
+      io.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients, user);
     });
 
     /**
@@ -147,10 +149,10 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.ENTER_LOBBY, function() {
       lobbyClients[socket.id] = activeClients[socket.id].username;
-      ++lobbyClients.length;
+      ++numLobbyClients;
 
-      io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, lobbyClients[socket.id]);
-      if (lobbyClients.length >= LOBBY_MAX) {
+      io.emit(NetworkIds.ENTER_LOBBY, numLobbyClients, lobbyClients[socket.id]);
+      if (numLobbyClients >= LOBBY_MAX) {
         io.emit(NetworkIds.START_TIMER);
       }
     });
@@ -192,7 +194,14 @@ function initializeSocketIO(httpServer) {
         for (let id in lobbyClients) {
           let newPlayer = Player.create();
           console.log('emitting player model' + JSON.stringify(newPlayer));
-          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,newPlayer);
+          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL, 
+            {
+              direction: .5*2*Math.PI,
+              position: { x:.1, y: .5},
+              size: newPlayer.size,
+              rotateRate: newPlayer.rotateRate,
+              speed: newPlayer.speed
+            });
           socket.emit(NetworkIds.INIT_PLAYER_MODEL, {
             direction: .5*2*Math.PI,
             position: { x:.1, y: .5},

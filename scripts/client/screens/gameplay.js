@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) {
+Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -17,7 +17,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
     messageHistory = Queue.create(),
     messageId = 1,
     nextExplosionId = 1,
-    socket = io(),
     networkQueue = Queue.create();
 
   var mouseCapture = false,
@@ -76,7 +75,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
   });
 
   socket.on(NetworkIds.INIT_PLAYER_MODEL, data => {
-    connectPlayerSelf(data);
+    networkQueue.enqueue({
+      type: NetworkIds.INIT_PLAYER_MODEL,
+      data: data
+    });
   });
 
 
@@ -214,12 +216,14 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
         disconnectPlayerOther(message.data);
         break;
       case NetworkIds.UPDATE_SELF:
+        console.log('update self recieved');
         updatePlayerSelf(message.data);
         break;
       case NetworkIds.UPDATE_OTHER:
         updatePlayerOther(message.data);
         break;
       case NetworkIds.INIT_PLAYER_MODEL:
+        console.log('init player model recieved');
         connectPlayerSelf(message.data);
         break;
       }
@@ -228,6 +232,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
 
   function initialize() {
     console.log('        gameplay initializing...');
+    console.log(socket.id);
     menu.addScreen('gameplay',
       `
       <canvas height=1000 width=1000 id='canvas-main'></canvas>
@@ -362,4 +367,4 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
     run
   };
 
-}(Game.menu, Game.input, Game.graphics, Game.assets, Game.components));
+}(Game.menu, Game.input, Game.graphics, Game.assets, Game.components, Game.network.socket));

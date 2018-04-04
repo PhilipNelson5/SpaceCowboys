@@ -7,7 +7,8 @@
 Game.network = (function() {
   'use strict';
 
-  const socket = io();
+  const socket = io({reconnection: false});
+  console.log(socket.id);
 
   socket.on(NetworkIds.CONNECT_ACK, data => {
     console.log('connection acknowledged', data);
