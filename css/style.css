@@ -175,14 +175,16 @@ input {
 
 #read-messages {
 	overflow: auto;
+  max-width: 100%;
+  overflow-x: hidden;
 	scroll-behavior: auto;
-	height: 90%;
+	height: 85%;
 }
 
 #enter-messages {
-	height: 10%;
+	height: 15%;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: flex-start;
 	align-items: flex-end;
 }
@@ -196,6 +198,17 @@ input {
 
 #exit-lobby {
 	height: 20%;
+}
+
+#char-count {
+  width: 100%;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 #msg {

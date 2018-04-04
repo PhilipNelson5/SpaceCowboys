@@ -126,7 +126,7 @@ Game.input.Keyboard = function() {
   // This is how we receive notification of keyboard events.
   window.addEventListener('keydown', keyDown);
   window.addEventListener('keyup', keyRelease);
-
+  
   return that;
 };
 
