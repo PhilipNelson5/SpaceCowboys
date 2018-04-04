@@ -79,24 +79,27 @@ function initializeSocketIO(httpServer) {
       console.log('request login: ' + data.username);
       data.username = data.username.toLowerCase();
 
+      // check if the user exists
       if (!login.userExists(data.username)) {
         socket.emit(NetworkIds.LOGIN_RESPONSE, {
-          success: false, message: 'User already logged in.'
+          success: false, message: 'That user does not exist.'
         });
         return;
       }
 
+      // check if the user is already logged in
       for (let id in activeClients)
-        if (activeClients[id].username === data.username)
-        {
+        if (activeClients[id].username === data.username) {
           socket.emit(NetworkIds.LOGIN_RESPONSE, {
             success: false, message: 'User already logged in.'
           });
           return;
         }
 
+      // verify that the password is correct
       login.verify(data.username, data.password, (err, success) => {
-        if (err) { console.log(err);
+        if (err) {
+          console.log(err);
           socket.emit(NetworkIds.LOGIN_RESPONSE, {
             success: false, message: 'Internal Server Error!'
           });
@@ -108,7 +111,7 @@ function initializeSocketIO(httpServer) {
           });
         } else {
           socket.emit(NetworkIds.LOGIN_RESPONSE, {
-            success: false, message: 'Incorrect username of password.'
+            success: false, message: 'Incorrect username or password.'
           });
         }
       });
@@ -119,7 +122,15 @@ function initializeSocketIO(httpServer) {
        * Attempts to register the new user..
        * Responds with success or failure.
        */
-    socket.on(NetworkIds.CREATE_USER_REQUEST, data => { //TODO make a promise
+    socket.on(NetworkIds.CREATE_USER_REQUEST, data => {
+
+      // check if the username is taken
+      if (login.userExists(data.username)) {
+        socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
+          success: false, message: 'Username already taken.'
+        });
+        return;
+      }
 
       if (login.registerNewUser(data.username, data.password)) {
         activeClients[socket.id].username = data.username;
@@ -128,7 +139,7 @@ function initializeSocketIO(httpServer) {
         });
       } else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
-          success: false, message: 'username exists'
+          success: false, message: 'Username already taken.'
         });
     });
 
