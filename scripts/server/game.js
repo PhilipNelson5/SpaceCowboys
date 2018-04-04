@@ -19,7 +19,6 @@ var inSession = false;
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
-let inputQueue = Queue.create();
 const lobbyClients = { length:0 };
 const inputQueue = Queue.create();
 
@@ -178,7 +177,7 @@ function initializeSocketIO(httpServer) {
       inSession = true;
       end = new Date().getTime() + TIMER_MS;
       let time = TIMER_MS;
-      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);		
+      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);
     });
 
     /**
@@ -192,6 +191,7 @@ function initializeSocketIO(httpServer) {
       if ((end - time) < 0) {
         for (let id in lobbyClients) {
           io.to(id).emit(NetworkIds.START_GAME);
+          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL);
         }
       } else {
         socket.emit(NetworkIds.REQUEST_TIMER, end-time);
@@ -222,7 +222,7 @@ function processInput(elapsedTime) {
 					break;
 				case NetworkIds.INPUT_ROTATE_RIGHT:
 					client.player.rotateRight(input.message.elapsedTime);
-					break;
+          break;
 		}
 	}
 }
@@ -238,7 +238,7 @@ function update(elapsedTime) {
 function updateClient(elapsedTime) {
 	lastUpdate += elaspedTime;
 	if(lastUpdate < STATE_UPDATE_RATE_MS) {
-		return; 
+		return;
 	}
 	for (let clicentId in activeClients) {
 		let client = activeClients[clientId];
@@ -261,11 +261,12 @@ function updateClient(elapsedTime) {
 				}
 			}
 		}
+	}
 
 	for (let clientId in activeClients) {
 		activeClients[clientId].player.reportUpdate = false;
 	}
-	
+
 	//Reset time since last update so we know when to put out next update
 	lastUpdate = 0;
 
@@ -281,6 +282,7 @@ function gameLoop(currentTime, elaspedTime) {
 			let now = present();
 			gameLoop(now, now - currentTime);
 		}, SIMULATION_UPDATE_RATE_MS);
+	}
 }
 
 

@@ -119,7 +119,12 @@
     'JOIN_LOBBY_RESPONSE': {
       value: 'join_lobby_response',
       writable: false
+    },
+    'INIT_PLAYER_MODEL': {
+      value: 'init_player_model',
+      writable: false
     }
+
   });
 
 })(typeof exports === 'undefined' ? this['NetworkIds'] = {} : exports);

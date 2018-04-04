@@ -41,6 +41,10 @@ Game.loader = (function() {
         message: 'Renderers loaded',
         onComplete: null
       }, {
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
+        message: 'Player models loaded',
+        onComplete: null
+      }, {
         scripts: [
           'screens/menu',
           'screens/login',
@@ -59,14 +63,14 @@ Game.loader = (function() {
         scripts: ['main'],
         message: 'Game model loaded',
         onComplete: null,
-        // }, {
-      // scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
-      // message: 'Player models loaded',
-      // onComplete: null
-        // }, {
-      // scripts: ['rendering/graphics'],
-      // message: 'Graphics loaded',
-      // onComplete: null
+      //}, {
+       // scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
+        //message: 'Player models loaded',
+        //onComplete: null
+      }, {
+        scripts: ['rendering/graphics'],
+        message: 'Graphics loaded',
+        onComplete: null
       }], // end scriptOrder
 
     assetOrder = [{
