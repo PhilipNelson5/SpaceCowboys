@@ -39,10 +39,17 @@ module.exports = (function() {
    *
    * @param username an existing username
    * @param password the password to check
+   * @param notify a callback to respond to the client.
+   *  Callback takes the error and boolean with the result
    */
-  function verify(username, password) {
-    if (!creds.has(username)) return Promise.reject();
-    return pw.verify(creds.get(username), password);
+  function verify(username, password, notify) {
+    pw.verify(creds.get(username), password, notify);
+  }
+
+  function userExists(username) {
+    if (creds.has(username))
+      return true;
+    return false;
   }
 
   /**
@@ -73,7 +80,8 @@ module.exports = (function() {
   return {
     initialize,
     verify,
-    registerNewUser
+    registerNewUser,
+    userExists
   };
 
 })();

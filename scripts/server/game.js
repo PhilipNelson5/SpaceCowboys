@@ -16,7 +16,7 @@ const STATE_UPDATE_RATE_MS = 100;
 const TIMER_MS = 15000;           // timer countdown in milliseconds
 const LOBBY_MAX = 3;              // max player count for lobby
 const CHAR_LEN = 300;             // max character length for post; hard coded elsewhere
-var inSession = false;
+let   inSession = false;
 const lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
@@ -77,24 +77,48 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.LOGIN_REQUEST, data => {
       console.log('request login: ' + data.username);
+      data.username = data.username.toLowerCase();
 
-      login.verify(data.username, data.password).then(
-        () => {
+      if (!login.userExists(data.username)) {
+        socket.emit(NetworkIds.LOGIN_RESPONSE, {
+          success: false, message: 'User already logged in.'
+        });
+        return;
+      }
+
+      for (let id in activeClients)
+        if (activeClients[id].username === data.username)
+        {
+          socket.emit(NetworkIds.LOGIN_RESPONSE, {
+            success: false, message: 'User already logged in.'
+          });
+          return;
+        }
+
+      login.verify(data.username, data.password, (err, success) => {
+        if (err) { console.log(err);
+          socket.emit(NetworkIds.LOGIN_RESPONSE, {
+            success: false, message: 'Internal Server Error!'
+          });
+        } else if (success) {
+          console.log('SUCCESS');
           activeClients[socket.id].username = data.username;
           socket.emit(NetworkIds.LOGIN_RESPONSE, {
             success: true, message: 'verification success', username: data.username
           });
-        },
-        () => socket.emit(NetworkIds.LOGIN_RESPONSE, {
-          success: false, message: 'verification failed'
-        }));
+        } else {
+          socket.emit(NetworkIds.LOGIN_RESPONSE, {
+            success: false, message: 'Incorrect username of password.'
+          });
+        }
+      });
     });
 
     /**
-     * When the client requests to create a new user.
-     * Attempts to register the new user..
-     * Responds with success or failure.
-     */
+       * When the client requests to create a new user.
+       * Attempts to register the new user..
+       * Responds with success or failure.
+       */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => { //TODO make a promise
 
       if (login.registerNewUser(data.username, data.password)) {
@@ -109,8 +133,8 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-     * Request to join lobby
-     */
+       * Request to join lobby
+       */
     socket.on(NetworkIds.JOIN_LOBBY_REQUEST, function() {
       if (inSession) {
         socket.emit(NetworkIds.JOIN_LOBBY_RESPONSE, !inSession);
@@ -183,7 +207,7 @@ function initializeSocketIO(httpServer) {
       inSession = true;
       end = new Date().getTime() + TIMER_MS;
       let time = TIMER_MS;
-      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);		
+      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);
     });
 
     /**
