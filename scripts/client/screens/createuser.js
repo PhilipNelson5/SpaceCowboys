@@ -37,6 +37,7 @@ Game.screens['create-user'] = (function(menu, socket) {
     document.getElementById('id-register').addEventListener(
       'click',
       function() {
+        document.getElementById('create-user-warning').innerText='';
         let username = document.getElementById('create-username');
         let password = document.getElementById('create-password');
         let confirm = document.getElementById('create-password-confirm');
@@ -90,7 +91,7 @@ Game.screens['create-user'] = (function(menu, socket) {
       }
       else {
         document.getElementById('create-user-warning')
-          .innerText='Username already exists';
+          .innerText=data.message;
         console.log('user creation failure');
       }
     });

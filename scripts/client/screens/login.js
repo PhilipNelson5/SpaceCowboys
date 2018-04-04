@@ -54,18 +54,18 @@ Game.screens['login'] = (function(menu, socket) {
      * Receive server response to LOGIN_REQUEST
      */
     socket.on(NetworkIds.LOGIN_RESPONSE, data => {
+      console.log('success ' + data.success);
       if (data.success) {
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
-        document.getElementById('login-warning')
-          .innerText='';
+        document.getElementById('login-warning').innerText='';
         Game.user.username = data.username;
         console.log('Welcome ' + Game.user.username);
         menu.showScreen('main-menu');
       }
       else {
         document.getElementById('login-warning')
-          .innerText='Incorrect username or password.';
+          .innerText=data.message;
         console.log(data.message);
       }
     });
