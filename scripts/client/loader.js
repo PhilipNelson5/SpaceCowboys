@@ -63,12 +63,12 @@ Game.loader = (function() {
         scripts: ['main'],
         message: 'Game model loaded',
         onComplete: null,
-      //}, {
-       // scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
-        //message: 'Player models loaded',
-        //onComplete: null
       }, {
-        scripts: ['rendering/graphics'],
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
+        message: 'Player models loaded',
+        onComplete: null
+      }, {
+        scripts: ['rendering/graphics','rendering/player','rendering/player-remote'],
         message: 'Graphics loaded',
         onComplete: null
       }], // end scriptOrder

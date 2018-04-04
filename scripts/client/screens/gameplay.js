@@ -1,8 +1,8 @@
 Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) {
   'use strict';
 
+  //let Queue = require('../../shared/queue.js');
   /*
-  let Queue = //require('../../shared/queue.js');
   require(['../shared/queue.js'], function (queue) {
     //foo is now loaded.
   });
@@ -75,6 +75,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
     });
   });
 
+  socket.on(NetworkIds.INIT_PLAYER_MODEL, data => {
+    connectPlayerSelf(data);
+  });
+
 
   //------------------------------------------------------------------
   //
@@ -83,6 +87,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
   //
   //------------------------------------------------------------------
   function connectPlayerSelf(data) {
+    console.log('updating player model: ' + JSON.stringify(data));
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
 
@@ -199,7 +204,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
       let message = processMe.dequeue();
       switch (message.type) {
       case NetworkIds.CONNECT_ACK:
-        connectPlayerSelf(message.data);
+        //connectPlayerSelf(message.data);
+        console.log('connect ack recieved');
         break;
       case NetworkIds.CONNECT_OTHER:
         connectPlayerOther(message.data);
@@ -213,6 +219,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
       case NetworkIds.UPDATE_OTHER:
         updatePlayerOther(message.data);
         break;
+      case NetworkIds.INIT_PLAYER_MODEL:
+        connectPlayerSelf(message.data);
+        break;
       }
     }
   }
@@ -221,10 +230,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
     console.log('        gameplay initializing...');
     menu.addScreen('gameplay',
       `
-      <canvas id="canvas-main"></canvas>
-			<p> hello </p>
+      <canvas height=1000 width=1000 id='canvas-main'></canvas>
 			`
     );
+    graphics.initialize();
 
     myTexture = graphics.Texture( {
       image : assets['player-self'],
@@ -313,13 +322,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components) 
 
   function render() {
     graphics.clear();
+    graphics.drawCircle({x:0,y:0},0.01,'blue');
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model, player.texture);
     }
     //graphics.clear();
-    //myTexture.draw();
   }
 
   //------------------------------------------------------------------

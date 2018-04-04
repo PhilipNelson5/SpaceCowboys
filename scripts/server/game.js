@@ -13,14 +13,14 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
-const TIMER_MS = 15000;           // timer countdown in milliseconds
-const LOBBY_MAX = 3;              // max player count for lobby
+const TIMER_MS = 3000;           // timer countdown in milliseconds
+const LOBBY_MAX = 1;              // max player count for lobby
 var inSession = false;
-const lastUpdate = 0;
+let lastUpdate = 0;
 const quit = false;
 const activeClients = { length:0 };
 const lobbyClients = { length:0 };
-const inputQueue = Queue.create();
+let inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -190,8 +190,17 @@ function initializeSocketIO(httpServer) {
       let time = new Date().getTime();
       if ((end - time) < 0) {
         for (let id in lobbyClients) {
+          let newPlayer = Player.create();
+          console.log('emitting player model' + JSON.stringify(newPlayer));
+          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,newPlayer);
+          socket.emit(NetworkIds.INIT_PLAYER_MODEL, {
+            direction: .5*2*Math.PI,
+            position: { x:.1, y: .5},
+            size: newPlayer.size,
+            rotateRate: newPlayer.rotateRate,
+            speed: newPlayer.speed
+          });
           io.to(id).emit(NetworkIds.START_GAME);
-          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL);
         }
       } else {
         socket.emit(NetworkIds.REQUEST_TIMER, end-time);
@@ -206,83 +215,83 @@ function initializeSocketIO(httpServer) {
 
 function processInput(elapsedTime) {
 
-	let processMe = inputQueue;
-	inputQueue = Queue.create();
+  let processMe = inputQueue;
+  inputQueue = Queue.create();
 
-	while(!processMe.empty) {
-		let input =  processMe.dequeue();
-		let client = activeClients[input.clientId];
-		client.lastMessageId = input.message.id;
-			switch (input.message.type) {
-				case NetworkIds.INPUT_MOVE:
-					client.player.move(input.message.elapsedTime);
-					break;
-				case NetworkIds.INPUT_ROTATE_LEFT:
-					client.player.rotateLeft(input.message.elapsedTime);
-					break;
-				case NetworkIds.INPUT_ROTATE_RIGHT:
-					client.player.rotateRight(input.message.elapsedTime);
-          break;
-		}
-	}
+  while (!processMe.empty) {
+    let input =  processMe.dequeue();
+    let client = activeClients[input.clientId];
+    client.lastMessageId = input.message.id;
+    switch (input.message.type) {
+    case NetworkIds.INPUT_MOVE:
+      client.player.move(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_ROTATE_LEFT:
+      client.player.rotateLeft(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_ROTATE_RIGHT:
+      client.player.rotateRight(input.message.elapsedTime);
+      break;
+    }
+  }
 }
 
 
 function update(elapsedTime) {
-	for (let clientId in activeClients) {
-		activeClients[clientId].player.update(currentTime);
-	}
-	//TODO: other things for collisions
+  for (let clientId in activeClients) {
+    activeClients[clientId].player.update(currentTime);
+  }
+  //TODO: other things for collisions
 }
 
 function updateClient(elapsedTime) {
-	lastUpdate += elaspedTime;
-	if(lastUpdate < STATE_UPDATE_RATE_MS) {
-		return;
-	}
-	for (let clicentId in activeClients) {
-		let client = activeClients[clientId];
-		let update = {
-			clientId : clientId,
-			lastMessageId: client.lastMessageId,
-			direction : client.player.direction,
-			position: client.player.position,
-			updateWindow: lastUpdate,
-		};
+  lastUpdate += elaspedTime;
+  if (lastUpdate < STATE_UPDATE_RATE_MS) {
+    return;
+  }
+  for (let clientId in activeClients) {
+    let client = activeClients[clientId];
+    let update = {
+      clientId : clientId,
+      lastMessageId: client.lastMessageId,
+      direction : client.player.direction,
+      position: client.player.position,
+      updateWindow: lastUpdate,
+    };
 
-		if (client.player.reportUpdate) {
-			client.socket.emit(NetworkIds.UPDATE_SELF, update);
-			//
-			//Notify all other connected clients about every
-			//other connected client status .... but only if they are updated.
-			for (let otherId in activeClients) {
-				if (otherId !== clientId) {
-					activeClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
-				}
-			}
-		}
-	}
+    if (client.player.reportUpdate) {
+      client.socket.emit(NetworkIds.UPDATE_SELF, update);
+      //
+      //Notify all other connected clients about every
+      //other connected client status .... but only if they are updated.
+      for (let otherId in activeClients) {
+        if (otherId !== clientId) {
+          activeClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
+        }
+      }
+    }
+  }
 
-	for (let clientId in activeClients) {
-		activeClients[clientId].player.reportUpdate = false;
-	}
+  for (let clientId in activeClients) {
+    activeClients[clientId].player.reportUpdate = false;
+  }
 
-	//Reset time since last update so we know when to put out next update
-	lastUpdate = 0;
+  //Reset time since last update so we know when to put out next update
+  lastUpdate = 0;
 
 }
 
 function gameLoop(currentTime, elaspedTime) {
-	processInput(elapsedTime);
-	update(elaspedTime,currentTime);
-	updateClients(elapsedTime);
+  processInput(elapsedTime);
+  update(elaspedTime,currentTime);
+  updateClient(elapsedTime);
 
-	if(!quit) {
-		setTimeout(() => {
-			let now = present();
-			gameLoop(now, now - currentTime);
-		}, SIMULATION_UPDATE_RATE_MS);
-	}
+  if (!quit) {
+    setTimeout(() => {
+      let now = present();
+      gameLoop(now, now - currentTime);
+    }, SIMULATION_UPDATE_RATE_MS);
+  }
 }
 
 

@@ -6,8 +6,16 @@
 Game.graphics = (function() {
   'use strict';
 
-  let canvas = document.getElementById('canvas-main');
-  let context = canvas.getContext('2d');
+
+  let canvas;
+  let context;
+
+  function initialize() {
+    canvas = document.getElementById('canvas-main');
+    console.log(canvas);
+    context = canvas.getContext('2d');
+    console.log(context);
+  }
 
   //------------------------------------------------------------------
   //
@@ -20,8 +28,7 @@ Game.graphics = (function() {
     this.setTransform(1, 0, 0, 1, 0, 0);
     this.clearRect(0, 0, canvas.width, canvas.height);
     this.restore();
-  };
-
+  }; 
   //------------------------------------------------------------------
   //
   // Public function that allows the client code to clear the canvas.
@@ -182,14 +189,15 @@ Game.graphics = (function() {
   }
 
   return {
-    clear: clear,
-    saveContext: saveContext,
-    restoreContext: restoreContext,
-    rotateCanvas: rotateCanvas,
-    drawImage: drawImage,
-    drawImageSpriteSheet: drawImageSpriteSheet,
-    drawCircle: drawCircle,
-    Texture: Texture
-				
+    initialize,
+    clear,
+    saveContext,
+    restoreContext,
+    rotateCanvas,
+    drawImage,
+    drawImageSpriteSheet,
+    drawCircle,
+    Texture,
+
   };
 }());
