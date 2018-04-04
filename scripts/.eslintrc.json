@@ -1,5 +1,12 @@
 {
   "extends": "eslint:recommended",
+    "globals": {
+        "Game": true,
+        "NetworkIds": true,
+        "Queue": true,
+        "io": true,
+        "$": true
+    },
   "rules": {
     "indent": [
       "error",
