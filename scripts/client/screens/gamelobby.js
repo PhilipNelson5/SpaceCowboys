@@ -4,36 +4,36 @@ Game.screens['gamelobby'] = (function(menu, socket) {
   function initialize() {
     menu.addScreen('gamelobby',
       `
-			<div id="lobby-container">
-			<div id="message-body">
-				<div id="read-messages">
-					<ul id="messages"></ul>
-				</div>
-				<div id="enter-messages">
+      <div id="lobby-container">
+      <div id="message-body">
+        <div id="read-messages">
+          <ul id="messages"></ul>
+        </div>
+        <div id="enter-messages">
           <p id="char-count" style="font-size:10px; text-align: left;">Char Count: 0/300</p>
           <form action="" style="position-bottom=0">
             <input type="text" id="msg" name="msg" autocomplete="off" />
             <button id="msg-enter-btn">Chat</button>
           </form>
-				</div>
-			</div>
-			<div id="lobby-body">
-				<div id="lobby-announcements">
-					<ul id="announce-tag"></ul>
-				</div>
-				<div id="lobby-users">
-					<p style="font-size:14px; text-align: center;">Users Currently Connected</p>
-					<ul id="users-tag"></ul>
-				</div>
-				<div id="exit-lobby">
-    		  <ul class = "menu">
-						<li><p id="timer" style="font-size:14px; text-align:center;">Timer: 0.0 sec</p>
-       			<li><button id = "id-gamelobby-back">Back</button></li>
-      		</ul>
-				</div>
-			</div>
-			</div>
-   	  `
+        </div>
+      </div>
+      <div id="lobby-body">
+        <div id="lobby-announcements">
+          <ul id="announce-tag"></ul>
+        </div>
+        <div id="lobby-users">
+          <p style="font-size:14px; text-align: center;">Users Currently Connected</p>
+          <ul id="users-tag"></ul>
+        </div>
+        <div id="exit-lobby">
+          <ul class = "menu">
+            <li><p id="timer" style="font-size:14px; text-align:center;">Timer: 0.0 sec</p>
+            <li><button id = "id-gamelobby-back">Back</button></li>
+          </ul>
+        </div>
+      </div>
+      </div>
+      `
     );
 
     const MAX_MSG = 500;   // so not too many messages in the scroller
@@ -44,17 +44,17 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     document.getElementById('id-gamelobby-back').addEventListener(
       'click',
-      function() { 
-        socket.emit(NetworkIds.LEAVE_LOBBY);	
-        menu.showScreen('main-menu'); 
-      });	
-		
+      function() {
+        socket.emit(NetworkIds.LEAVE_LOBBY);
+        menu.showScreen('main-menu');
+      });
+
     //----------------------------------------------------------
     // Send server CHAT_MESSAGE
     //----------------------------------------------------------
     $('form').submit(function(){
       socket.emit(NetworkIds.CHAT_MESSAGE, $('#msg').val());
-      $('#msg').val('');				
+      $('#msg').val('');
       document.getElementById('char-count').innerHTML = 'Char Count: 0/300';
       return false;
     });
@@ -77,7 +77,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
       }
       $('#messages').append($('<li>').text(user, msg));
       let scroller = document.getElementById('read-messages');
-      scroller.scrollTop = scroller.scrollHeight;	
+      scroller.scrollTop = scroller.scrollHeight;
     });
 
     //----------------------------------------------------------
@@ -87,7 +87,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
       $('#messages').empty();
       message_count = 0;
     });
-    
+
     //----------------------------------------------------------
     // clear chat messages
     //----------------------------------------------------------
@@ -99,7 +99,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     // User enters lobby
     //----------------------------------------------------------
-    socket.on(NetworkIds.ENTER_LOBBY, function(number, user) {	
+    socket.on(NetworkIds.ENTER_LOBBY, function(number, user) {
       $('#announce-tag').append($('<li>').text(user + ' connected... users in lobby: ' + number));
       let scroller = document.getElementById('lobby-announcements');
       scroller.scrollTop = scroller.scrollHeight;
@@ -121,25 +121,34 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     socket.on(NetworkIds.REQUEST_USERS, function(user_list) {
       $('#users-tag').empty();
-      for (let i = 0; i < user_list.length; i++) {	
+      for (let i = 0; i < user_list.length; i++) {
         let val = user_list[i];
         $('#users-tag').append($('<li id=user-' + val +'>').text(val));
       }
     });
-		
+
+    function timer(time, lastTime) {
+      let newTime = performance.now();
+      time -= newTime - lastTime;
+      document.getElementById('timer').innerHTML = 'Timer: ' + (time/1000).toFixed(1) + ' sec';
+
+      if (time > 0)
+        requestAnimationFrame(() => timer(time, newTime));
+    }
+
     //----------------------------------------------------------
     // on countdown start
-    //----------------------------------------------------------	
+    //----------------------------------------------------------
     socket.on(NetworkIds.START_TIMER, function(time) {
       $('#announce-tag').append($('<li>').text('!!'));
       $('#announce-tag').append($('<li>').text('!! game starting soon !!'));
       $('#announce-tag').append($('<li>').text('!!'));
-      socket.emit(NetworkIds.START_TIMER);
+      timer(time, performance.now());
     });
 
     //----------------------------------------------------------
     // request timer update from server
-    //----------------------------------------------------------	
+    //----------------------------------------------------------
     socket.on(NetworkIds.REQUEST_TIMER, function(time) {
       document.getElementById('timer').innerHTML = 'Timer: ' + (time/1000).toFixed(1) + ' sec';
       socket.emit(NetworkIds.REQUEST_TIMER);
@@ -147,17 +156,17 @@ Game.screens['gamelobby'] = (function(menu, socket) {
 
     //----------------------------------------------------------
     // change to gameplay when timer reaches 0
-    //----------------------------------------------------------	
+    //----------------------------------------------------------
     socket.on(NetworkIds.START_GAME, function() {
       document.getElementById('timer').innerHTML = 'Timer: 0.0 sec';
-      menu.showScreen('gameplay'); 
+      menu.showScreen('gameplay');
       $('#messages').empty();
       $('#announce-tag').empty();
     });
   }
 
   function run() {
-    socket.emit(NetworkIds.ENTER_LOBBY); 
+    socket.emit(NetworkIds.ENTER_LOBBY);
     $('#announce-tag').append($('<li>').text('!!'));
     $('#announce-tag').append($('<li>').text('!! Welcome to the Lobby Chat !!'));
     $('#announce-tag').append($('<li>').text('!! type \'clear\' to clear messages !!'));

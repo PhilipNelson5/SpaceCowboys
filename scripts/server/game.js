@@ -14,9 +14,9 @@ const present = require('present'),
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
 
-const TIMER_MS = 15000;           // timer countdown in milliseconds
-const LOBBY_MAX = 3;              // max player count for lobby
-const CHAR_LEN = 300;             // max character length for post; hard coded elsewhere
+const TIMER_MS = 3000;           // timer countdown in milliseconds
+const LOBBY_MAX = 2;             // max player count for lobby
+const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let   inSession = false;
 const lastUpdate = 0;
 const quit = false;
@@ -121,10 +121,10 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-       * When the client requests to create a new user.
-       * Attempts to register the new user..
-       * Responds with success or failure.
-       */
+     * When the client requests to create a new user.
+     * Attempts to register the new user..
+     * Responds with success or failure.
+     */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => {
 
       // check if the username is too long
@@ -155,8 +155,8 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-       * Request to join lobby
-       */
+     * Request to join lobby
+     */
     socket.on(NetworkIds.JOIN_LOBBY_REQUEST, function() {
       if (inSession) {
         socket.emit(NetworkIds.JOIN_LOBBY_RESPONSE, !inSession);
@@ -203,7 +203,31 @@ function initializeSocketIO(httpServer) {
 
       io.emit(NetworkIds.ENTER_LOBBY, numLobbyClients, lobbyClients[socket.id]);
       if (numLobbyClients >= LOBBY_MAX) {
-        io.emit(NetworkIds.START_TIMER);
+        inSession = true;
+
+        for (let id in lobbyClients) {
+          console.log(id);
+          io.to(id).emit(NetworkIds.START_TIMER, TIMER_MS);
+        }
+
+        setTimeout( () => {
+          for (let id in lobbyClients) {
+            let newPlayer = Player.create(); // TODO Fix create player
+            console.log(id);
+            io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,
+              {
+                direction: .5*2*Math.PI,
+                position: { x:.1, y: .5},
+                size: newPlayer.size,
+                rotateRate: newPlayer.rotateRate,
+                speed: newPlayer.speed
+              });
+          }
+
+          for (let id in lobbyClients)
+            io.to(id).emit(NetworkIds.START_GAME);
+
+        }, TIMER_MS);
       }
     });
 
@@ -221,18 +245,6 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-     * Direction to start the timer
-     * TODO: move to a function instead of dealing with
-     * on client side as well
-     */
-    socket.on(NetworkIds.START_TIMER, function() {
-      inSession = true;
-      end = new Date().getTime() + TIMER_MS;
-      let time = TIMER_MS;
-      socket.emit(NetworkIds.REQUEST_TIMER, TIMER_MS/1000);
-    });
-
-    /**
      * Requests timer update
      * Attempts to return timer update to client and,
      * if timer has counted down, starts the game for all
@@ -243,7 +255,7 @@ function initializeSocketIO(httpServer) {
       if ((end - time) < 0) {
         for (let id in lobbyClients) {
           let newPlayer = Player.create();
-          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL, 
+          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,
             {
               direction: .5*2*Math.PI,
               position: { x:.1, y: .5},
