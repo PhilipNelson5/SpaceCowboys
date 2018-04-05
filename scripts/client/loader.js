@@ -209,7 +209,6 @@ Game.loader = (function() {
   //------------------------------------------------------------------
   function mainComplete() {
     console.log('All scripts and asset loaded are loaded\n\nInitializing Game...\n');
-    //setTimeout( Game.main.initialize , 250 );
     Game.main.initialize();
   }
 
