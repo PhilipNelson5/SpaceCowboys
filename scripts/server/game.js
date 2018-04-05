@@ -17,8 +17,8 @@ const STATE_UPDATE_RATE_MS = 100;
 const TIMER_MS = 15000;           // timer countdown in milliseconds
 const LOBBY_MAX = 3;              // max player count for lobby
 const CHAR_LEN = 300;             // max character length for post; hard coded elsewhere
-var inSession = false;
-let lastUpdate = 0;
+let   inSession = false;
+const lastUpdate = 0;
 const quit = false;
 let numActiveClients = 0;
 const activeClients = {};
@@ -80,25 +80,60 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.LOGIN_REQUEST, data => {
       console.log('request login: ' + data.username);
+      data.username = data.username.toLowerCase();
 
-      login.verify(data.username, data.password).then(
-        () => {
+      // check if the user exists
+      if (!login.userExists(data.username)) {
+        socket.emit(NetworkIds.LOGIN_RESPONSE, {
+          success: false, message: 'That user does not exist.'
+        });
+        return;
+      }
+
+      // check if the user is already logged in
+      for (let id in activeClients)
+        if (activeClients[id].username === data.username) {
+          socket.emit(NetworkIds.LOGIN_RESPONSE, {
+            success: false, message: 'User already logged in.'
+          });
+          return;
+        }
+
+      // verify that the password is correct
+      login.verify(data.username, data.password, (err, success) => {
+        if (err) {
+          console.log(err);
+          socket.emit(NetworkIds.LOGIN_RESPONSE, {
+            success: false, message: 'Internal Server Error!'
+          });
+        } else if (success) {
+          console.log('SUCCESS');
           activeClients[socket.id].username = data.username;
           socket.emit(NetworkIds.LOGIN_RESPONSE, {
             success: true, message: 'verification success', username: data.username
           });
-        },
-        () => socket.emit(NetworkIds.LOGIN_RESPONSE, {
-          success: false, message: 'verification failed'
-        }));
+        } else {
+          socket.emit(NetworkIds.LOGIN_RESPONSE, {
+            success: false, message: 'Incorrect username or password.'
+          });
+        }
+      });
     });
 
     /**
-     * When the client requests to create a new user.
-     * Attempts to register the new user..
-     * Responds with success or failure.
-     */
-    socket.on(NetworkIds.CREATE_USER_REQUEST, data => { //TODO make a promise
+       * When the client requests to create a new user.
+       * Attempts to register the new user..
+       * Responds with success or failure.
+       */
+    socket.on(NetworkIds.CREATE_USER_REQUEST, data => {
+
+      // check if the username is taken
+      if (login.userExists(data.username)) {
+        socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
+          success: false, message: 'Username already taken.'
+        });
+        return;
+      }
 
       if (login.registerNewUser(data.username, data.password)) {
         activeClients[socket.id].username = data.username;
@@ -107,13 +142,13 @@ function initializeSocketIO(httpServer) {
         });
       } else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
-          success: false, message: 'username exists'
+          success: false, message: 'Username already taken.'
         });
     });
 
     /**
-     * Request to join lobby
-     */
+       * Request to join lobby
+       */
     socket.on(NetworkIds.JOIN_LOBBY_REQUEST, function() {
       if (inSession) {
         socket.emit(NetworkIds.JOIN_LOBBY_RESPONSE, !inSession);
