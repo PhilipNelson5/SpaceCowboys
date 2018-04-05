@@ -1,6 +1,5 @@
 // -----------------------------------------------------------------------------
-//
-// This is the main game initialization system, it initializes all the screens.
+// // This is the main game initialization system, it initializes all the screens.
 //
 // -----------------------------------------------------------------------------
 Game.main = (function(screens, menu) {

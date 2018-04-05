@@ -13,15 +13,18 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
+
 const TIMER_MS = 15000;           // timer countdown in milliseconds
 const LOBBY_MAX = 3;              // max player count for lobby
 const CHAR_LEN = 300;             // max character length for post; hard coded elsewhere
 let   inSession = false;
 const lastUpdate = 0;
 const quit = false;
-const activeClients = { length:0 };
-const lobbyClients = { length:0 };
-const inputQueue = Queue.create();
+let numActiveClients = 0;
+const activeClients = {};
+let numLobbyClients = 0;
+const lobbyClients = {};
+let inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -38,8 +41,8 @@ function initializeSocketIO(httpServer) {
       socket: socket,
       player: null
     };
-    ++activeClients.length;
-    console.log(activeClients.length + ' active clients');
+    ++numActiveClients;
+    console.log(numActiveClients + ' active clients');
 
     /**
      * Acknowledges the connection of a new user.
@@ -57,14 +60,14 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.DISCONNECT, function() {
       delete activeClients[socket.id];
-      --activeClients.length;
+      --numActiveClients;
       if (lobbyClients[socket.id] != undefined) {
         delete lobbyClients[socket.id];
-        --lobbyClients.length;
-        socket.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length);
+        --numLobbyClients;
+        socket.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients);
       }
 
-      console.log('DISCONNECT: ' + activeClients.length + ' active clients');
+      console.log('DISCONNECT: ' + numActiveClients + ' active clients');
 
       // notify other clients about disconnect if needed
       //socket.broadcast.emit(NetworkIds.id, data)
@@ -175,8 +178,8 @@ function initializeSocketIO(httpServer) {
     socket.on(NetworkIds.LEAVE_LOBBY, function() {
       let user = lobbyClients[socket.id];
       delete lobbyClients[socket.id];
-      --lobbyClients.length;
-      io.emit(NetworkIds.LEAVE_LOBBY, lobbyClients.length, user);
+      --numLobbyClients;
+      io.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients, user);
     });
 
     /**
@@ -188,10 +191,10 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.ENTER_LOBBY, function() {
       lobbyClients[socket.id] = activeClients[socket.id].username;
-      ++lobbyClients.length;
+      ++numLobbyClients;
 
-      io.emit(NetworkIds.ENTER_LOBBY, lobbyClients.length, lobbyClients[socket.id]);
-      if (lobbyClients.length >= LOBBY_MAX) {
+      io.emit(NetworkIds.ENTER_LOBBY, numLobbyClients, lobbyClients[socket.id]);
+      if (numLobbyClients >= LOBBY_MAX) {
         io.emit(NetworkIds.START_TIMER);
       }
     });
@@ -231,6 +234,15 @@ function initializeSocketIO(httpServer) {
       let time = new Date().getTime();
       if ((end - time) < 0) {
         for (let id in lobbyClients) {
+          let newPlayer = Player.create();
+          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL, 
+            {
+              direction: .5*2*Math.PI,
+              position: { x:.1, y: .5},
+              size: newPlayer.size,
+              rotateRate: newPlayer.rotateRate,
+              speed: newPlayer.speed
+            });
           io.to(id).emit(NetworkIds.START_GAME);
         }
       } else {
@@ -242,6 +254,89 @@ function initializeSocketIO(httpServer) {
     //socket.broadcast.emit(NetworkIds.id, data)
   });
 }
+
+
+function processInput(elapsedTime) {
+
+  let processMe = inputQueue;
+  inputQueue = Queue.create();
+
+  while (!processMe.empty) {
+    let input =  processMe.dequeue();
+    let client = activeClients[input.clientId];
+    client.lastMessageId = input.message.id;
+    switch (input.message.type) {
+    case NetworkIds.INPUT_MOVE:
+      client.player.move(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_ROTATE_LEFT:
+      client.player.rotateLeft(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_ROTATE_RIGHT:
+      client.player.rotateRight(input.message.elapsedTime);
+      break;
+    }
+  }
+}
+
+
+function update(elapsedTime) {
+  for (let clientId in activeClients) {
+    activeClients[clientId].player.update(currentTime);
+  }
+  //TODO: other things for collisions
+}
+
+function updateClient(elapsedTime) {
+  lastUpdate += elaspedTime;
+  if (lastUpdate < STATE_UPDATE_RATE_MS) {
+    return;
+  }
+  for (let clientId in activeClients) {
+    let client = activeClients[clientId];
+    let update = {
+      clientId : clientId,
+      lastMessageId: client.lastMessageId,
+      direction : client.player.direction,
+      position: client.player.position,
+      updateWindow: lastUpdate,
+    };
+
+    if (client.player.reportUpdate) {
+      client.socket.emit(NetworkIds.UPDATE_SELF, update);
+      //
+      //Notify all other connected clients about every
+      //other connected client status .... but only if they are updated.
+      for (let otherId in activeClients) {
+        if (otherId !== clientId) {
+          activeClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
+        }
+      }
+    }
+  }
+
+  for (let clientId in activeClients) {
+    activeClients[clientId].player.reportUpdate = false;
+  }
+
+  //Reset time since last update so we know when to put out next update
+  lastUpdate = 0;
+
+}
+
+function gameLoop(currentTime, elaspedTime) {
+  processInput(elapsedTime);
+  update(elaspedTime,currentTime);
+  updateClient(elapsedTime);
+
+  if (!quit) {
+    setTimeout(() => {
+      let now = present();
+      gameLoop(now, now - currentTime);
+    }, SIMULATION_UPDATE_RATE_MS);
+  }
+}
+
 
 /**
  *
