@@ -21,6 +21,10 @@ Game.loader = (function() {
   // The file paths are from the client directory
   let scriptOrder = [
       {
+        scripts: ['screens/menu'],
+        message: 'Loaded menu module',
+        onComplete: null,
+      }, {
         scripts: ['../shared/network-ids'],
         message: 'Network Ids loaded',
         onComplete: null,
@@ -46,7 +50,6 @@ Game.loader = (function() {
         onComplete: null
       }, {
         scripts: [
-          'screens/menu',
           'screens/login',
           'screens/createuser',
           'screens/gamelobby',
@@ -206,6 +209,7 @@ Game.loader = (function() {
   //------------------------------------------------------------------
   function mainComplete() {
     console.log('All scripts and asset loaded are loaded\n\nInitializing Game...\n');
+    //setTimeout( Game.main.initialize , 250 );
     Game.main.initialize();
   }
 
