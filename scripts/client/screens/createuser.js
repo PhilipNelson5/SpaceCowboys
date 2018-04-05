@@ -47,8 +47,8 @@ Game.screens['create-user'] = (function(menu, socket) {
         }
         else if (username.value.length > 20) {
           document.getElementById('create-user-warning')
-            .innerText='Maximum username length is 20 characters';
-          console.log('Maximum username length is 20 characters');
+            .innerText='Maximum username length is 20 characters.';
+          console.log('Maximum username length is 20 characters.');
           password.value = '';
           confirm.value = '';
         }

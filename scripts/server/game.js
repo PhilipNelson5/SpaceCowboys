@@ -124,6 +124,14 @@ function initializeSocketIO(httpServer) {
        */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => {
 
+      // check if the username is too long
+      if (login.userExists(data.username)) {
+        socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
+          success: false, message: 'Maximum username length is 20 characters.'
+        });
+        return;
+      }
+
       // check if the username is taken
       if (login.userExists(data.username)) {
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
