@@ -21,6 +21,10 @@ Game.loader = (function() {
   // The file paths are from the client directory
   let scriptOrder = [
       {
+        scripts: ['screens/menu'],
+        message: 'Loaded menu module',
+        onComplete: null,
+      }, {
         scripts: ['../shared/network-ids'],
         message: 'Network Ids\t\tloaded',
         onComplete: null,
@@ -46,7 +50,6 @@ Game.loader = (function() {
         onComplete: null
       }, {
         scripts: [
-          'screens/menu',
           'screens/login',
           'screens/createuser',
           'screens/gamelobby',

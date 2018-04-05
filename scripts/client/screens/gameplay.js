@@ -314,7 +314,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
   function render() {
     graphics.clear();
-    graphics.drawCircle({x:0,y:0},0.01,'blue');
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
