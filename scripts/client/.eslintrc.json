@@ -1,16 +1,18 @@
 {
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true
+  },
   "extends": "eslint:recommended",
-    "globals": {
-        "Game": true,
-        "NetworkIds": true,
-        "Queue": true,
-        "io": true,
-        "$": true
-    },
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "rules": {
+    "no-console": "off",
     "indent": [
       "error",
-            2
+      2
     ],
     "linebreak-style": 0
     ,

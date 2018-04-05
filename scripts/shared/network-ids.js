@@ -122,6 +122,14 @@
     },
     'INIT_PLAYER_MODEL': {
       value: 'init_player_model',
+      writiable: false
+    },
+    'CLEAR_CHAT_MESSAGE': {
+      value: 'clear_chat_message',
+      writable: false
+    },
+    'LONG_CHAT_MESSAGE': {
+      value: 'long_chat_message',
       writable: false
     }
 
