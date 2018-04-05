@@ -127,6 +127,14 @@ function initializeSocketIO(httpServer) {
      */
     socket.on(NetworkIds.CREATE_USER_REQUEST, data => {
 
+      // check if the username is too long
+      if (data.username.length > 20) {
+        socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
+          success: false, message: 'Maximum username length is 20 characters.'
+        });
+        return;
+      }
+
       // check if the username is taken
       if (login.userExists(data.username)) {
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
@@ -142,7 +150,7 @@ function initializeSocketIO(httpServer) {
         });
       } else
         socket.emit(NetworkIds.CREATE_USER_RESPONSE, {
-          success: false, message: 'Username already taken.'
+          success: false, message: 'Error Creating User.'
         });
     });
 
