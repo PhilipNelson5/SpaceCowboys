@@ -193,7 +193,6 @@ function initializeSocketIO(httpServer) {
       if ((end - time) < 0) {
         for (let id in lobbyClients) {
           let newPlayer = Player.create();
-          console.log('emitting player model' + JSON.stringify(newPlayer));
           io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL, 
             {
               direction: .5*2*Math.PI,
@@ -202,13 +201,6 @@ function initializeSocketIO(httpServer) {
               rotateRate: newPlayer.rotateRate,
               speed: newPlayer.speed
             });
-          socket.emit(NetworkIds.INIT_PLAYER_MODEL, {
-            direction: .5*2*Math.PI,
-            position: { x:.1, y: .5},
-            size: newPlayer.size,
-            rotateRate: newPlayer.rotateRate,
-            speed: newPlayer.speed
-          });
           io.to(id).emit(NetworkIds.START_GAME);
         }
       } else {

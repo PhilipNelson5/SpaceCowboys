@@ -89,7 +89,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function connectPlayerSelf(data) {
-    console.log('updating player model: ' + JSON.stringify(data));
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
 
