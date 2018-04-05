@@ -37,7 +37,6 @@ Game.screens['main-menu'] = (function(menu, socket) {
       function() { menu.showScreen('about'); });
 
     socket.on(NetworkIds.JOIN_LOBBY_RESPONSE, function(data) {
-      console.log(data);
       if (data) menu.showScreen('gamelobby'); 
       else alert('game lobby full');
     });

@@ -58,7 +58,6 @@ Game.screens['create-user'] = (function(menu, socket) {
         else {
           document.getElementById('create-user-warning')
             .innerText='Passwords do not match.';
-          console.log('Passwords do not match');
         }
       });
 
@@ -80,13 +79,11 @@ Game.screens['create-user'] = (function(menu, socket) {
         document.getElementById('create-user-warning')
           .innerText='';
         Game.user.username = data.username;
-        console.log('Welcome ' + Game.user.username);
         menu.showScreen('main-menu');
       }
       else {
         document.getElementById('create-user-warning')
           .innerText=data.message;
-        console.log('user creation failure');
       }
     });
 

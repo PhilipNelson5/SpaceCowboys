@@ -19,18 +19,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     nextExplosionId = 1,
     networkQueue = Queue.create();
 
-  var mouseCapture = false,
+  let mouseCapture = false,
     //myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
     myTexture = null,
     cancelNextRequest = false;
-
-  socket.on(NetworkIds.CONNECT_ACK, data => {
-    networkQueue.enqueue({
-      type: NetworkIds.CONNECT_ACK,
-      data: data
-    });
-  });
 
   socket.on(NetworkIds.CONNECT_OTHER, data => {
     networkQueue.enqueue({
@@ -204,10 +197,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     while (!processMe.empty) {
       let message = processMe.dequeue();
       switch (message.type) {
-      case NetworkIds.CONNECT_ACK:
-        //connectPlayerSelf(message.data);
-        console.log('connect ack recieved');
-        break;
       case NetworkIds.CONNECT_OTHER:
         connectPlayerOther(message.data);
         break;
@@ -215,14 +204,14 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         disconnectPlayerOther(message.data);
         break;
       case NetworkIds.UPDATE_SELF:
-        console.log('update self recieved');
+        console.log('update self received');
         updatePlayerSelf(message.data);
         break;
       case NetworkIds.UPDATE_OTHER:
         updatePlayerOther(message.data);
         break;
       case NetworkIds.INIT_PLAYER_MODEL:
-        console.log('init player model recieved');
+        console.log('init player model received');
         connectPlayerSelf(message.data);
         break;
       }
@@ -230,13 +219,12 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   }
 
   function initialize() {
-    console.log('        gameplay initializing...');
-    console.log(socket.id);
     menu.addScreen('gameplay',
       `
       <canvas height=1000 width=1000 id='canvas-main'></canvas>
-			`
+      `
     );
+
     graphics.initialize();
 
     myTexture = graphics.Texture( {
@@ -295,7 +283,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     input.KeyEvent.DOM_VK_SPACE, false);
     //
     // Create an ability to move the logo using the mouse
-    // 
+    //
     /*
     myMouse = input.Mouse();
     myMouse.registerCommand('mousedown', function(e) {
@@ -344,8 +332,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     let elapsedTime = time - lastTimeStamp;
     lastTimeStamp = time;
-    processInput(elapsedTime); 
-    update(elapsedTime); 
+    processInput(elapsedTime);
+    update(elapsedTime);
     render();
 
     if (!cancelNextRequest) {

@@ -12,9 +12,7 @@ Game.graphics = (function() {
 
   function initialize() {
     canvas = document.getElementById('canvas-main');
-    console.log(canvas);
     context = canvas.getContext('2d');
-    console.log(context);
   }
 
   //------------------------------------------------------------------

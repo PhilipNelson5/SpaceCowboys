@@ -22,27 +22,27 @@ Game.loader = (function() {
   let scriptOrder = [
       {
         scripts: ['../shared/network-ids'],
-        message: 'Network Ids loaded',
+        message: 'Network Ids\t\tloaded',
         onComplete: null,
       }, {
         scripts: ['../shared/queue'],
-        message: 'Utilities loaded',
+        message: 'Utilities\t\tloaded',
         onComplete: null,
       }, {
         scripts: ['../client/network'],
-        message: 'Network loaded',
+        message: 'Network\t\t\tloaded',
         onComplete: null,
       }, {
         scripts: ['./input'],
-        message: 'Input loaded',
+        message: 'Input\t\t\tloaded',
         onComplete: null
       }, {
         scripts: ['rendering/graphics'],
-        message: 'Renderers loaded',
+        message: 'Renderer\t\tloaded',
         onComplete: null
       }, {
         scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
-        message: 'Player models loaded',
+        message: 'Player models\tloaded',
         onComplete: null
       }, {
         scripts: [
@@ -57,19 +57,19 @@ Game.loader = (function() {
           'screens/highscores',
           'screens/mainmenu'
         ],
-        message: 'Screens loaded',
+        message: 'Screens\t\t\tloaded',
         onComplete: null,
       }, {
         scripts: ['main'],
-        message: 'Game model loaded',
+        message: 'Game model\t\tloaded',
         onComplete: null,
       }, {
         scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
-        message: 'Player models loaded',
+        message: 'Player models\tloaded',
         onComplete: null
       }, {
         scripts: ['rendering/graphics','rendering/player','rendering/player-remote'],
-        message: 'Graphics loaded',
+        message: 'Graphics\t\tloaded',
         onComplete: null
       }], // end scriptOrder
 
@@ -97,10 +97,6 @@ Game.loader = (function() {
   //
   //------------------------------------------------------------------
   function loadScripts(scripts, onComplete) {
-    // TODO: maybe make this iterative
-    // Although recursion is beautiful, iteration seems more efficient
-
-    //
     // When we run out of things to load, that is when we call onComplete.
     if (scripts.length > 0) {
       let entry = scripts[0];
@@ -133,10 +129,6 @@ Game.loader = (function() {
   //
   //------------------------------------------------------------------
   function loadAssets(assets, onSuccess, onError, onComplete) {
-    // TODO: maybe make this iterative
-    // Although recursion is beautiful, iteration seems more efficient
-
-    //
     // When we run out of things to load, that is when we call onComplete.
     if (assets.length > 0) {
       let entry = assets[0];
@@ -201,15 +193,18 @@ Game.loader = (function() {
 
   //------------------------------------------------------------------
   //
-  // Called when all the scripts are loaded, it kicks off the game.
+  // Called when all the scripts are loaded, it kicks off the menu
   //
   //------------------------------------------------------------------
   function mainComplete() {
-    console.log('All scripts and asset loaded are loaded\n\nInitializing Game...\n');
-    Game.main.initialize();
+    console.log('All scripts and asset loaded are loaded');
+    console.log('Initializing Game...');
+
+    // make sure that all assets and scripts are actually loaded
+    setTimeout(Game.main.initialize, 250);
   }
 
-  //
+
   // Start with loading the assets, then the scripts.
   console.log('Starting to dynamically load project assets...');
   loadAssets(assetOrder, //source
@@ -220,8 +215,8 @@ Game.loader = (function() {
       console.log(error);
     },
     function() { //onComplete load the scripts
-      console.log('All assets loaded');
-      console.log('Starting to dynamically load project scripts');
+      console.log('All assets\t\tloaded');
+      console.log('Starting to dynamically load project scripts...');
       loadScripts(scriptOrder, mainComplete);
     }
   );
