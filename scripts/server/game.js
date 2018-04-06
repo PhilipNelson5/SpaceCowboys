@@ -208,22 +208,32 @@ function initializeSocketIO(httpServer) {
 
         for (let client in lobbyClients) {
           console.log('210 client.id ' + client.id);
-          io.to(client.id).emit(NetworkIds.START_TIMER, TIMER_MS);
+          io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
         setTimeout( () => {
           for (let id in lobbyClients) {
             let newPlayer = Player.create();
             lobbyClients[id].player = newPlayer;
-            console.log('218 create new player ' + JSON.stringify(newPlayer));
-            io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,
-              {
-                direction: newPlayer.direction,
-                position: newPlayer.position,
-                size: newPlayer.size,
-                rotateRate: newPlayer.rotateRate,
-                speed: newPlayer.speed
-              });
+            io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL, {
+              direction: newPlayer.direction,
+              position: newPlayer.position,
+              size: newPlayer.size,
+              rotateRate: newPlayer.rotateRate,
+              speed: newPlayer.speed
+            });
+
+            for (let id2 in lobbyClients) {
+              if (id !== id2) {
+                io.to(id2).emit(NetworkIds.INIT_ENEMY_MODEL, {
+                  direction: newPlayer.direction,
+                  position: newPlayer.position,
+                  size: newPlayer.size,
+                  rotateRate: newPlayer.rotateRate,
+                  speed: newPlayer.speed
+                });
+              }
+            }
           }
 
           for (let id in lobbyClients)
@@ -249,32 +259,8 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-     * Requests timer update
-     * Attempts to return timer update to client and,
-     * if timer has counted down, starts the game for all
-     * clients in the lobby
+     * Enqueues inputs from clients to be processed
      */
-    socket.on(NetworkIds.REQUEST_TIMER, function() {
-      let time = new Date().getTime();
-      if ((end - time) < 0) {
-        for (let id in lobbyClients) {
-          let newPlayer = Player.create();
-          lobbyClients[socket.id].player = newPlayer;
-          io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,
-            {
-              direction: .5*2*Math.PI,
-              position: { x:.1, y: .5},
-              size: newPlayer.size,
-              rotateRate: newPlayer.rotateRate,
-              speed: newPlayer.speed
-            });
-          io.to(id).emit(NetworkIds.START_GAME);
-        }
-      } else {
-        socket.emit(NetworkIds.REQUEST_TIMER, end-time);
-      }
-    });
-
     socket.on(NetworkIds.INPUT, data => {
       inputQueue.enqueue({
         clientId: socket.id,
@@ -296,7 +282,7 @@ function processInput(elapsedTime) {
 
   while (!processMe.empty) {
     let input =  processMe.dequeue();
-    let client = activeClients[input.clientId];
+    let client = lobbyClients[input.clientId];
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
     case NetworkIds.INPUT_MOVE:
@@ -325,8 +311,8 @@ function updateClient(elapsedTime) {
   if (lastUpdate < STATE_UPDATE_RATE_MS) {
     return;
   }
-  for (let clientId in activeClients) {
-    let client = activeClients[clientId];
+  for (let clientId in lobbyClients) {
+    let client = lobbyClients[clientId];
     let update = {
       clientId : clientId,
       lastMessageId: client.lastMessageId,
@@ -336,20 +322,21 @@ function updateClient(elapsedTime) {
     };
 
     if (client.player.reportUpdate) {
+      console.log(client.player.reportUpdate);
       client.socket.emit(NetworkIds.UPDATE_SELF, update);
       //
       //Notify all other connected clients about every
       //other connected client status .... but only if they are updated.
-      for (let otherId in activeClients) {
+      for (let otherId in lobbyClients) {
         if (otherId !== clientId) {
-          activeClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
+          lobbyClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
         }
       }
     }
   }
 
-  for (let clientId in activeClients) {
-    activeClients[clientId].player.reportUpdate = false;
+  for (let clientId in lobbyClients) {
+    lobbyClients[clientId].player.reportUpdate = false;
   }
 
   //Reset time since last update so we know when to put out next update

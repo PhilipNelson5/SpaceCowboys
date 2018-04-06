@@ -68,11 +68,19 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   });
 
   socket.on(NetworkIds.INIT_PLAYER_MODEL, data => {
+    console.log('71 INIT_PLAYER_MODEL ');
     networkQueue.enqueue({
       type: NetworkIds.INIT_PLAYER_MODEL,
       data: data
     });
-    console.log('received' + JSON.stringify(data));
+  });
+
+  socket.on(NetworkIds.INIT_ENEMY_MODEL, data => {
+    console.log('80 INIT_ENEMY_MODEL ');
+    networkQueue.enqueue({
+      type: NetworkIds.INIT_ENEMY_MODEL,
+      data: data
+    });
   });
 
 
@@ -83,6 +91,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function connectPlayerSelf(data) {
+    console.log('Connected Player Self ' + data);
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
 
@@ -101,6 +110,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function connectPlayerOther(data) {
+    console.log('Connected Enemy ' + data);
     let model = components.PlayerRemote();
     model.state.position.x = data.position.x;
     model.state.position.y = data.position.y;
@@ -198,9 +208,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     while (!processMe.empty) {
       let message = processMe.dequeue();
       switch (message.type) {
-      case NetworkIds.CONNECT_OTHER:
-        connectPlayerOther(message.data);
-        break;
       case NetworkIds.DISCONNECT_OTHER:
         disconnectPlayerOther(message.data);
         break;
@@ -209,11 +216,15 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         updatePlayerSelf(message.data);
         break;
       case NetworkIds.UPDATE_OTHER:
+        console.log('update other received');
         updatePlayerOther(message.data);
         break;
       case NetworkIds.INIT_PLAYER_MODEL:
-        console.log('init player model received');
         connectPlayerSelf(message.data);
+        break;
+      case NetworkIds.INIT_ENEMY_MODEL:
+        console.log('WHATTATATATATATTATATATATATTAATTAATTAATAAT');
+        connectPlayerOther(message.data);
         break;
       }
     }
