@@ -28,7 +28,7 @@ let inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
-  var end;
+  let end;
 
   /**
    * When a new client connects
@@ -207,7 +207,6 @@ function initializeSocketIO(httpServer) {
         inSession = true;
 
         for (let client in lobbyClients) {
-          console.log('210 client.id ' + client.id);
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
@@ -323,7 +322,6 @@ function updateClient(elapsedTime) {
     };
 
     if (client.player.reportUpdate) {
-      console.log(client.player.reportUpdate);
       client.socket.emit(NetworkIds.UPDATE_SELF, update);
       //
       //Notify all other connected clients about every
