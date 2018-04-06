@@ -184,7 +184,7 @@ function initializeSocketIO(httpServer) {
      * removal update to all clients
      */
     socket.on(NetworkIds.LEAVE_LOBBY, function() {
-      let user = lobbyClients[socket.id];
+      let user = lobbyClients[socket.id].username;
       delete lobbyClients[socket.id];
       --numLobbyClients;
       io.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients, user);
