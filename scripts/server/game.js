@@ -175,7 +175,7 @@ function initializeSocketIO(httpServer) {
       else if (msg.replace(/\s+/g, '') == 'clear')
         socket.emit(NetworkIds.CLEAR_CHAT_MESSAGE);
       else if (msg.replace(/\s+/g, '') !== '')
-        io.emit(NetworkIds.CHAT_MESSAGE, lobbyClients[socket.id] + ': ' + msg);
+        io.emit(NetworkIds.CHAT_MESSAGE, lobbyClients[socket.id].username + ': ' + msg);
     });
 
     /**
