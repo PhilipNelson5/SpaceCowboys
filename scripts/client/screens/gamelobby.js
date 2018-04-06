@@ -143,7 +143,6 @@ Game.screens['gamelobby'] = (function(menu, socket) {
       $('#announce-tag').append($('<li>').text('!!'));
       $('#announce-tag').append($('<li>').text('!! game starting soon !!'));
       $('#announce-tag').append($('<li>').text('!!'));
-      console.log(time);
       timer(time, performance.now());
     });
 
