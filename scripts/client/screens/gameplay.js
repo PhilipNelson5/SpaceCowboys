@@ -74,6 +74,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     });
   });
 
+  socket.on(NetworkIds.INIT_ENEMY_MODEL, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.INIT_ENEMY_MODEL,
+      data: data
+    });
+  });
+
 
   //------------------------------------------------------------------
   //
@@ -197,22 +204,20 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     while (!processMe.empty) {
       let message = processMe.dequeue();
       switch (message.type) {
-      case NetworkIds.CONNECT_OTHER:
-        connectPlayerOther(message.data);
-        break;
       case NetworkIds.DISCONNECT_OTHER:
         disconnectPlayerOther(message.data);
         break;
       case NetworkIds.UPDATE_SELF:
-        console.log('update self received');
         updatePlayerSelf(message.data);
         break;
       case NetworkIds.UPDATE_OTHER:
         updatePlayerOther(message.data);
         break;
       case NetworkIds.INIT_PLAYER_MODEL:
-        console.log('init player model received');
         connectPlayerSelf(message.data);
+        break;
+      case NetworkIds.INIT_ENEMY_MODEL:
+        connectPlayerOther(message.data);
         break;
       }
     }

@@ -124,6 +124,10 @@
       value: 'init_player_model',
       writiable: false
     },
+    'INIT_ENEMY_MODEL': {
+      value: 'init_enemy_model',
+      writiable: false
+    },
     'CLEAR_CHAT_MESSAGE': {
       value: 'clear_chat_message',
       writable: false
