@@ -230,7 +230,8 @@ function initializeSocketIO(httpServer) {
                   position: newPlayer.position,
                   size: newPlayer.size,
                   rotateRate: newPlayer.rotateRate,
-                  speed: newPlayer.speed
+                  speed: newPlayer.speed,
+				  clientId: id
                 });
               }
             }
