@@ -79,7 +79,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       type: NetworkIds.INIT_ENEMY_MODEL,
       data: data
     });
-	console.log(JSON.stringify(networkQueue));
   });
 
 
@@ -321,7 +320,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function render() {
     graphics.clear();
     graphics.Player.render(playerSelf.model, playerSelf.texture);
-    console.log(JSON.stringify(playerOthers));
     for (let id in playerOthers) {
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model, player.texture);
