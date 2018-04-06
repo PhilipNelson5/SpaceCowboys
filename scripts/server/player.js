@@ -106,6 +106,7 @@ function createPlayer() {
   that.update = function(when) {
   };
 
+  console.log('creating new player');
   return that;
 }
 

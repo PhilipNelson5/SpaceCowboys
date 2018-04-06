@@ -17,13 +17,13 @@ const STATE_UPDATE_RATE_MS = 100;
 const TIMER_MS = 3000;           // timer countdown in milliseconds
 const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
-let   inSession = false;
-const lastUpdate = 0;
-const quit = false;
+let inSession = false;
+let lastUpdate = 0;
+let quit = false;
 let numActiveClients = 0;
-const activeClients = {};
+let activeClients = {};
 let numLobbyClients = 0;
-const lobbyClients = {};
+let lobbyClients = {};
 let inputQueue = Queue.create();
 
 function initializeSocketIO(httpServer) {
@@ -198,26 +198,28 @@ function initializeSocketIO(httpServer) {
      * length of people are in the lobby
      */
     socket.on(NetworkIds.ENTER_LOBBY, function() {
-      lobbyClients[socket.id] = activeClients[socket.id].username;
+      lobbyClients[socket.id] = activeClients[socket.id];
       ++numLobbyClients;
 
-      io.emit(NetworkIds.ENTER_LOBBY, numLobbyClients, lobbyClients[socket.id]);
+      io.emit(NetworkIds.ENTER_LOBBY, numLobbyClients, lobbyClients[socket.id].username);
+
       if (numLobbyClients >= LOBBY_MAX) {
         inSession = true;
 
-        for (let id in lobbyClients) {
-          console.log(id);
-          io.to(id).emit(NetworkIds.START_TIMER, TIMER_MS);
+        for (let client in lobbyClients) {
+          console.log('210 client.id ' + client.id);
+          io.to(client.id).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
         setTimeout( () => {
           for (let id in lobbyClients) {
-            let newPlayer = Player.create(); // TODO Fix create player
-            console.log(id);
+            let newPlayer = Player.create();
+            lobbyClients[id].player = newPlayer;
+            console.log('218 create new player ' + JSON.stringify(newPlayer));
             io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,
               {
-                direction: .5*2*Math.PI,
-                position: { x:.1, y: .5},
+                direction: newPlayer.direction,
+                position: newPlayer.position,
                 size: newPlayer.size,
                 rotateRate: newPlayer.rotateRate,
                 speed: newPlayer.speed
@@ -226,6 +228,8 @@ function initializeSocketIO(httpServer) {
 
           for (let id in lobbyClients)
             io.to(id).emit(NetworkIds.START_GAME);
+
+          gameLoop(present(), 0);
 
         }, TIMER_MS);
       }
@@ -239,7 +243,7 @@ function initializeSocketIO(httpServer) {
     socket.on(NetworkIds.REQUEST_USERS, function() {
       let user_list = [];
       for (let key in lobbyClients) {
-        if (key != 'length') user_list.push(lobbyClients[key]);
+        user_list.push(lobbyClients[key].username);
       }
       socket.emit(NetworkIds.REQUEST_USERS, user_list);
     });
@@ -255,6 +259,7 @@ function initializeSocketIO(httpServer) {
       if ((end - time) < 0) {
         for (let id in lobbyClients) {
           let newPlayer = Player.create();
+          lobbyClients[socket.id].player = newPlayer;
           io.to(id).emit(NetworkIds.INIT_PLAYER_MODEL,
             {
               direction: .5*2*Math.PI,
@@ -269,6 +274,14 @@ function initializeSocketIO(httpServer) {
         socket.emit(NetworkIds.REQUEST_TIMER, end-time);
       }
     });
+
+    socket.on(NetworkIds.INPUT, data => {
+      inputQueue.enqueue({
+        clientId: socket.id,
+        message: data
+      });
+    });
+
 
     // notify other clients about new client if needed
     //socket.broadcast.emit(NetworkIds.id, data)
@@ -300,15 +313,15 @@ function processInput(elapsedTime) {
 }
 
 
-function update(elapsedTime) {
-  for (let clientId in activeClients) {
-    activeClients[clientId].player.update(currentTime);
+function update(elapsedTime, currentTime) {
+  for (let client in lobbyClients) {
+    lobbyClients[client].player.update(currentTime);
   }
   //TODO: other things for collisions
 }
 
 function updateClient(elapsedTime) {
-  lastUpdate += elaspedTime;
+  lastUpdate += elapsedTime;
   if (lastUpdate < STATE_UPDATE_RATE_MS) {
     return;
   }
@@ -344,9 +357,9 @@ function updateClient(elapsedTime) {
 
 }
 
-function gameLoop(currentTime, elaspedTime) {
+function gameLoop(currentTime, elapsedTime) {
   processInput(elapsedTime);
-  update(elaspedTime,currentTime);
+  update(elapsedTime,currentTime);
   updateClient(elapsedTime);
 
   if (!quit) {

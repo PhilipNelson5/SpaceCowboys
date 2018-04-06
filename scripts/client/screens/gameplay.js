@@ -72,6 +72,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       type: NetworkIds.INIT_PLAYER_MODEL,
       data: data
     });
+    console.log('received' + JSON.stringify(data));
   });
 
 
