@@ -177,6 +177,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
+      console.log(JSON.stringify(data));
       let model = playerOthers[data.clientId].model;
       model.goal.updateWindow = data.updateWindow;
 
@@ -185,7 +186,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       model.goal.direction = data.direction;
     }
   }
-
 
   //------------------------------------------------------------------
   //

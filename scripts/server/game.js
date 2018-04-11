@@ -389,7 +389,7 @@ function update(elapsedTime, currentTime) {
 
 function updateClient(elapsedTime) {
   // simulate network lag
-  // lastUpdate += elapsedTime;
+  lastUpdate += elapsedTime;
   // if (lastUpdate < STATE_UPDATE_RATE_MS) {
   // return;
   // }

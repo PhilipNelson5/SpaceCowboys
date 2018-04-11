@@ -45,7 +45,7 @@ Game.components.PlayerRemote = function() {
   //
   //------------------------------------------------------------------
   that.update = function(elapsedTime) {
-    // Protect agains divide by 0 before the first update from the server has been given
+    // Protect against divide by 0 before the first update from the server has been given
     if (goal.updateWindow === 0) return;
 
     let updateFraction = elapsedTime / goal.updateWindow;
