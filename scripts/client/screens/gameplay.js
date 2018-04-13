@@ -395,6 +395,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function render() {
     graphics.clear();
+    //graphics.drawClip(90);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
@@ -408,6 +409,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
+
+    graphics.drawFog(90);
+    
   }
 
   //------------------------------------------------------------------
