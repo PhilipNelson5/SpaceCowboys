@@ -17,6 +17,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     messageHistory = Queue.create(),
     messageId = 1,
     nextExplosionId = 1,
+    missiles = {},
+    explosions = {},
     networkQueue = Queue.create();
 
   let mouseCapture = false,
@@ -175,6 +177,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
+      console.log(JSON.stringify(data));
       let model = playerOthers[data.clientId].model;
       model.goal.updateWindow = data.updateWindow;
 
@@ -182,6 +185,46 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       model.goal.position.y = data.position.y;
       model.goal.direction = data.direction;
     }
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Handler for receiving notice of a new missile in the environment.
+  //
+  //------------------------------------------------------------------
+  function missileNew(data) {
+    missiles[data.id] = components.Missile({
+      id: data.id,
+      radius: data.radius,
+      speed: data.speed,
+      direction: data.direction,
+      position: {
+        x: data.position.x,
+        y: data.position.y
+      },
+      timeRemaining: data.timeRemaining
+    });
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Handler for receiving notice that a missile has hit a player.
+  //
+  //------------------------------------------------------------------
+  function missileHit(data) {
+    explosions[nextExplosionId] = components.AnimatedSprite({
+      id: nextExplosionId++,
+      spriteSheet: Game.assets['explosion'],
+      spriteSize: { width: 0.07, height: 0.07 },
+      spriteCenter: data.position,
+      spriteCount: 16,
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+    });
+
+    //
+    // When we receive a hit notification, go ahead and remove the
+    // associated missle from the client model.
+    delete missiles[data.missileId];
   }
 
 
@@ -218,6 +261,12 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         break;
       case NetworkIds.INIT_ENEMY_MODEL:
         connectPlayerOther(message.data);
+        break;
+      case NetworkIds.MISSILE_NEW:
+        missileNew(message.data);
+        break;
+      case NetworkIds.MISSILE_HIT:
+        missileHit(message.data);
         break;
       }
     }
@@ -308,15 +357,42 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       */
   }
 
+  //------------------------------------------------------------------
+  //
+  // Update the game simulation
+  //
+  //------------------------------------------------------------------
   function update(elapsedTime) {
     playerSelf.model.update(elapsedTime);
     for (let id in playerOthers) {
       playerOthers[id].model.update(elapsedTime);
     }
+
+    let removeMissiles = [];
+    for (let missile in missiles) {
+      if (!missiles[missile].update(elapsedTime)) {
+        removeMissiles.push(missiles[missile]);
+      }
+    }
+
+    for (let missile = 0; missile < removeMissiles.length; missile++) {
+      delete missiles[removeMissiles[missile].id];
+    }
+
+    for (let id in explosions) {
+      if (!explosions[id].update(elapsedTime)) {
+        delete explosions[id];
+      }
+    }
     myKeyboard.update(elapsedTime);
     //myMouse.update(elapsedTime);
   }
 
+  //------------------------------------------------------------------
+  //
+  // Render the current state of the game simulation
+  //
+  //------------------------------------------------------------------
   function render() {
     graphics.clear();
     graphics.Player.render(playerSelf.model, playerSelf.texture);
@@ -324,7 +400,14 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model, player.texture);
     }
-    //graphics.clear();
+
+    for (let missile in missiles) {
+      graphics.Missile.render(missiles[missile]);
+    }
+
+    for (let id in explosions) {
+      graphics.AnimatedSprite.render(explosions[id]);
+    }
   }
 
   //------------------------------------------------------------------

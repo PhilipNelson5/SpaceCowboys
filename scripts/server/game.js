@@ -9,7 +9,8 @@ const present = require('present'),
   Player = require('./player'),
   NetworkIds = require('../shared/network-ids'),
   Queue = require('../shared/queue.js'),
-  login = require('./login.js');
+  login = require('./login.js'),
+  Missile = require('./missile');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
@@ -25,6 +26,31 @@ let activeClients = {};
 let numLobbyClients = 0;
 let lobbyClients = {};
 let inputQueue = Queue.create();
+let missileId = 0;
+let newMissiles = [];
+let activeMissiles = [];
+let hits = [];
+
+//------------------------------------------------------------------
+//
+// Create a missile in response to user input.
+//
+//------------------------------------------------------------------
+function createMissile(clientId, playerModel) {
+  let missile = Missile.create({
+    id: ++missileId,
+    clientId: clientId,
+    position: {
+      x: playerModel.position.x,
+      y: playerModel.position.y
+    },
+    direction: playerModel.direction,
+    speed: playerModel.speed
+  });
+
+  newMissiles.push(missile);
+}
+
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -230,7 +256,7 @@ function initializeSocketIO(httpServer) {
                   size: newPlayer.size,
                   rotateRate: newPlayer.rotateRate,
                   speed: newPlayer.speed,
-				  clientId: id
+                  clientId: id
                 });
               }
             }
@@ -294,23 +320,102 @@ function processInput(elapsedTime) {
     case NetworkIds.INPUT_ROTATE_RIGHT:
       client.player.rotateRight(input.message.elapsedTime);
       break;
+    case NetworkIds.INPUT_FIRE:
+      createMissile(input.clientId, client.player);
+      break;
     }
   }
 }
 
+//------------------------------------------------------------------
+//
+// Utility function to perform a hit test between two objects.  The
+// objects must have a position: { x: , y: } property and radius property.
+//
+//------------------------------------------------------------------
+function collided(obj1, obj2) {
+  let distance = Math.sqrt(Math.pow(obj1.position.x - obj2.position.x, 2)
+    + Math.pow(obj1.position.y - obj2.position.y, 2));
+  let radii = obj1.radius + obj2.radius;
+
+  return distance <= radii;
+}
 
 function update(elapsedTime, currentTime) {
   for (let client in lobbyClients) {
     lobbyClients[client].player.update(currentTime);
   }
+
+  for (let missile = 0; missile < newMissiles.length; ++missile) {
+    newMissiles[missile].update(elapsedTime);
+  }
+
+  let keepMissiles = [];
+  for (let missile = 0; missile < activeMissiles.length; ++missile) {
+    //
+    // If update returns false, that means the missile lifetime ended and
+    // we don't keep it around any longer.
+    if (activeMissiles[missile].update(elapsedTime)) {
+      keepMissiles.push(activeMissiles[missile]);
+    }
+  }
+  activeMissiles = keepMissiles;
+  // Check to see if any missiles collide with any players (no friendly fire)
+  keepMissiles = [];
+  for (let missile = 0; missile < activeMissiles.length; ++missile) {
+    let hit = false;
+    for (let clientId in activeClients) {
+      //
+      // Don't allow a missile to hit the player it was fired from.
+      if (clientId !== activeMissiles[missile].clientId) {
+        if (collided(activeMissiles[missile], activeClients[clientId].player)) {
+          hit = true;
+          hits.push({
+            clientId: clientId,
+            missileId: activeMissiles[missile].id,
+            position: activeClients[clientId].player.position
+          });
+        }
+      }
+    }
+    if (!hit) {
+      keepMissiles.push(activeMissiles[missile]);
+    }
+  }
+  activeMissiles = keepMissiles;
   //TODO: other things for collisions
 }
 
 function updateClient(elapsedTime) {
+  // simulate network lag
   lastUpdate += elapsedTime;
-  if (lastUpdate < STATE_UPDATE_RATE_MS) {
-    return;
+  // if (lastUpdate < STATE_UPDATE_RATE_MS) {
+  // return;
+  // }
+
+  // Build the missile messages one time, then reuse inside the loop
+  let missileMessages = [];
+  for (let i = 0; i < newMissiles.length; ++i) {
+    let missile = newMissiles[i];
+    missileMessages.push({
+      id: missile.id,
+      direction: missile.direction,
+      position: {
+        x: missile.position.x,
+        y: missile.position.y
+      },
+      radius: missile.radius,
+      speed: missile.speed,
+      timeRemaining: missile.timeRemaining
+    });
   }
+
+  // Move all the new missiles over to the active missiles array
+  for (let missile = 0; missile < newMissiles.length; ++missile) {
+    activeMissiles.push(newMissiles[missile]);
+  }
+  newMissiles.length = 0;
+
   for (let clientId in lobbyClients) {
     let client = lobbyClients[clientId];
     let update = {
@@ -323,7 +428,7 @@ function updateClient(elapsedTime) {
 
     if (client.player.reportUpdate) {
       client.socket.emit(NetworkIds.UPDATE_SELF, update);
-      //
+
       //Notify all other connected clients about every
       //other connected client status .... but only if they are updated.
       for (let otherId in lobbyClients) {
@@ -332,12 +437,24 @@ function updateClient(elapsedTime) {
         }
       }
     }
+
+    // Report any new missiles to the active clients
+    for (let missile = 0; missile < missileMessages.length; ++missile) {
+      client.socket.emit(NetworkIds.MISSILE_NEW, missileMessages[missile]);
+    }
+
+    // Report any missile hits to this client
+    for (let hit = 0; hit < hits.length; ++hit) {
+      client.socket.emit(NetworkIds.MISSILE_HIT, hits[hit]);
+    }
+
   }
 
   for (let clientId in lobbyClients) {
     lobbyClients[clientId].player.reportUpdate = false;
   }
 
+  hits.length = 0;
   //Reset time since last update so we know when to put out next update
   lastUpdate = 0;
 
