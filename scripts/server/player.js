@@ -69,6 +69,7 @@ function createPlayer() {
   //------------------------------------------------------------------
   that.move = function(elapsedTime) {
     reportUpdate = true;
+    /*
     let vectorX = Math.cos(direction);
     let vectorY = Math.sin(direction);
 
@@ -90,6 +91,19 @@ function createPlayer() {
       position.y = (position.y >= 0.8) ? 0.8 : 0.2;
     }
 
+    return vector;
+    */
+
+    //TODO -- need to get world coordinates
+    let vector = {
+      x: 0,
+      y: 0
+    }
+
+    vector.x = Math.cos(direction) * elapsedTime * speed * 2;
+    vector.y = Math.sin(direction) * elapsedTime * speed * 2;
+    position.x = 0.5;
+    position.y = 0.5;
     return vector;
   };
 

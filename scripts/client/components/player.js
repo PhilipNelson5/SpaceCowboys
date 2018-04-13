@@ -47,11 +47,15 @@ Game.components.Player = function() {
   //
   //------------------------------------------------------------------
   that.move = function(elapsedTime) {
+    /*
     let vectorX = Math.cos(direction);
     let vectorY = Math.sin(direction);
 
     position.x += (vectorX * elapsedTime * speed);
     position.y += (vectorY * elapsedTime * speed);
+    */
+    position.x = 0.5;
+    position.y = 0.5;
   };
 
   //------------------------------------------------------------------
