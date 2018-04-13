@@ -124,12 +124,89 @@ Game.graphics = (function() {
   }
 
   function drawHealth(x, y, health, max) {
-    // let portion = max / health;
-    context.fillStyle = 'green';
-    context.fillRect(x*canvas.width, y*canvas.height, health, 10);
+    let percent = health/max;
+
     context.fillStyle = 'red';
-    context.fillRect(x*canvas.width, y*canvas.height, max, 10);
+    context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*8/10, 25);
+
+    if (health > 0) {
+      context.fillStyle = 'green';
+      context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*percent*8/10, 25);
+    } else { health = 0; }
+
+    writeCenter({
+      color: 'black',
+      font : '23px sans serif', // the font size and font name
+      text : health + ' / ' + max,     // the text to be written
+      x    : .5,        // the x location
+      y    : 9/10       // the y location
+    });
   }
+
+  /**
+   * write text given the top right coordinate
+   * spec {
+   * color: color
+   * font : '#px serif' // the font size and font name
+   * text : 'text'      // the text to be written
+   * x    : #px         // the x location
+   * y    : #px         // the y location
+   * }
+   */
+  function write(spec) {
+    context.font = spec.font;
+    context.fillStyle = spec.color;
+    context.fillText(spec.text, spec.x, spec.y);
+  }
+
+  /**
+   * write text given the lower right coordinate
+   * spec {
+   * color: color
+   * font : '#px serif' // the font size and font name
+   * text : 'text'      // the text to be written
+   * x    : #px         // the x location
+   * y    : #px         // the y location
+   * }
+   */
+  function writeLowerRight(spec) {
+    context.font = spec.font;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let width = context.measureText(spec.text).width;
+    let height = context.measureText('M').width;
+    write({
+      font: spec.font,
+      text: spec.text,
+      x: spec.x-width, y: spec.y-height,
+    });
+  }
+
+  /**
+   * write text given the lower right coordinate
+   * spec {
+   * color: color
+   * font : '#px serif' // the font size and font name
+   * text : 'text'      // the text to be written
+   * x    : #px         // the x location
+   * y    : #px         // the y location
+   * }
+   */
+  function writeCenter(spec) {
+    context.font = spec.font;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let width = context.measureText(spec.text).width;
+    let height = context.measureText('M').width;
+    // write({
+    // font: spec.font,
+    // text: spec.text,
+    // x: spec.x-width/2, y: spec.y-height/2,
+    // });
+    context.fillStyle = spec.color;
+    context.fillText(spec.text, spec.x-width/2, spec.y+height);
+  }
+
 
   //------------------------------------------------------------------
   //
@@ -205,6 +282,8 @@ Game.graphics = (function() {
     drawCircle,
     drawHealth,
     Texture,
+    writeLowerRight,
+    writeCenter,
 
   };
 }());

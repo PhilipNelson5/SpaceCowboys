@@ -16,8 +16,9 @@ Game.graphics.Player = (function(graphics) {
     graphics.saveContext();
     graphics.rotateCanvas(model.position, model.direction);
     graphics.drawImage(texture, model.position, model.size);
-    graphics.drawHealth(model.position.x, model.position.y, model.health, 100);
+    // graphics.drawHealth(model.position.x, model.position.y, model.health, 100);
     graphics.restoreContext();
+    graphics.drawHealth(model.position.x, model.position.y, model.health, 100);
   };
 
   return that;

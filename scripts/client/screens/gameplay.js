@@ -186,7 +186,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
-      console.log(JSON.stringify(data));
       let model = playerOthers[data.clientId].model;
       model.goal.updateWindow = data.updateWindow;
 
@@ -242,9 +241,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function missileHitYou(data) {
-      // TODO: Some effect to alert the player that they were hit
-      playerSelf.model.health -= data;
-      console.log('you got rekt m8!', playerSelf.model.health);
+    // TODO: Some effect to alert the player that they were hit
+    playerSelf.model.health -= data;
   }
 
   //------------------------------------------------------------------

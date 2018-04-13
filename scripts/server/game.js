@@ -378,6 +378,7 @@ function update(elapsedTime, currentTime) {
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
+          lobbyClients[clientId].player.health -= activeMissiles[missile].dammage;
           lobbyClients[clientId].socket.emit(NetworkIds.MISSILE_HIT_YOU, activeMissiles[missile].dammage);
         }
       }
