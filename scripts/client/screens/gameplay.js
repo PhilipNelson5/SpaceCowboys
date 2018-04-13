@@ -147,6 +147,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
     playerSelf.model.direction = data.direction;
+    if(player.mode.health !== data.health) {
+      // TODO: Some effect to alert the player that they were hit
+      console.log("you got rekt m8!");
+      playerSelf.model.health = data.health;
+    }
 
     //
     // Remove messages from the queue up through the last one identified

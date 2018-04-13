@@ -320,6 +320,7 @@ function updateClient(elapsedTime) {
       lastMessageId: client.lastMessageId,
       direction : client.player.direction,
       position: client.player.position,
+      health: client.player.health,
       updateWindow: lastUpdate,
     };
 
