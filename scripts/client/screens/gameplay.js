@@ -98,6 +98,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.direction = data.direction;
     playerSelf.model.speed = data.speed;
     playerSelf.model.rotateRate = data.rotateRate;
+
+    playerSelf.model.health = data.health;
   }
 
   //------------------------------------------------------------------

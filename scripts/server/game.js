@@ -219,7 +219,8 @@ function initializeSocketIO(httpServer) {
               position: newPlayer.position,
               size: newPlayer.size,
               rotateRate: newPlayer.rotateRate,
-              speed: newPlayer.speed
+              speed: newPlayer.speed,
+              health: newPlayer.health
             });
 
             for (let id2 in lobbyClients) {
@@ -230,7 +231,8 @@ function initializeSocketIO(httpServer) {
                   size: newPlayer.size,
                   rotateRate: newPlayer.rotateRate,
                   speed: newPlayer.speed,
-				  clientId: id
+                  health: newPlayer.health,
+                  clientId: id
                 });
               }
             }
