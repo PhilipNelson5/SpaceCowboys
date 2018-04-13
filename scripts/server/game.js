@@ -45,7 +45,8 @@ function createMissile(clientId, playerModel) {
       y: playerModel.position.y
     },
     direction: playerModel.direction,
-    speed: playerModel.speed
+    speed: playerModel.speed,
+    dammage: 10
   });
 
   newMissiles.push(missile);
@@ -377,6 +378,7 @@ function update(elapsedTime, currentTime) {
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
+          lobbyClients[clientId].socket.emit(NetworkIds.MISSILE_HIT_YOU, activeMissiles[missile].dammage);
         }
       }
     }

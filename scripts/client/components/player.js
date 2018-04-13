@@ -43,7 +43,8 @@ Game.components.Player = function() {
   });
 
   Object.defineProperty(that, 'health', {
-    get: () => health
+    get: () => health,
+    set: value => health = value
   });
 
   //------------------------------------------------------------------

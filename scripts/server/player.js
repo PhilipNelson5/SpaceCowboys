@@ -54,7 +54,8 @@ function createPlayer() {
   });
 
   Object.defineProperty(that, 'health', {
-    get: () => health
+    get: () => health,
+    set: value => health = value
   });
 
   Object.defineProperty(that, 'radius', {
