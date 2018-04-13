@@ -146,11 +146,11 @@ Game.graphics = (function() {
   /**
    * write text given the top right coordinate
    * spec {
-   * color: color
-   * font : '#px serif' // the font size and font name
-   * text : 'text'      // the text to be written
-   * x    : #px         // the x location
-   * y    : #px         // the y location
+   *   color: color
+   *   font : '#px serif' // the font size and font name
+   *   text : 'text'      // the text to be written
+   *   x    : #px         // the x location
+   *   y    : #px         // the y location
    * }
    */
   function write(spec) {
@@ -162,11 +162,11 @@ Game.graphics = (function() {
   /**
    * write text given the lower right coordinate
    * spec {
-   * color: color
-   * font : '#px serif' // the font size and font name
-   * text : 'text'      // the text to be written
-   * x    : #px         // the x location
-   * y    : #px         // the y location
+   *   color: color
+   *   font : '#px serif'   // the font size and font name
+   *   text : 'text'        // the text to be written
+   *   x    :  percent of x // the x location
+   *   y    :  percent in y // the y location
    * }
    */
   function writeLowerRight(spec) {
@@ -175,21 +175,18 @@ Game.graphics = (function() {
     spec.y*=canvas.height;
     let width = context.measureText(spec.text).width;
     let height = context.measureText('M').width;
-    write({
-      font: spec.font,
-      text: spec.text,
-      x: spec.x-width, y: spec.y-height,
-    });
+    context.fillStyle = spec.fillStyle;
+    context.fillText(spec.text, spec.x-width, spec.y-height);
   }
 
   /**
    * write text given the lower right coordinate
    * spec {
-   * color: color
-   * font : '#px serif' // the font size and font name
-   * text : 'text'      // the text to be written
-   * x    : #px         // the x location
-   * y    : #px         // the y location
+   *   color: color
+   *   font : 'px serif'    // the font size and font name
+   *   text : 'text'        // the text to be written
+   *   x    :  percent of x // the x location
+   *   y    :  percent in y // the y location
    * }
    */
   function writeCenter(spec) {
@@ -198,11 +195,6 @@ Game.graphics = (function() {
     spec.y*=canvas.height;
     let width = context.measureText(spec.text).width;
     let height = context.measureText('M').width;
-    // write({
-    // font: spec.font,
-    // text: spec.text,
-    // x: spec.x-width/2, y: spec.y-height/2,
-    // });
     context.fillStyle = spec.color;
     context.fillText(spec.text, spec.x-width/2, spec.y+height);
   }
