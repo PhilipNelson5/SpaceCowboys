@@ -27,6 +27,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     myTexture = null,
     cancelNextRequest = false;
 
+  let background = null;
+
   socket.on(NetworkIds.CONNECT_OTHER, data => {
     networkQueue.enqueue({
       type: NetworkIds.CONNECT_OTHER,
@@ -177,7 +179,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
-      console.log(JSON.stringify(data));
       let model = playerOthers[data.clientId].model;
       model.goal.updateWindow = data.updateWindow;
 
@@ -227,7 +228,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     delete missiles[data.missileId];
   }
 
-
   //------------------------------------------------------------------
   //
   // Process the registered input handlers here.
@@ -275,11 +275,21 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function initialize() {
     menu.addScreen('gameplay',
       `
-      <canvas height=1000 width=1000 id='canvas-main'></canvas>
+      <canvas height=100% width=100% id='canvas-main'></canvas>
       `
     );
 
     graphics.initialize();
+
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: 4.375, height: 2.5 },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
+    });
+
+    background.setViewport(0.00, 0.00);
 
     myTexture = graphics.Texture( {
       image : assets['player-self'],
@@ -395,6 +405,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function render() {
     graphics.clear();
+
+    graphics.Tiled.render(background);
+    
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];

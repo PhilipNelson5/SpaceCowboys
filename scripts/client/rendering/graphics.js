@@ -50,13 +50,13 @@ Game.graphics = (function() {
     // whether width or height is largest dimension
     if (canvas.width < canvas.height) {
       smallestSize = canvas.width;
-      world.size = smallestSize * 0.9;
-      world.left = Math.floor(canvas.width * 0.05);
+      world.size = smallestSize;
+      world.left = 0;
       world.top = (canvas.height - world.size) / 2;
     } else {
       smallestSize = canvas.height;
-      world.size = smallestSize * 0.9;
-      world.top = Math.floor(canvas.height * 0.05);
+      world.size = smallestSize;
+      world.top = 0;
       world.left = (canvas.width - world.size) / 2;
     }
 
