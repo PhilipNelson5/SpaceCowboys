@@ -103,7 +103,7 @@ Game.graphics = (function() {
     };
 
     context.drawImage(spriteSheet,
-      sprite * spriteSize.width, 0,                 // which sprite to render
+      sprite * spriteSize.width, 0,           // which sprite to render
       spriteSize.width, spriteSize.height,    // size in the spritesheet
       localCenter.x - localSize.width / 2,
       localCenter.y - localSize.height / 2,
@@ -121,6 +121,14 @@ Game.graphics = (function() {
     context.closePath();
     context.fillStyle = color;
     context.fill();
+  }
+
+  function drawHealth(x, y, health, max) {
+    // let portion = max / health;
+    context.fillStyle = 'green';
+    context.fillRect(x*canvas.width, y*canvas.height, health, 10);
+    context.fillStyle = 'red';
+    context.fillRect(x*canvas.width, y*canvas.height, max, 10);
   }
 
   //------------------------------------------------------------------
@@ -195,6 +203,7 @@ Game.graphics = (function() {
     drawImage,
     drawImageSpriteSheet,
     drawCircle,
+    drawHealth,
     Texture,
 
   };
