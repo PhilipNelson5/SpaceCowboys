@@ -28,13 +28,10 @@ function createPlayer() {
   };
 
   let direction = random.nextDouble() * 2 * Math.PI; // Angle in radians
-  let rotateRate = Math.PI / 1000; // radians per millisecond
   let speed = 0.0002;              // unit distance per millisecond
+  let rotateRate = Math.PI / 1000; // radians per millisecond
+  let health = 100;                // initial health
   let reportUpdate = false;        // Indicates if this model was updated during the last update
-
-  Object.defineProperty(that, 'direction', {
-    get: () => direction
-  });
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -42,6 +39,10 @@ function createPlayer() {
 
   Object.defineProperty(that, 'size', {
     get: () => size
+  });
+
+  Object.defineProperty(that, 'direction', {
+    get: () => direction
   });
 
   Object.defineProperty(that, 'speed', {
@@ -52,14 +53,20 @@ function createPlayer() {
     get: () => rotateRate
   });
 
-  Object.defineProperty(that, 'reportUpdate', {
-    get: () => reportUpdate,
-    set: value => reportUpdate = value
+  Object.defineProperty(that, 'health', {
+    get: () => health,
+    set: value => health = value
   });
 
   Object.defineProperty(that, 'radius', {
     get: () => size.radius
   });
+
+  Object.defineProperty(that, 'reportUpdate', {
+    get: () => reportUpdate,
+    set: value => reportUpdate = value
+  });
+
 
   //------------------------------------------------------------------
   //
@@ -104,6 +111,10 @@ function createPlayer() {
   //
   //------------------------------------------------------------------
   that.update = function(when) {
+  };
+
+  that.hit = function(dammage) {
+    health -= dammage;
   };
 
   console.log('creating new player');

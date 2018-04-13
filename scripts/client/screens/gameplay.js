@@ -83,6 +83,12 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     });
   });
 
+  socket.on(NetworkIds.MISSILE_HIT_YOU, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.MISSILE_HIT_YOU,
+      data: data
+    });
+  });
 
   //------------------------------------------------------------------
   //
@@ -100,6 +106,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.direction = data.direction;
     playerSelf.model.speed = data.speed;
     playerSelf.model.rotateRate = data.rotateRate;
+
+    playerSelf.model.health = data.health;
   }
 
   //------------------------------------------------------------------
@@ -147,6 +155,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
     playerSelf.model.direction = data.direction;
+    playerSelf.model.health = data.health;
 
     //
     // Remove messages from the queue up through the last one identified
@@ -177,7 +186,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
-      console.log(JSON.stringify(data));
       let model = playerOthers[data.clientId].model;
       model.goal.updateWindow = data.updateWindow;
 
@@ -227,6 +235,15 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     delete missiles[data.missileId];
   }
 
+  //------------------------------------------------------------------
+  //
+  // Handler for receiving notice that a missile has hit you.
+  //
+  //------------------------------------------------------------------
+  function missileHitYou(data) {
+    // TODO: Some effect to alert the player that they were hit
+    playerSelf.model.health -= data;
+  }
 
   //------------------------------------------------------------------
   //
@@ -267,6 +284,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         break;
       case NetworkIds.MISSILE_HIT:
         missileHit(message.data);
+        break;
+      case NetworkIds.MISSILE_HIT_YOU:
+        missileHitYou(message.data);
         break;
       }
     }
