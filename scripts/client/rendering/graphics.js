@@ -6,7 +6,6 @@
 Game.graphics = (function() {
   'use strict';
 
-
   let canvas;
   let context;
 
@@ -26,7 +25,8 @@ Game.graphics = (function() {
     this.setTransform(1, 0, 0, 1, 0, 0);
     this.clearRect(0, 0, canvas.width, canvas.height);
     this.restore();
-  }; 
+  };
+
   //------------------------------------------------------------------
   //
   // Public function that allows the client code to clear the canvas.

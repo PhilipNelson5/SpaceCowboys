@@ -71,7 +71,7 @@ Game.loader = (function() {
         message: 'Player models\tloaded',
         onComplete: null
       }, {
-        scripts: ['rendering/graphics','rendering/player','rendering/player-remote'],
+        scripts: ['rendering/graphics', 'rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote'],
         message: 'Graphics\t\tloaded',
         onComplete: null
       }], // end scriptOrder

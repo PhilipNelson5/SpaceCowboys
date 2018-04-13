@@ -4,11 +4,11 @@
 //
 // Defines an animated model object.  The spec is defined as:
 // {
-//		spriteSheet: Image,
-//		spriteSize: { width: , height: },	// In world coordinates
-//		spriteCenter: { x:, y: },			// In world coordinates
-//		spriteCount: Number of sprites in the sheet,
-//		spriteTime: [array of times (milliseconds) for each frame]
+//    spriteSheet: Image,
+//    spriteSize: { width: , height: }, // In world coordinates
+//    spriteCenter: { x:, y: },         // In world coordinates
+//    spriteCount: Number of sprites in the sheet,
+//    spriteTime: [array of times (milliseconds) for each frame]
 // }
 //
 //------------------------------------------------------------------
