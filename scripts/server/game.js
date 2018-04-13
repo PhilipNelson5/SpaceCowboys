@@ -47,7 +47,6 @@ function createMissile(clientId, playerModel) {
     direction: playerModel.direction,
     speed: playerModel.speed
   });
-  console.log('new missile');
 
   newMissiles.push(missile);
 }
