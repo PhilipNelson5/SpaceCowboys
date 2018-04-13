@@ -146,10 +146,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function updatePlayerSelf(data) {
+    //TODO
+    if (data.vector != null) background.move(data.vector);
+
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
     playerSelf.model.direction = data.direction;
-
+    
     //
     // Remove messages from the queue up through the last one identified
     // by the server as having been processed.

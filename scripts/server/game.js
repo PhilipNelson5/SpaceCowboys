@@ -30,6 +30,7 @@ let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
 let hits = [];
+let vector = null;
 
 //------------------------------------------------------------------
 //
@@ -312,7 +313,7 @@ function processInput(elapsedTime) {
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
     case NetworkIds.INPUT_MOVE:
-      client.player.move(input.message.elapsedTime);
+      vector = client.player.move(input.message.elapsedTime);
       break;
     case NetworkIds.INPUT_ROTATE_LEFT:
       client.player.rotateLeft(input.message.elapsedTime);
@@ -424,6 +425,7 @@ function updateClient(elapsedTime) {
       direction : client.player.direction,
       position: client.player.position,
       updateWindow: lastUpdate,
+      vector: vector
     };
 
     if (client.player.reportUpdate) {

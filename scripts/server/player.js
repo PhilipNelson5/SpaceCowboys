@@ -74,6 +74,23 @@ function createPlayer() {
 
     position.x += (vectorX * elapsedTime * speed);
     position.y += (vectorY * elapsedTime * speed);
+
+    let vector = {
+      x: 0,
+      y: 0
+    }
+
+    if (position.x >= 0.8 || position.x <= 0.2) { 
+      vector.x = Math.cos(direction) * elapsedTime * speed;
+      position.x = (position.x >= 0.8) ? 0.8 : 0.2;
+    }
+
+    if (position.y >= 0.8 || position.y <= 0.2) {
+      vector.y = Math.sin(direction) * elapsedTime * speed;
+      position.y = (position.y >= 0.8) ? 0.8 : 0.2;
+    }
+
+    return vector;
   };
 
   //------------------------------------------------------------------
