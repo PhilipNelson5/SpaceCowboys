@@ -311,14 +311,20 @@ function processInput(elapsedTime) {
     let client = lobbyClients[input.clientId];
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
-    case NetworkIds.INPUT_MOVE:
-      client.player.move(input.message.elapsedTime);
+    case NetworkIds.INPUT_MOVE_UP:
+      client.player.moveUp(input.message.elapsedTime);
       break;
-    case NetworkIds.INPUT_ROTATE_LEFT:
-      client.player.rotateLeft(input.message.elapsedTime);
+    case NetworkIds.INPUT_MOVE_DOWN:
+      client.player.moveDown(input.message.elapsedTime);
       break;
-    case NetworkIds.INPUT_ROTATE_RIGHT:
-      client.player.rotateRight(input.message.elapsedTime);
+    case NetworkIds.INPUT_MOVE_RIGHT:
+      client.player.moveRight(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_MOVE_LEFT:
+      client.player.moveLeft(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_ROTATE:
+      client.player.rotate(input.message);
       break;
     case NetworkIds.INPUT_FIRE:
       createMissile(input.clientId, client.player);
