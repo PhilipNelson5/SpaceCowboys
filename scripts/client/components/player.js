@@ -98,10 +98,14 @@ Game.components.Player = function() {
   // Public function that rotates the player
   //
   //------------------------------------------------------------------
+  function cp(v1, v2) {
+    return (v1.x * v2.y) - (v1.y * v2.x);
+  }
+
   that.rotate = function() {
     let v1 = {
-        x : position.x,
-        y : position.y
+        x : 1,
+        y : 0
       },
       v2 = {
         x : target.x - window.innerWidth/2,
@@ -114,6 +118,8 @@ Game.components.Player = function() {
     v2.y /= v2.len;
 
     angle = Math.acos(v1.x * v2.x + v1.y * v2.y);
+    angle *= (cp(v1, v2) > 0) ? 1 : -1;
+
     if (tolerance(direction, angle, .001)) {
       return false;
     } else {

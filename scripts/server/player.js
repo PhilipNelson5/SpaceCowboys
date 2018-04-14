@@ -49,10 +49,6 @@ function createPlayer() {
     get: () => speed
   });
 
-  Object.defineProperty(that, 'reportUpdate', {
-    get: () => reportUpdate,
-    set: value => reportUpdate = value
-
   Object.defineProperty(that, 'health', {
     get: () => health,
     set: value => health = value
