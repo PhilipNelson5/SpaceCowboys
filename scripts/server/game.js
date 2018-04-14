@@ -45,7 +45,8 @@ function createMissile(clientId, playerModel) {
       y: playerModel.position.y
     },
     direction: playerModel.direction,
-    speed: playerModel.speed
+    speed: playerModel.speed,
+    dammage: 10
   });
 
   newMissiles.push(missile);
@@ -245,7 +246,8 @@ function initializeSocketIO(httpServer) {
               position: newPlayer.position,
               size: newPlayer.size,
               rotateRate: newPlayer.rotateRate,
-              speed: newPlayer.speed
+              speed: newPlayer.speed,
+              health: newPlayer.health
             });
 
             for (let id2 in lobbyClients) {
@@ -256,6 +258,7 @@ function initializeSocketIO(httpServer) {
                   size: newPlayer.size,
                   rotateRate: newPlayer.rotateRate,
                   speed: newPlayer.speed,
+                  health: newPlayer.health,
                   clientId: id
                 });
               }
@@ -381,6 +384,8 @@ function update(elapsedTime, currentTime) {
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
+          lobbyClients[clientId].player.health -= activeMissiles[missile].dammage;
+          lobbyClients[clientId].socket.emit(NetworkIds.MISSILE_HIT_YOU, activeMissiles[missile].dammage);
         }
       }
     }
@@ -429,6 +434,7 @@ function updateClient(elapsedTime) {
       lastMessageId: client.lastMessageId,
       direction : client.player.direction,
       position: client.player.position,
+      health: client.player.health,
       updateWindow: lastUpdate,
     };
 

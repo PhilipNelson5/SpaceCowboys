@@ -139,6 +139,10 @@
     'LONG_CHAT_MESSAGE': {
       value: 'long_chat_message',
       writable: false
+    },
+    'MISSILE_HIT_YOU': {
+      value: 'missile_hit_you',
+      writable: false
     }
 
   });
