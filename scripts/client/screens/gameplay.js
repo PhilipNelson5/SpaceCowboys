@@ -394,13 +394,15 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function render() {
+
     graphics.clear();
-    //graphics.drawClip(90);
+    graphics.beginClip(90, 50);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model, player.texture);
     }
+    graphics.endClip();
 
     for (let missile in missiles) {
       graphics.Missile.render(missiles[missile]);
@@ -409,6 +411,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
+
+    //draw Buildings AFTER clip or else they be underneath it
 
     graphics.drawFog(90);
     

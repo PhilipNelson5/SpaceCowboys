@@ -129,73 +129,67 @@ Game.graphics = (function(assets) {
   // Draw the clip for field of view
   //
   //------------------------------------------------------------------
-  function drawClip(angle,distance) {
+  function beginClip(angle,distance) {
     context.save();
     context.beginPath();
     context.moveTo(canvas.width/2+300, 0 );
-    context.lineTo(canvas.width/2+80, canvas.height/2-80);
-    context.arc(.5 * canvas.width, .5 * canvas.width, 2 * 71, 7/4*Math.PI, 5/4* Math.PI, false);
+    //context.lineTo(canvas.width/2+80, canvas.height/2-80);
+    context.arc(.5 * canvas.width, .5 * canvas.width, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
 
-    context.lineTo(canvas.width/2-80, canvas.height/2-80);
+    //context.lineTo(canvas.width/2-80, canvas.height/2-80);
     context.lineTo(canvas.width/2-300, 0);
 
-    ///context.arc(offset * 0.5, offset * 0.5, offset * 0.3, 0, 2 * Math.PI);
-    //context.closePath();
-    //context.fillStyle = 'rgba(0,0,0,1)';
-    //context.fill();
     context.strokeStyle='#FFFF00';
     context.lineWidth=10;
     context.stroke();
     context.clip();
-    //context.fillStyle = 'rgba(1,0,0,1)';
-    //context.fillRect(0, 0, canvas.width, canvas.height);
-    /*
-    context.beginPath();
-    context.arc(center.x * canvas.width, center.y * canvas.width, 2 * radius * canvas.width, 2 * Math.PI, false);
-    context.closePath();
-    context.fillStyle = color;
-    context.fill();
-    context.globalCompositeOperation='destination-out';
-    context.beginPath();
-    context.moveTo(canvas.width/2+50, 0 );
-    context.lineTo(canvas.width/2, canvas.height/2);
-    context.lineTo(canvas.width/2-50, 0);
-    ///context.arc(offset * 0.5, offset * 0.5, offset * 0.3, 0, 2 * Math.PI);
-    context.closePath();
-    context.fillStyle = 'rgba(1,1,1,1)';
-    context.fill();
-    */
-    //context.clearRect(0, 0, canvas.width, canvas.height);
-    //context.restore();
   }
   
+  function endClip() {
+    context.restore();
+  }
   //------------------------------------------------------------------
   //
   // Draw the fog with a triangular field view cut out
   //
   //------------------------------------------------------------------
   function drawFog(angle) {
-    //context.restore();
     context.save();
+    /*
     context.beginPath();
     context.moveTo(0,0);
     context.lineTo(canvas.width, 0 );
     context.lineTo(canvas.width/2-50, 0 );
     context.lineTo(canvas.width/2, canvas.height/2);
     context.lineTo(canvas.width/2+50, 0);
-    //context.lineTo(canvas.width/2+50,0);
+    context.lineTo(canvas.width, 0 );
     context.lineTo(canvas.width, canvas.height );
     context.lineTo(0, canvas.height );
     context.lineTo(0, 0);
     context.closePath();
+    */
+    context.beginPath();
+    context.moveTo(0,0);
+    //context.lineTo(canvas.width, 0 );
+    context.lineTo(canvas.width/2-300, 0 );
 
-    ///context.arc(offset * 0.5, offset * 0.5, offset * 0.3, 0, 2 * Math.PI);
-    //context.closePath();
-    //context.fillStyle = 'rgba(0,0,0,1)';
-    //context.fill();
+    //context.lineTo(canvas.width/2-(50*Math.cos(Math.pi/4)), canvas.height/2-(50*Math.sin(Math.pi/4)));
+
+    //context.lineTo(canvas.width/2, canvas.height/2);
+    context.arc(canvas.width/2, canvas.width/2, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
+    //context.lineTo(canvas.width/2+(50*Math.cos(Math.pi/4)), canvas.height/2-(50*Math.sin(Math.pi/4)));
+
+    context.lineTo(canvas.width/2+300, 0);
+    context.lineTo(canvas.width, 0 );
+    context.lineTo(canvas.width, canvas.height );
+    context.lineTo(0, canvas.height );
+    context.lineTo(0, 0);
+    context.closePath();
+    context.strokeStyle='#FF0000';
+    context.lineWidth=10;
+    context.stroke();
+
     context.clip();
-    //context.fillStyle = 'rgba(1,0,0,1)';
-    //context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 0.8;
     context.drawImage(assets['clouds-light'],
       0,
@@ -203,24 +197,6 @@ Game.graphics = (function(assets) {
       canvas.width,
       canvas.height);
     context.restore();
-    /*
-    context.beginPath();
-    context.arc(center.x * canvas.width, center.y * canvas.width, 2 * radius * canvas.width, 2 * Math.PI, false);
-    context.closePath();
-    context.fillStyle = color;
-    context.fill();
-    context.globalCompositeOperation='destination-out';
-    context.beginPath();
-    context.moveTo(canvas.width/2+50, 0 );
-    context.lineTo(canvas.width/2, canvas.height/2);
-    context.lineTo(canvas.width/2-50, 0);
-    ///context.arc(offset * 0.5, offset * 0.5, offset * 0.3, 0, 2 * Math.PI);
-    context.closePath();
-    context.fillStyle = 'rgba(1,1,1,1)';
-    context.fill();
-    */
-    //context.clearRect(0, 0, canvas.width, canvas.height);
-    //context.restore();
   }
 
   //------------------------------------------------------------------
@@ -295,7 +271,8 @@ Game.graphics = (function(assets) {
     drawImage,
     drawImageSpriteSheet,
     drawCircle,
-    drawClip,
+    beginClip,
+    endClip,
     drawFog,
     Texture,
 
