@@ -228,11 +228,11 @@ Game.graphics = (function() {
    *   y    : #px         // the y location
    * }
    */
-  function write(spec) {
-    context.font = spec.font;
-    context.fillStyle = spec.color;
-    context.fillText(spec.text, spec.x, spec.y);
-  }
+  // function write(spec) {
+  // context.font = spec.font;
+  // context.fillStyle = spec.color;
+  // context.fillText(spec.text, spec.x, spec.y);
+  // }
 
   /**
    * write text given the lower right coordinate
@@ -274,70 +274,6 @@ Game.graphics = (function() {
     context.fillText(spec.text, spec.x-width/2, spec.y+height);
   }
 
-
-  //------------------------------------------------------------------
-  //
-  // This is used to create a texture object that can be used by client
-  // code for rendering.
-  //
-  //------------------------------------------------------------------
-  function Texture(spec) {
-    let that = {},
-      ready = false,
-
-      image = spec.image;
-
-    that.updateRotation = function(angle) {
-      spec.rotation += angle;
-    };
-
-    that.rotateRight = function(elapsedTime) {
-      spec.rotation += spec.rotateRate * (elapsedTime / 1000);
-    };
-
-    that.rotateLeft = function(elapsedTime) {
-      spec.rotation -= spec.rotateRate * (elapsedTime / 1000);
-    };
-
-    that.moveLeft = function(elapsedTime) {
-      spec.center.x -= spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveRight = function(elapsedTime) {
-      spec.center.x += spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveUp = function(elapsedTime) {
-      spec.center.y -= spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveDown = function(elapsedTime) {
-      spec.center.y += spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveTo = function(center) {
-      spec.center = center;
-    };
-
-    that.draw = function() {
-      context.save();
-
-      context.translate(spec.center.x, spec.center.y);
-      context.rotate(spec.rotation);
-      context.translate(-spec.center.x, -spec.center.y);
-
-      context.drawImage(
-        image,
-        spec.center.x - spec.width/2,
-        spec.center.y - spec.height/2,
-        spec.width, spec.height);
-
-      context.restore();
-    };
-
-    return that;
-  }
- 
   //------------------------------------------------------------------
   //
   // Renders text based on provided spec
@@ -476,7 +412,6 @@ Game.graphics = (function() {
     drawImageSpriteSheet,
     drawCircle,
     drawHealth,
-    Texture,
     toggleFullScreen,
     drawText,
     measureTextHeight,
