@@ -22,9 +22,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     networkQueue = Queue.create();
 
   let mouseCapture = false,
-    //myMouse = input.Mouse(),
+    myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
-    myTexture = null,
     cancelNextRequest = false;
 
   let background = null;
@@ -316,6 +315,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     background.setViewport(0.00, 0.00);
 
+    /*
     myTexture = graphics.Texture( {
       image : assets['player-self'],
       center : { x : 100, y : 100 },
@@ -324,16 +324,17 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       moveRate : 200,       // pixels per second
       rotateRate : 3.14159  // Radians per second
     });
+    */
 
     myKeyboard.registerHandler(elapsedTime => {
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE
+        type: NetworkIds.INPUT_MOVE_UP
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.move(elapsedTime);
+      playerSelf.model.moveUp(elapsedTime);
     },
     input.KeyEvent.DOM_VK_W, true);
 
@@ -341,11 +342,23 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_ROTATE_RIGHT
+        type: NetworkIds.INPUT_MOVE_DOWN
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.rotateRight(elapsedTime);
+      playerSelf.model.moveDown(elapsedTime);
+    },
+    input.KeyEvent.DOM_VK_S, true);
+
+    myKeyboard.registerHandler(elapsedTime => {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_MOVE_RIGHT
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
+      playerSelf.model.moveRight(elapsedTime);
     },
     input.KeyEvent.DOM_VK_D, true);
 
@@ -353,11 +366,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_ROTATE_LEFT
+        type: NetworkIds.INPUT_MOVE_LEFT
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.rotateLeft(elapsedTime);
+      playerSelf.model.moveLeft(elapsedTime);
     },
     input.KeyEvent.DOM_VK_A, true);
 
@@ -370,26 +383,19 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       socket.emit(NetworkIds.INPUT, message);
     },
     input.KeyEvent.DOM_VK_SPACE, false);
-    //
-    // Create an ability to move the logo using the mouse
-    //
-    /*
-    myMouse = input.Mouse();
+
     myMouse.registerCommand('mousedown', function(e) {
       mouseCapture = true;
-      myTexture.moveTo({x : e.clientX, y : e.clientY});
     });
 
-    myMouse.registerCommand('mouseup', function() {
+    myMouse.registerCommand('mouseup', function(e) {
       mouseCapture = false;
     });
 
     myMouse.registerCommand('mousemove', function(e) {
-      if (mouseCapture) {
-        myTexture.moveTo({x : e.clientX, y : e.clientY});
-      }
+      // if (mouseCapture) { }
+      playerSelf.model.target = {x : e.clientX, y : e.clientY};
     });
-      */
   }
 
   //------------------------------------------------------------------
@@ -399,6 +405,20 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function update(elapsedTime) {
     playerSelf.model.update(elapsedTime);
+
+    // rotates the player if needed and updates server
+    if (playerSelf.model.rotate()) {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_ROTATE,
+        data: { direction : playerSelf.model.direction }
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
+    }
+
+    // update all other players
     for (let id in playerOthers) {
       playerOthers[id].model.update(elapsedTime);
     }
@@ -420,7 +440,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       }
     }
     myKeyboard.update(elapsedTime);
-    //myMouse.update(elapsedTime);
+    myMouse.update(elapsedTime);
   }
 
   //------------------------------------------------------------------
