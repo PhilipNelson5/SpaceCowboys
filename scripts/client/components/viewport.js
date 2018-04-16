@@ -11,7 +11,7 @@ Game.components.Viewport = function(spec) {
     get top() { return spec.top; },
     get width() { return 1; },
     get heigth() { return 1; },
-    get buffer() { return spec.buffer}
+    get buffer() { return spec.buffer }
   };
 
   Object.defineProperty(that, 'right', {

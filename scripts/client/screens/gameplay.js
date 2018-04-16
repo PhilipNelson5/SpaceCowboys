@@ -28,6 +28,27 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
   let background = null;
 
+  let world = {
+    get left() { return 0; },
+    get top() { return 0; },
+    get width() { return 4.375; },
+    get height() { return 2.5; },
+    get bufferSize() { return 0.25 }
+  };
+
+  let worldBuffer = {
+    get left() { return world.left + world.bufferSize; },
+    get top() { return world.top + world.bufferSize; },
+    get right() { return world.width - world.bufferSize; },
+    get bottom() { return world.height - world.bufferSize; }
+  };
+
+  Object.defineProperty(world, 'buffer', {
+    get: function() { return worldBuffer },
+    enumerable: true,
+    configurable: false
+  });
+
   socket.on(NetworkIds.CONNECT_OTHER, data => {
     networkQueue.enqueue({
       type: NetworkIds.CONNECT_OTHER,
@@ -305,15 +326,15 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     graphics.initialize();
 
+    graphics.viewport.set(0, 0, 0.25);
+
     var backgroundKey = 'background';
     background = components.Tiled( {
       pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
-      size: { width: 4.375, height: 2.5 },
+      size: { width: world.width, height: world.height },
       tileSize: assets[backgroundKey].tileSize,
       assetKey: backgroundKey
     });
-
-    background.setViewport(0.00, 0.00);
 
     /*
     myTexture = graphics.Texture( {
@@ -441,6 +462,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
     myKeyboard.update(elapsedTime);
     myMouse.update(elapsedTime);
+
+    // TODO: go here
+    graphics.viewport.update(playerSelf.model);
   }
 
   //------------------------------------------------------------------
@@ -451,7 +475,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function render() {
     graphics.clear();
 
-    graphics.Tiled.render(background);
+    graphics.Tiled.render(background, graphics.viewport);
     
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
@@ -466,6 +490,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
+
   }
 
   //------------------------------------------------------------------

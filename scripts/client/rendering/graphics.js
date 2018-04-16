@@ -8,11 +8,19 @@ Game.graphics = (function() {
 
   let canvas = null;
   let context = null;
+
   let world = {
     size : 0,
     top : 0,
     left : 0
   };
+
+  let viewport = Game.components.Viewport({
+    left: 0,
+    top: 0,
+    buffer: 0.25 // questions
+  });
+
   var resizeHandlers = [];
 
   function initialize() {
@@ -147,9 +155,9 @@ Game.graphics = (function() {
   //
   //------------------------------------------------------------------
   function rotateCanvas(center, rotation) {
-    context.translate(center.x * world.size + world.left, center.y * world.size + world.top);
+    context.translate((center.x - viewport.left) * world.size + world.left, (center.y - viewport.top) * world.size + world.top);
     context.rotate(rotation);
-    context.translate(-(center.x * world.size + world.left), -(center.y * world.size + world.top));
+    context.translate(-((center.x - viewport.left) * world.size + world.left), -((center.y - viewport.top) * world.size + world.top));
   }
 
   //------------------------------------------------------------------
@@ -393,9 +401,10 @@ Game.graphics = (function() {
       sx, sy,
       sWidth, sHeight,
       dx, dy,
-      dWidth, dHeight;
+      dWidth, dHeight,
+      useViewport;
 
-    if (arguments.length === 3) {
+    if (arguments.length === 3 || arguments.length === 4) {
       let center = arguments[1];
       let size = arguments[2];
       sx = 0;
@@ -406,7 +415,8 @@ Game.graphics = (function() {
       dy = (center.y - size.height / 2);
       dWidth = size.width;
       dHeight = size.height;
-    } else if (arguments.length === 5) {
+      useViewport = arguments[3];
+    } else if (arguments.length === 5 || arguments.length === 6) {
       sx = 0;
       sy = 0;
       sWidth = image.width;
@@ -415,7 +425,8 @@ Game.graphics = (function() {
       dy = arguments[2];
       dWidth = arguments[3];
       dHeight = arguments[4];
-    } else if (arguments.length === 9) {
+      useViewport = arguments[5];
+    } else if (arguments.length === 9 || arguments.length === 10) {
       sx = arguments[1];
       sy = arguments[2];
       sWidth = arguments[3];
@@ -424,6 +435,12 @@ Game.graphics = (function() {
       dy = arguments[6];
       dWidth = arguments[7];
       dHeight = arguments[8];
+      useViewport = arguments[9];
+    }
+
+    if (useViewport) {
+      dx -= viewport.left;
+      dy -= viewport.right;
     }
 
     context.drawImage(
@@ -468,6 +485,7 @@ Game.graphics = (function() {
     notifyResize,
     writeLowerRight,
     writeCenter,
+    get viewport() { return viewport; }    
 
   };
 }());

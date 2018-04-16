@@ -29,11 +29,11 @@ Game.graphics.Tiled = ( function(graphics) {
   // Renders a Tiled model
   //
   //------------------------------------------------------------
-  that.render = function(image) {
+  that.render = function(image, viewport) {
     var tiledSizeWorldCoords = image.size.width * (image.tileSize / image.pixel.width);
     var oneOverTileSizeWorld = 1 / tiledSizeWorldCoords;
-    var imageWorldXPos = image.viewport.left;
-    var imageWorldYPos = image.viewport.top;
+    var imageWorldXPos = viewport.left;
+    var imageWorldYPos = viewport.top;
     var worldXRemain = 1.0;
     var worldYRemain = 1.0;
     var renderPosX = 0.0;
@@ -102,7 +102,7 @@ Game.graphics.Tiled = ( function(graphics) {
         renderPosY += tileRenderWorldHeight;
         worldYRemain -= tileRenderWorldHeight;
 
-        imageWorldXPos = image.viewport.left;
+        imageWorldXPos = viewport.left;
         renderPosX = 0.0;
         worldXRemain = 1.0;
       }

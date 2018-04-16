@@ -41,12 +41,12 @@ Game.loader = (function() {
         message: 'Input\t\t\tloaded',
         onComplete: null
       }, {
-        scripts: ['rendering/graphics'],
-        message: 'Renderer\t\tloaded',
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/tiled', 'components/viewport'],
+        message: 'Player models\tloaded',
         onComplete: null
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/tiled'],
-        message: 'Player models\tloaded',
+        scripts: ['rendering/graphics'],
+        message: 'Renderer\t\tloaded',
         onComplete: null
       }, {
         scripts: [
@@ -67,7 +67,7 @@ Game.loader = (function() {
         message: 'Game model\t\tloaded',
         onComplete: null,
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/viewport'],
         message: 'Player models\tloaded',
         onComplete: null
       }, {
