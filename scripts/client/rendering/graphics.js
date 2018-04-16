@@ -160,9 +160,9 @@ Game.graphics = (function() {
   function drawImageSpriteSheet(spriteSheet, spriteSize, sprite, center, size) {
     drawImage(
       spriteSheet,
-      sprite * spriteSize.width, // which sprite
+      sprite * spriteSize.width,            // which sprite
       0,
-      spriteSize.width,
+      spriteSize.width,                     // size in the spritesheet
       spriteSize.height,
       center.x - size.width / 2,
       center.y - size.height / 2,
@@ -189,6 +189,83 @@ Game.graphics = (function() {
     context.fillStyle = color;
     context.fill();
   }
+
+  function drawHealth(x, y, health, max) {
+    let percent = health/max;
+
+    context.fillStyle = 'red';
+    context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*8/10, 25);
+
+    if (health > 0) {
+      context.fillStyle = 'green';
+      context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*percent*8/10, 25);
+    } else { health = 0; }
+
+    writeCenter({
+      color: 'black',
+      font : '23px sans serif', // the font size and font name
+      text : health + ' / ' + max,     // the text to be written
+      x    : .5,        // the x location
+      y    : 9/10       // the y location
+    });
+  }
+
+  /**
+   * write text given the top right coordinate
+   * spec {
+   *   color: color
+   *   font : '#px serif' // the font size and font name
+   *   text : 'text'      // the text to be written
+   *   x    : #px         // the x location
+   *   y    : #px         // the y location
+   * }
+   */
+  function write(spec) {
+    context.font = spec.font;
+    context.fillStyle = spec.color;
+    context.fillText(spec.text, spec.x, spec.y);
+  }
+
+  /**
+   * write text given the lower right coordinate
+   * spec {
+   *   color: color
+   *   font : '#px serif'   // the font size and font name
+   *   text : 'text'        // the text to be written
+   *   x    :  percent of x // the x location
+   *   y    :  percent in y // the y location
+   * }
+   */
+  function writeLowerRight(spec) {
+    context.font = spec.font;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let width = context.measureText(spec.text).width;
+    let height = context.measureText('M').width;
+    context.fillStyle = spec.fillStyle;
+    context.fillText(spec.text, spec.x-width, spec.y-height);
+  }
+
+  /**
+   * write text given the lower right coordinate
+   * spec {
+   *   color: color
+   *   font : 'px serif'    // the font size and font name
+   *   text : 'text'        // the text to be written
+   *   x    :  percent of x // the x location
+   *   y    :  percent in y // the y location
+   * }
+   */
+  function writeCenter(spec) {
+    context.font = spec.font;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let width = context.measureText(spec.text).width;
+    let height = context.measureText('M').width;
+    context.fillStyle = spec.color;
+    context.fillText(spec.text, spec.x-width/2, spec.y+height);
+  }
+
 
   //------------------------------------------------------------------
   //
@@ -381,6 +458,7 @@ Game.graphics = (function() {
     drawImage,
     drawImageSpriteSheet,
     drawCircle,
+    drawHealth,
     Texture,
     toggleFullScreen,
     drawText,
@@ -388,6 +466,8 @@ Game.graphics = (function() {
     measureTextWidth,
     clientToWorld,
     notifyResize,
+    writeLowerRight,
+    writeCenter,
 
   };
 }());
