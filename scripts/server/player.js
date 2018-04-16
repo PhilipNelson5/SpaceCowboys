@@ -49,10 +49,6 @@ function createPlayer() {
     get: () => speed
   });
 
-  Object.defineProperty(that, 'rotateRate', {
-    get: () => rotateRate
-  });
-
   Object.defineProperty(that, 'health', {
     get: () => health,
     set: value => health = value
@@ -70,39 +66,32 @@ function createPlayer() {
 
   //------------------------------------------------------------------
   //
-  // Moves the player forward based on how long it has been since the
-  // last move took place.
+  // Public functions that move the player in the specified direction.
   //
   //------------------------------------------------------------------
-  that.move = function(elapsedTime) {
+  that.moveUp = function(elapsedTime) {
     reportUpdate = true;
-    let vectorX = Math.cos(direction);
-    let vectorY = Math.sin(direction);
-
-    position.x += (vectorX * elapsedTime * speed);
-    position.y += (vectorY * elapsedTime * speed);
+    position.y -= elapsedTime * speed;
   };
 
-  //------------------------------------------------------------------
-  //
-  // Rotates the player right based on how long it has been since the
-  // last rotate took place.
-  //
-  //------------------------------------------------------------------
-  that.rotateRight = function(elapsedTime) {
+  that.moveDown = function(elapsedTime) {
     reportUpdate = true;
-    direction += (rotateRate * elapsedTime);
+    position.y += elapsedTime * speed;
   };
 
-  //------------------------------------------------------------------
-  //
-  // Rotates the player left based on how long it has been since the
-  // last rotate took place.
-  //
-  //------------------------------------------------------------------
-  that.rotateLeft = function(elapsedTime) {
+  that.moveLeft = function(elapsedTime) {
     reportUpdate = true;
-    direction -= (rotateRate * elapsedTime);
+    position.x -= elapsedTime * speed;
+  };
+
+  that.moveRight = function(elapsedTime) {
+    reportUpdate = true;
+    position.x += elapsedTime * speed;
+  };
+
+  that.rotate = function(message) {
+    reportUpdate = true;
+    direction = message.data.direction;
   };
 
   //------------------------------------------------------------------
