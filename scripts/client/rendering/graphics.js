@@ -3,7 +3,7 @@
 // This is the graphics rendering code for the game.
 //
 // ------------------------------------------------------------------
-Game.graphics = (function() {
+Game.graphics = (function(assets) {
   'use strict';
 
   let canvas;
@@ -123,7 +123,82 @@ Game.graphics = (function() {
     context.fill();
   }
 
-  function drawHealth(x, y, health, max) {
+  //------------------------------------------------------------------
+  //
+  // Draw the clip for field of view
+  //
+  //------------------------------------------------------------------
+  function beginClip(angle,distance) {
+    context.save();
+
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(angle);
+
+    context.beginPath();
+    context.arc(0, 0, 25, 2*Math.PI, 0, false);
+    context.closePath();
+    context.strokeStyle='#0000FF';
+    context.lineWidth=10;
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(300, -canvas.height/2 );
+    context.arc(0, 0, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
+    context.lineTo(-300, -canvas.height/2);
+
+    context.strokeStyle='#FFFF00';
+    context.lineWidth=10;
+    context.stroke();
+    context.clip();
+    context.rotate(-angle);
+    context.translate(-canvas.width/2,-canvas.height/2);
+  }
+  
+  function endClip(angle) {
+    context.restore();
+  }
+  //------------------------------------------------------------------
+  //
+  // Draw the fog with a triangular field view cut out
+  //
+  //------------------------------------------------------------------
+  function drawFog(angle, distance) {
+    context.save();
+
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(angle);
+
+    //Path function, creates a polygon that the image will fill
+    context.beginPath();
+    context.moveTo(-canvas.width,-canvas.height);
+    context.lineTo(-300, -canvas.height/2);
+    context.arc(0, 0, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
+    context.lineTo(300, -canvas.height/2);
+    context.lineTo(canvas.width, -canvas.height );
+    context.lineTo(canvas.width, canvas.height );
+    context.lineTo(-canvas.width, canvas.height );
+    context.lineTo(-canvas.width,-canvas.height );
+    context.closePath();
+
+    //Debug to view fog draw
+    context.strokeStyle='#FF0000';
+    context.lineWidth=10;
+    context.stroke();
+
+    //create clip and draw picture inside of it
+    context.clip();
+    context.globalAlpha = 0.8;
+    context.drawImage(assets['clouds-light'],
+      -canvas.width/Math.sqrt(2),
+      -canvas.height/Math.sqrt(2),
+      canvas.width*Math.sqrt(2),
+      canvas.height*Math.sqrt(2));
+    context.rotate(-angle);
+    context.translate(-canvas.width/2,-canvas.height/2);
+    context.restore();
+  }
+
+  function drawHealth(health, max) {
     let percent = health/max;
 
     context.fillStyle = 'red';
@@ -208,9 +283,13 @@ Game.graphics = (function() {
     drawImage,
     drawImageSpriteSheet,
     drawCircle,
+    beginClip,
+    endClip,
+    drawFog,
     drawHealth,
     writeLowerRight,
     writeCenter,
 
+
   };
-}());
+}(Game.assets));

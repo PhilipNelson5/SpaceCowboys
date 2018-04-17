@@ -18,9 +18,6 @@ Game.graphics.Player = (function(graphics) {
     graphics.drawImage(texture, model.position, model.size);
     graphics.restoreContext();
 
-    //TODO 100 is the max health
-    //TODO maybe move this to the main update function
-    graphics.drawHealth(model.position.x, model.position.y, model.health, 100);
   };
 
   return that;

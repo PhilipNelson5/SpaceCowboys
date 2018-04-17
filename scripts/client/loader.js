@@ -85,6 +85,12 @@ Game.loader = (function() {
     }, {
       key: 'explosion',
       source: 'assets/explosion.png'
+    }, {
+      key: 'clouds-light',
+      source: 'assets/clouds_light.png'
+    }, {
+      key: 'clouds-dark',
+      source: 'assets/clouds_dark.png'
     }]; // end assetOrder
 
   //------------------------------------------------------------------
