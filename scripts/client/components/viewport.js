@@ -10,8 +10,8 @@ Game.components.Viewport = function(spec) {
     get left() { return spec.left; },
     get top() { return spec.top; },
     get width() { return 1; },
-    get heigth() { return 1; },
-    get buffer() { return spec.buffer }
+    get height() { return 1; },
+    get buffer() { return spec.buffer; }
   };
 
   Object.defineProperty(that, 'right', {
@@ -34,7 +34,7 @@ Game.components.Viewport = function(spec) {
   // the viewport is updated to ensure that the model is visible
   //
   //------------------------------------------------------------
-  that.update = function(model) {
+  that.update = function(model) { 
     // compute how close model is to visible edge in screen-space
     var diffRight = that.right - model.position.x;
     var diffLeft = Math.abs(spec.left - model.position.x);

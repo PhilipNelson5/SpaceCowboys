@@ -174,9 +174,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function updatePlayerSelf(data) {
-    //TODO
-    if (data.vector != null) background.move(data.vector);
-
     playerSelf.model.position.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
     playerSelf.model.direction = data.direction;
@@ -476,7 +473,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     graphics.clear();
 
     graphics.Tiled.render(background, graphics.viewport);
-    
+
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];

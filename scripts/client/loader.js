@@ -41,12 +41,20 @@ Game.loader = (function() {
         message: 'Input\t\t\tloaded',
         onComplete: null
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/tiled', 'components/viewport'],
+        scripts: ['components/viewport', 'components/tiled'],
+        message: 'World\tComponents\tlaoded',
+        onComplete: null
+      }, {
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
         message: 'Player models\tloaded',
         onComplete: null
       }, {
         scripts: ['rendering/graphics'],
         message: 'Renderer\t\tloaded',
+        onComplete: null
+      }, {
+        scripts: ['rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
+        message: 'Graphics\t\tloaded',
         onComplete: null
       }, {
         scripts: [
@@ -66,14 +74,6 @@ Game.loader = (function() {
         scripts: ['main'],
         message: 'Game model\t\tloaded',
         onComplete: null,
-      }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/viewport'],
-        message: 'Player models\tloaded',
-        onComplete: null
-      }, {
-        scripts: ['rendering/graphics', 'rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
-        message: 'Graphics\t\tloaded',
-        onComplete: null
       }], // end scriptOrder
 
     assetOrder = [{
