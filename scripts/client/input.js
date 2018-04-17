@@ -6,34 +6,130 @@
 Game.input.Mouse = function() {
   'use strict';
   let that = {
-    mouseMove : [],
-    handlersMove : []
+    mouseDown    : [],
+    mouseUp      : [],
+    mouseMove    : [],
+    handlersDown : [],
+    handlersUp   : [],
+    handlersMove : [],
+    isDown       : false,
+    isDownRepeat : false,
   };
+
+  function mouseDown(e) {
+    that.mouseDown.push(e);
+    that.isDown = true;
+  }
+
+  function mouseUp(e) {
+    that.mouseUp.push(e);
+  }
 
   function mouseMove(e) {
     that.mouseMove.push(e);
+    that.isDown = false;
+    that.isDownRepeat = false;
   }
 
   that.update = function(elapsedTime) {
     let event,
-      handler;
+      handler,
+      e,
+      h;
 
-    for (event = 0; event < that.mouseMove.length; ++event) {
-      for (handler = 0; handler < that.handlersMove.length; ++handler) {
-        that.handlersMove[handler](that.mouseMove[event], elapsedTime);
+    //
+    // Process the mouse events for each of the different kinds of handlers
+    for (event = 0; event < that.mouseDown.length; ++event) {
+      e = that.mouseDown[event];
+      for (handler = 0; handler < that.handlersDown.length; ++handler) {
+        h = that.handlersDown[handler];
+        h.elapsedTime += elapsedTime;
+        if (h.repeat && h.elapsedTime >= h.rate) {
+          h.handler(e, elapsedTime);
+          that.isDownRepeat = true;
+          h.elapsedTime -= h.rate; // keep overflow time
+        } else if (!h.repeat && !that.isDownRepeat) {
+          h.handler(e, elapsedTime);
+          that.isDownRepeat = true;
+        }
       }
     }
 
+    for (event = 0; event < that.mouseUp.length; ++event) {
+      e = that.mouseUp[event];
+      for (handler = 0; handler < that.handlersUp.length; ++handler) {
+        h = that.handlersUp[handler];
+        h.elapsedTime += elapsedTime;
+        if (h.repeat && h.elapsedTime >= h.rate) {
+          h.handler(e, elapsedTime);
+          that.isDownRepeat = true;
+          h.elapsedTime -= h.rate; // keep overflow time
+        } else if (!h.repeat && !that.isDownRepeat) {
+          h.handler(e, elapsedTime);
+          that.isDownRepeat = true;
+        }
+      }
+    }
+
+    for (event = 0; event < that.mouseMove.length; ++event) {
+      e = that.mouseMove[event];
+      for (handler = 0; handler < that.handlersMove.length; ++handler) {
+        h = that.handlersMove[handler];
+        h.elapsedTime += elapsedTime;
+        if (h.repeat && h.elapsedTime >= h.rate) {
+          h.handler(e, elapsedTime);
+          that.isDownRepeat = true;
+          h.elapsedTime -= h.rate; // keep overflow time
+        } else if (!h.repeat && !that.isDownRepeat) {
+          h.handler(e, elapsedTime);
+          that.isDownRepeat = true;
+        }
+      }
+    }
+
+    that.mouseDown.length = 0;
+    that.mouseUp.length = 0;
     that.mouseMove.length = 0;
 
   };
 
-  that.registerCommand = function(type, handler) {
-    if (type === 'mousemove') {
-      that.handlersMove.push(handler);
+  that.registerCommand = function(type, handler, repeat, rate) {
+    //
+    // If no repeat rate was passed in, use a value of 0 so that no delay between
+    // repeated keydown events occurs.
+    if (rate === undefined) {
+      rate = 0;
+    }
+
+    if (type === 'mousedown') {
+      that.handlersDown.push({
+        elapsedTime : rate,
+        handler     : handler,
+        rate        : rate,
+        repeat      : repeat,
+      });
+    }
+    else if (type === 'mousemove') {
+      that.handlersMove.push({
+        elapsedTime : rate,
+        handler     : handler,
+        rate        : rate,
+        repeat      : repeat,
+      });
+    }
+    else if (type === 'mouseup') {
+      that.handlersUp.push({
+        elapsedTime : rate,
+        handler     : handler,
+        rate        : rate,
+        repeat      : repeat,
+      });
     }
   };
 
+  // window.addEventListener('mousemove', mouseMove.bind(that));
+  window.addEventListener('mousedown', mouseDown.bind(that));
+  window.addEventListener('mouseup', mouseUp.bind(that));
   window.addEventListener('mousemove', mouseMove.bind(that));
 
   return that;
@@ -74,7 +170,7 @@ Game.input.Keyboard = function() {
       key: key,
       repeat: repeat,
       rate: rate,
-      elapsedTime: rate,	// Initialize an initial elapsed time so the very first keypress will be valid
+      elapsedTime: rate,  // Initialize elapsed time so first keypress is valid
       handler: handler
     });
 

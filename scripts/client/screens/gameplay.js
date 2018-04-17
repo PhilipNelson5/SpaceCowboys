@@ -21,8 +21,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     explosions = {},
     networkQueue = Queue.create();
 
-  let mouseCapture = false,
-    myMouse = input.Mouse(),
+  // let mouseCapture = false,
+  let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
     cancelNextRequest = false;
 
@@ -358,13 +358,20 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     },
     input.KeyEvent.DOM_VK_SPACE, false);
 
-    myMouse.registerCommand('mousedown', function(e) {
-      mouseCapture = true;
-    });
+    myMouse.registerCommand('mousedown', function(e, elapsedTime) {
+      // mouseCapture = true;
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_FIRE
+      };
+      socket.emit(NetworkIds.INPUT, message);
 
-    myMouse.registerCommand('mouseup', function(e) {
-      mouseCapture = false;
-    });
+    }, true);
+
+    // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
+    // mouseCapture = false;
+    // });
 
     myMouse.registerCommand('mousemove', function(e) {
       // if (mouseCapture) { }
