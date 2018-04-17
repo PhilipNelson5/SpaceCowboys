@@ -340,6 +340,7 @@ Game.graphics = (function() {
       dWidth, dHeight,
       useViewport;
 
+    // image texture, position, size
     if (arguments.length === 3 || arguments.length === 4) {
       let center = arguments[1];
       let size = arguments[2];
@@ -347,12 +348,14 @@ Game.graphics = (function() {
       sy = 0;
       sWidth = image.width;
       sHeight = image.height;
-      dx = (center.x - size.width / 2);
-      dy = (center.y - size.height / 2);
+      dx = center.x - (size.width / 2);
+      dy = center.y - (size.height / 2);
       dWidth = size.width;
       dHeight = size.height;
       useViewport = arguments[3];
-    } else if (arguments.length === 5 || arguments.length === 6) {
+    }
+    // image texture, x, y, width, height
+    else if (arguments.length === 5 || arguments.length === 6) {
       sx = 0;
       sy = 0;
       sWidth = image.width;
@@ -362,7 +365,11 @@ Game.graphics = (function() {
       dWidth = arguments[3];
       dHeight = arguments[4];
       useViewport = arguments[5];
-    } else if (arguments.length === 9 || arguments.length === 10) {
+    }
+    // for animated sprites
+    // image texture, x-clip, y-clip, width-clip, height-clip, 
+    //                x, y, width, height
+    else if (arguments.length === 9 || arguments.length === 10) {
       sx = arguments[1];
       sy = arguments[2];
       sWidth = arguments[3];
@@ -374,9 +381,10 @@ Game.graphics = (function() {
       useViewport = arguments[9];
     }
 
+    // when using the viewport
     if (useViewport) {
       dx -= viewport.left;
-      dy -= viewport.right;
+      dy -= viewport.top;
     }
 
     context.drawImage(

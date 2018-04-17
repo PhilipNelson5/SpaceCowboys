@@ -17,8 +17,8 @@ function createPlayer() {
   let that = {};
 
   let position = {
-    x: random.nextDouble(),
-    y: random.nextDouble()
+    x: 0.5,
+    y: 0.5
   };
 
   let size = {
