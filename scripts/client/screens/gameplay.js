@@ -422,11 +422,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   // Render the current state of the game simulation
   //
   //------------------------------------------------------------------
-  let angle = 0;
   function render() {
 
     graphics.clear();
-    graphics.beginClip(angle, 50);
+    graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
@@ -444,11 +443,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     //draw Buildings AFTER clip or else they be underneath it
 
-    graphics.drawFog(angle);
+    graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
     //TODO 100 is the max health
     graphics.drawHealth(playerSelf.model.health, 100);
-    angle+=.02;
     
   }
 
