@@ -388,6 +388,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.update(elapsedTime);
 
     // rotates the player if needed and updates server
+    // this is an attempt to reduce load on the server
+    // by only sending one rotational update per frame
     if (playerSelf.model.rotate()) {
       let message = {
         id: messageId++,
@@ -454,7 +456,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     //TODO 100 is the max health
     graphics.drawHealth(playerSelf.model.health, 100);
-    
+
   }
 
   //------------------------------------------------------------------
