@@ -393,10 +393,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   // Render the current state of the game simulation
   //
   //------------------------------------------------------------------
+  let angle = 0;
   function render() {
 
     graphics.clear();
-    graphics.beginClip(90, 50);
+    graphics.beginClip(angle, 50);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
@@ -414,7 +415,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     //draw Buildings AFTER clip or else they be underneath it
 
-    graphics.drawFog(90);
+    graphics.drawFog(angle);
+    angle+=.02;
     
   }
 

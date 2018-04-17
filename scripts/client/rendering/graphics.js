@@ -131,21 +131,31 @@ Game.graphics = (function(assets) {
   //------------------------------------------------------------------
   function beginClip(angle,distance) {
     context.save();
-    context.beginPath();
-    context.moveTo(canvas.width/2+300, 0 );
-    //context.lineTo(canvas.width/2+80, canvas.height/2-80);
-    context.arc(.5 * canvas.width, .5 * canvas.width, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
 
-    //context.lineTo(canvas.width/2-80, canvas.height/2-80);
-    context.lineTo(canvas.width/2-300, 0);
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(angle);
+
+    context.beginPath();
+    context.arc(0, 0, 25, 2*Math.PI, 0, false);
+    context.closePath();
+    context.strokeStyle='#0000FF';
+    context.lineWidth=10;
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(300, -canvas.height/2 );
+    context.arc(0, 0, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
+    context.lineTo(-300, -canvas.height/2);
 
     context.strokeStyle='#FFFF00';
     context.lineWidth=10;
     context.stroke();
     context.clip();
+    context.rotate(-angle);
+    context.translate(-canvas.width/2,-canvas.height/2);
   }
   
-  function endClip() {
+  function endClip(angle) {
     context.restore();
   }
   //------------------------------------------------------------------
@@ -153,49 +163,39 @@ Game.graphics = (function(assets) {
   // Draw the fog with a triangular field view cut out
   //
   //------------------------------------------------------------------
-  function drawFog(angle) {
+  function drawFog(angle, distance) {
     context.save();
-    /*
+
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(angle);
+
+    //Path function, creates a polygon that the image will fill
     context.beginPath();
-    context.moveTo(0,0);
-    context.lineTo(canvas.width, 0 );
-    context.lineTo(canvas.width/2-50, 0 );
-    context.lineTo(canvas.width/2, canvas.height/2);
-    context.lineTo(canvas.width/2+50, 0);
-    context.lineTo(canvas.width, 0 );
+    context.moveTo(-canvas.width,-canvas.height);
+    context.lineTo(-300, -canvas.height/2);
+    context.arc(0, 0, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
+    context.lineTo(300, -canvas.height/2);
+    context.lineTo(canvas.width, -canvas.height );
     context.lineTo(canvas.width, canvas.height );
-    context.lineTo(0, canvas.height );
-    context.lineTo(0, 0);
+    context.lineTo(-canvas.width, canvas.height );
+    context.lineTo(-canvas.width,-canvas.height );
     context.closePath();
-    */
-    context.beginPath();
-    context.moveTo(0,0);
-    //context.lineTo(canvas.width, 0 );
-    context.lineTo(canvas.width/2-300, 0 );
 
-    //context.lineTo(canvas.width/2-(50*Math.cos(Math.pi/4)), canvas.height/2-(50*Math.sin(Math.pi/4)));
-
-    //context.lineTo(canvas.width/2, canvas.height/2);
-    context.arc(canvas.width/2, canvas.width/2, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
-    //context.lineTo(canvas.width/2+(50*Math.cos(Math.pi/4)), canvas.height/2-(50*Math.sin(Math.pi/4)));
-
-    context.lineTo(canvas.width/2+300, 0);
-    context.lineTo(canvas.width, 0 );
-    context.lineTo(canvas.width, canvas.height );
-    context.lineTo(0, canvas.height );
-    context.lineTo(0, 0);
-    context.closePath();
+    //Debug to view fog draw
     context.strokeStyle='#FF0000';
     context.lineWidth=10;
     context.stroke();
 
+    //create clip and draw picture inside of it
     context.clip();
     context.globalAlpha = 0.8;
     context.drawImage(assets['clouds-light'],
-      0,
-      0,
-      canvas.width,
-      canvas.height);
+      -canvas.width/Math.sqrt(2),
+      -canvas.height/Math.sqrt(2),
+      canvas.width*Math.sqrt(2),
+      canvas.height*Math.sqrt(2));
+    context.rotate(-angle);
+    context.translate(-canvas.width/2,-canvas.height/2);
     context.restore();
   }
 
