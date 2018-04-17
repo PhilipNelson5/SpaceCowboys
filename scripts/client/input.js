@@ -1,5 +1,45 @@
 // ------------------------------------------------------------------
 //
+// Mouse input handling support
+//
+// ------------------------------------------------------------------
+Game.input.Mouse = function() {
+  'use strict';
+  let that = {
+    mouseMove : [],
+    handlersMove : []
+  };
+
+  function mouseMove(e) {
+    that.mouseMove.push(e);
+  }
+
+  that.update = function(elapsedTime) {
+    let event,
+      handler;
+
+    for (event = 0; event < that.mouseMove.length; ++event) {
+      for (handler = 0; handler < that.handlersMove.length; ++handler) {
+        that.handlersMove[handler](that.mouseMove[event], elapsedTime);
+      }
+    }
+
+    that.mouseMove.length = 0;
+
+  };
+
+  that.registerCommand = function(type, handler) {
+    if (type === 'mousemove') {
+      that.handlersMove.push(handler);
+    }
+  };
+
+  window.addEventListener('mousemove', mouseMove.bind(that));
+
+  return that;
+};
+// ------------------------------------------------------------------
+//
 // Keyboard input handling support
 //
 // ------------------------------------------------------------------
@@ -126,7 +166,7 @@ Game.input.Keyboard = function() {
   // This is how we receive notification of keyboard events.
   window.addEventListener('keydown', keyDown);
   window.addEventListener('keyup', keyRelease);
-  
+
   return that;
 };
 

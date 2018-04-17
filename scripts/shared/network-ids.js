@@ -16,16 +16,20 @@
       value: 'input',
       writable: false
     },
-    'INPUT_MOVE': {
-      value: 'move',
+    'INPUT_MOVE_UP': {
+      value: 'move-up',
       writable: false
     },
-    'INPUT_ROTATE_LEFT': {
-      value: 'rotate-left',
+    'INPUT_MOVE_DOWN': {
+      value: 'move-down',
       writable: false
     },
-    'INPUT_ROTATE_RIGHT': {
-      value: 'rotate-right',
+    'INPUT_MOVE_RIGHT': {
+      value: 'move-right',
+      writable: false
+    },
+    'INPUT_MOVE_LEFT': {
+      value: 'move-left',
       writable: false
     },
     'INPUT_FIRE': {
@@ -134,6 +138,10 @@
     },
     'LONG_CHAT_MESSAGE': {
       value: 'long_chat_message',
+      writable: false
+    },
+    'MISSILE_HIT_YOU': {
+      value: 'missile_hit_you',
       writable: false
     }
 

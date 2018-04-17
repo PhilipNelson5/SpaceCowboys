@@ -103,7 +103,7 @@ Game.graphics = (function(assets) {
     };
 
     context.drawImage(spriteSheet,
-      sprite * spriteSize.width, 0,                 // which sprite to render
+      sprite * spriteSize.width, 0,           // which sprite to render
       spriteSize.width, spriteSize.height,    // size in the spritesheet
       localCenter.x - localSize.width / 2,
       localCenter.y - localSize.height / 2,
@@ -122,7 +122,6 @@ Game.graphics = (function(assets) {
     context.fillStyle = color;
     context.fill();
   }
-
 
   //------------------------------------------------------------------
   //
@@ -199,67 +198,80 @@ Game.graphics = (function(assets) {
     context.restore();
   }
 
-  //------------------------------------------------------------------
-  //
-  // This is used to create a texture object that can be used by client
-  // code for rendering.
-  //
-  //------------------------------------------------------------------
-  function Texture(spec) {
-    let that = {},
-      ready = false,
+  function drawHealth(health, max) {
+    let percent = health/max;
 
-      image = spec.image;
+    context.fillStyle = 'red';
+    context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*8/10, 25);
 
-    that.updateRotation = function(angle) {
-      spec.rotation += angle;
-    };
+    if (health > 0) {
+      context.fillStyle = 'green';
+      context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*percent*8/10, 25);
+    } else { health = 0; }
 
-    that.rotateRight = function(elapsedTime) {
-      spec.rotation += spec.rotateRate * (elapsedTime / 1000);
-    };
+    writeCenter({
+      color: 'black',
+      font : '23px sans serif', // the font size and font name
+      text : health + ' / ' + max,     // the text to be written
+      x    : .5,        // the x location
+      y    : 9/10       // the y location
+    });
+  }
 
-    that.rotateLeft = function(elapsedTime) {
-      spec.rotation -= spec.rotateRate * (elapsedTime / 1000);
-    };
+  /**
+   * write text given the top right coordinate
+   * spec {
+   *   color: color
+   *   font : '#px serif' // the font size and font name
+   *   text : 'text'      // the text to be written
+   *   x    : #px         // the x location
+   *   y    : #px         // the y location
+   * }
+   */
+  // function write(spec) {
+  // context.font = spec.font;
+  // context.fillStyle = spec.color;
+  // context.fillText(spec.text, spec.x, spec.y);
+  // }
 
-    that.moveLeft = function(elapsedTime) {
-      spec.center.x -= spec.moveRate * (elapsedTime / 1000);
-    };
+  /**
+   * write text given the lower right coordinate
+   * spec {
+   *   color: color
+   *   font : '#px serif'   // the font size and font name
+   *   text : 'text'        // the text to be written
+   *   x    :  percent of x // the x location
+   *   y    :  percent in y // the y location
+   * }
+   */
+  function writeLowerRight(spec) {
+    context.font = spec.font;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let width = context.measureText(spec.text).width;
+    let height = context.measureText('M').width;
+    context.fillStyle = spec.fillStyle;
+    context.fillText(spec.text, spec.x-width, spec.y-height);
+  }
 
-    that.moveRight = function(elapsedTime) {
-      spec.center.x += spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveUp = function(elapsedTime) {
-      spec.center.y -= spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveDown = function(elapsedTime) {
-      spec.center.y += spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveTo = function(center) {
-      spec.center = center;
-    };
-
-    that.draw = function() {
-      context.save();
-
-      context.translate(spec.center.x, spec.center.y);
-      context.rotate(spec.rotation);
-      context.translate(-spec.center.x, -spec.center.y);
-
-      context.drawImage(
-        image,
-        spec.center.x - spec.width/2,
-        spec.center.y - spec.height/2,
-        spec.width, spec.height);
-
-      context.restore();
-    };
-
-    return that;
+  /**
+   * write text given the lower right coordinate
+   * spec {
+   *   color: color
+   *   font : 'px serif'    // the font size and font name
+   *   text : 'text'        // the text to be written
+   *   x    :  percent of x // the x location
+   *   y    :  percent in y // the y location
+   * }
+   */
+  function writeCenter(spec) {
+    context.font = spec.font;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let width = context.measureText(spec.text).width;
+    let height = context.measureText('M').width;
+    context.fillStyle = spec.color;
+    context.fillText(spec.text, spec.x-width/2, spec.y+height);
   }
 
   return {
@@ -274,7 +286,9 @@ Game.graphics = (function(assets) {
     beginClip,
     endClip,
     drawFog,
-    Texture,
+    drawHealth,
+    writeLowerRight,
+    writeCenter,
 
 
   };

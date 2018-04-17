@@ -45,7 +45,8 @@ function createMissile(clientId, playerModel) {
       y: playerModel.position.y
     },
     direction: playerModel.direction,
-    speed: playerModel.speed
+    speed: playerModel.speed,
+    dammage: 10
   });
 
   newMissiles.push(missile);
@@ -245,7 +246,8 @@ function initializeSocketIO(httpServer) {
               position: newPlayer.position,
               size: newPlayer.size,
               rotateRate: newPlayer.rotateRate,
-              speed: newPlayer.speed
+              speed: newPlayer.speed,
+              health: newPlayer.health
             });
 
             for (let id2 in lobbyClients) {
@@ -256,6 +258,7 @@ function initializeSocketIO(httpServer) {
                   size: newPlayer.size,
                   rotateRate: newPlayer.rotateRate,
                   speed: newPlayer.speed,
+                  health: newPlayer.health,
                   clientId: id
                 });
               }
@@ -311,14 +314,20 @@ function processInput(elapsedTime) {
     let client = lobbyClients[input.clientId];
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
-    case NetworkIds.INPUT_MOVE:
-      client.player.move(input.message.elapsedTime);
+    case NetworkIds.INPUT_MOVE_UP:
+      client.player.moveUp(input.message.elapsedTime);
       break;
-    case NetworkIds.INPUT_ROTATE_LEFT:
-      client.player.rotateLeft(input.message.elapsedTime);
+    case NetworkIds.INPUT_MOVE_DOWN:
+      client.player.moveDown(input.message.elapsedTime);
       break;
-    case NetworkIds.INPUT_ROTATE_RIGHT:
-      client.player.rotateRight(input.message.elapsedTime);
+    case NetworkIds.INPUT_MOVE_RIGHT:
+      client.player.moveRight(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_MOVE_LEFT:
+      client.player.moveLeft(input.message.elapsedTime);
+      break;
+    case NetworkIds.INPUT_ROTATE:
+      client.player.rotate(input.message);
       break;
     case NetworkIds.INPUT_FIRE:
       createMissile(input.clientId, client.player);
@@ -375,6 +384,8 @@ function update(elapsedTime, currentTime) {
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
+          lobbyClients[clientId].player.health -= activeMissiles[missile].dammage;
+          lobbyClients[clientId].socket.emit(NetworkIds.MISSILE_HIT_YOU, activeMissiles[missile].dammage);
         }
       }
     }
@@ -423,6 +434,7 @@ function updateClient(elapsedTime) {
       lastMessageId: client.lastMessageId,
       direction : client.player.direction,
       position: client.player.position,
+      health: client.player.health,
       updateWindow: lastUpdate,
     };
 
