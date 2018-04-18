@@ -78,7 +78,7 @@ Game.loader = (function() {
 
     assetOrder = [{
       key: 'player-self',
-      source: 'assets/playerShip1_blue.png'
+      source: 'assets/blue_ship.png'
     }, {
       key: 'player-other',
       source: 'assets/playerShip1_red.png'

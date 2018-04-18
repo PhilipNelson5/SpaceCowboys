@@ -86,7 +86,6 @@ Game.graphics = (function() {
       localSize.width,
       localSize.height);
   }
-
   //------------------------------------------------------------------
   //
   // Draw an image out of a spritesheet into the local canvas coordinate system.
@@ -101,13 +100,14 @@ Game.graphics = (function() {
       width: size.width * canvas.width,
       height: size.height * canvas.height
     };
-
+	
     context.drawImage(spriteSheet,
       sprite * spriteSize.width, 0,           // which sprite to render
       spriteSize.width, spriteSize.height,    // size in the spritesheet
       localCenter.x - localSize.width / 2,
       localCenter.y - localSize.height / 2,
       localSize.width, localSize.height);
+	
   }
 
   //------------------------------------------------------------------

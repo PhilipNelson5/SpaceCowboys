@@ -14,8 +14,8 @@ Game.graphics.Player = (function(graphics) {
   // ------------------------------------------------------------------
   that.render = function(model, texture) {
     graphics.saveContext();
-    graphics.rotateCanvas(model.position, model.direction);
-    graphics.drawImage(texture, model.position, model.size);
+    graphics.rotateCanvas(texture.center, model.direction);
+	graphics.AnimatedSprite.render(texture); 
     graphics.restoreContext();
 
     //TODO 100 is the max health

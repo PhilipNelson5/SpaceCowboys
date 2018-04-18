@@ -9,10 +9,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   */
 
   let lastTimeStamp = performance.now(),
-    playerSelf = {
-      model: components.Player(),
-      texture: Game.assets['player-self']
-    },
+    playerSelf = {},
     playerOthers = {},
     messageHistory = Queue.create(),
     messageId = 1,
@@ -96,17 +93,29 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function connectPlayerSelf(data) {
-    playerSelf.model.position.x = data.position.x;
-    playerSelf.model.position.y = data.position.y;
+	let model = components.Player();
+    model.position.x = data.position.x;
+    model.position.y = data.position.y;
 
-    playerSelf.model.size.x = data.size.x;
-    playerSelf.model.size.y = data.size.y;
+    model.size.x = data.size.x;
+    model.size.y = data.size.y;
 
-    playerSelf.model.direction = data.direction;
-    playerSelf.model.speed = data.speed;
-    playerSelf.model.rotateRate = data.rotateRate;
+    model.direction = data.direction;
+    model.speed = data.speed;
+    model.rotateRate = data.rotateRate;
 
-    playerSelf.model.health = data.health;
+    model.health = data.health;
+
+	playerSelf = {
+	  model: model,
+      texture: components.AnimatedSprite ({
+	  spriteSheet: Game.assets['player-self'],
+      spriteSize: { width: 0.07, height : 0.07 },
+      spriteCenter: {x : 0.5, y : 0.5},
+      spriteCount: 10,
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+	  })
+	};
   }
 
   //------------------------------------------------------------------
@@ -378,7 +387,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function update(elapsedTime) {
-    playerSelf.model.update(elapsedTime);
+    playerSelf.texture.update(elapsedTime);
 
     // rotates the player if needed and updates server
     if (playerSelf.model.rotate()) {
@@ -425,9 +434,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function render() {
     graphics.clear();
     graphics.Player.render(playerSelf.model, playerSelf.texture);
+    //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
+
     for (let id in playerOthers) {
       let player = playerOthers[id];
-      graphics.PlayerRemote.render(player.model, player.texture);
+      graphics.PlayerRemote.render(player.model,player.texture);
     }
 
     for (let missile in missiles) {
