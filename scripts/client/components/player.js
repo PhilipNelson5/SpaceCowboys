@@ -69,20 +69,24 @@ Game.components.Player = function() {
   // Public functions that move the player in the specified direction.
   //
   //------------------------------------------------------------------
-  that.moveUp = function(elapsedTime) {
+  that.moveUp = function(sprite,elapsedTime) {
     position.y -= elapsedTime * speed;
+	sprite.center.y -= elapsedTime * speed;
   };
 
-  that.moveDown = function(elapsedTime) {
+  that.moveDown = function(sprite,elapsedTime) {
     position.y += elapsedTime * speed;
+	sprite.center.y += elapsedTime * speed;
   };
 
-  that.moveLeft = function(elapsedTime) {
+  that.moveLeft = function(sprite,elapsedTime) {
     position.x -= elapsedTime * speed;
+	sprite.center.x -= elapsedTime * speed;
   };
 
-  that.moveRight = function(elapsedTime) {
+  that.moveRight = function(sprite,elapsedTime) {
     position.x += elapsedTime * speed;
+	sprite.center.x += elapsedTime * speed;
   };
 
   function tolerance(value, test, tolerance) {
