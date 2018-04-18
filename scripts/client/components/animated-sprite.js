@@ -1,5 +1,3 @@
-/* global Demo */
-
 //------------------------------------------------------------------
 //
 // Defines an animated model object.  The spec is defined as:
@@ -14,16 +12,16 @@
 //------------------------------------------------------------------
 Game.components.AnimatedSprite = function(spec) {
   'use strict';
-  let frame = 0,
-    that = {
-      get spriteSheet() { return spec.spriteSheet; },
-      get pixelWidth() { return spec.spriteSheet.width / spec.spriteCount; },
-      get pixelHeight() { return spec.spriteSheet.height; },
-      get width() { return spec.spriteSize.width; },
-      get height() { return spec.spriteSize.height; },
-      get center() { return spec.spriteCenter; },
-      get sprite() { return spec.sprite; }
-    };
+  // let frame = 0,
+  let that = {
+    get spriteSheet() { return spec.spriteSheet; },
+    get pixelWidth() { return spec.spriteSheet.width / spec.spriteCount; },
+    get pixelHeight() { return spec.spriteSheet.height; },
+    get width() { return spec.spriteSize.width; },
+    get height() { return spec.spriteSize.height; },
+    get center() { return spec.spriteCenter; },
+    get sprite() { return spec.sprite; }
+  };
 
   //
   // Initialize the animation of the spritesheet

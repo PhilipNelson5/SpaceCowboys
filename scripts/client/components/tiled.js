@@ -14,7 +14,7 @@
 
 Game.components.Tiled = function(spec) {
   'use strict';
-  
+
   var viewport = {
     left: 0,
     top: 0

@@ -129,7 +129,7 @@ Game.components.Player = function() {
 
   };
 
-  that.update = function(elapsedTime) {
+  that.update = function(/* elapsedTime */) {
   };
 
   return that;

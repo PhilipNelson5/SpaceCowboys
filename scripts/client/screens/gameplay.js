@@ -33,7 +33,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     get top() { return 0; },
     get width() { return 4.375; },
     get height() { return 2.5; },
-    get bufferSize() { return 0.50 }
+    get bufferSize() { return 0.50; }
   };
 
   let worldBuffer = {
@@ -44,7 +44,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   };
 
   Object.defineProperty(world, 'buffer', {
-    get: function() { return worldBuffer },
+    get: function() { return worldBuffer; },
     enumerable: true,
     configurable: false
   });
@@ -376,7 +376,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveRight(elapsedTime); 
+      playerSelf.model.moveRight(elapsedTime);
     },
     input.KeyEvent.DOM_VK_D, true);
 

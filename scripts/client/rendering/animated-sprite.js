@@ -13,7 +13,7 @@ Game.graphics.AnimatedSprite = (function(graphics) {
       { width: sprite.pixelWidth, height: sprite.pixelHeight },
       sprite.sprite,
       { x: sprite.center.x, y: sprite.center.y },
-      { width: sprite.width, height: sprite.height },
+      { width: sprite.width, height: sprite.height }
     );
   };
 
