@@ -267,13 +267,13 @@ Game.graphics = (function(assets) {
     //create clip and draw picture inside of it
     context.clip();
     context.globalAlpha = 0.8;
-    context.drawImage(assets['clouds-light'],
-      -canvas.width/Math.sqrt(2),
-      -canvas.height/Math.sqrt(2),
-      canvas.width*Math.sqrt(2),
-      canvas.height*Math.sqrt(2));
     context.rotate(-angle);
     context.translate(-canvas.width/2,-canvas.height/2);
+    context.drawImage(assets['clouds-light'],
+      0,
+      0,
+      canvas.width,
+      canvas.height);
     context.restore();
   }
 
