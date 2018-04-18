@@ -17,8 +17,8 @@ function createPlayer() {
   let that = {};
 
   let position = {
-    x: random.nextDouble(),
-    y: random.nextDouble()
+    x: 0.5,
+    y: 0.5
   };
 
   let size = {
@@ -28,7 +28,7 @@ function createPlayer() {
   };
 
   let direction = random.nextDouble() * 2 * Math.PI; // Angle in radians
-  let speed = 0.0002;              // unit distance per millisecond
+  let speed = 0.0004;              // unit distance per millisecond
   let rotateRate = Math.PI / 1000; // radians per millisecond
   let reportUpdate = false;        // Indicates if this model was updated during the last update
   

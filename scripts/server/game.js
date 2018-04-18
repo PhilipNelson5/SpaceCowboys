@@ -30,6 +30,7 @@ let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
 let hits = [];
+let vector = null;
 
 //------------------------------------------------------------------
 //
@@ -445,6 +446,7 @@ function updateClient(elapsedTime) {
 	  ammo  : client.player.ammo,
 	  score : client.player.score,
       updateWindow: lastUpdate,
+      vector: vector
     };
 
     if (client.player.reportUpdate) {

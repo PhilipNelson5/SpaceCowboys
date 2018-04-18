@@ -3,15 +3,110 @@
 // This is the graphics rendering code for the game.
 //
 // ------------------------------------------------------------------
-Game.graphics = (function() {
+Game.graphics = (function(assets) {
   'use strict';
 
-  let canvas;
-  let context;
+  let canvas = null;
+  let context = null;
+
+  let world = {
+    size : 0,
+    top : 0,
+    left : 0
+  };
+
+  let viewport = Game.components.Viewport({
+    left: 0,
+    top: 0,
+    buffer: 0.50 // questions
+  });
+
+  var resizeHandlers = [];
 
   function initialize() {
     canvas = document.getElementById('canvas-main');
     context = canvas.getContext('2d');
+
+    window.addEventListener('resize', function() {
+      resizeCanvas();
+    }, false);
+    window.addEventListener('orientationchange', function() {
+      resizeCanvas();
+    }, false);
+    window.addEventListener('deviceorientation', function() {
+      resizeCanvas();
+    }, false);
+
+    // force resize first time
+    resizeCanvas();
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Used to set the size of the canvas to match the size of the
+  // browser window so that rendering is zixel perfect
+  //
+  //------------------------------------------------------------------
+  function resizeCanvas() {
+    let smallestSize = 0;
+    let handler = null;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // determine upper left corner of world based on
+    // whether width or height is largest dimension
+    if (canvas.width < canvas.height) {
+      smallestSize = canvas.width;
+      world.size = smallestSize;
+      world.left = 0;
+      world.top = (canvas.height - world.size) / 2;
+    } else {
+      smallestSize = canvas.height;
+      world.size = smallestSize;
+      world.top = 0;
+      world.left = (canvas.width - world.size) / 2;
+    }
+
+    for (handler in resizeHandlers) {
+      resizeHandlers[handler](true);
+    }
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Quick allow other code to be notified when a resize even occurs
+  //
+  //------------------------------------------------------------------
+  function notifyResize(handler) {
+    resizeHandlers.push(handler);
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Toggles to full-screen mode:
+  // If not in full screen, enters; if in full screen, exits
+  //
+  //------------------------------------------------------------------
+  function toggleFullScreen(element) {
+    var fullScreenElement = document.fullscreenElement ||
+                            document.webkitFullscreenElement ||
+                            document.mozFullScreenElement ||
+                            document.msFullscreenElement;
+    element.requestFullScreen = element.requestFullScreen ||
+                            element.webkitRequestFullscreen ||
+                            element.mozRequestFullScreen ||
+                            element.msRequestFullscreen;
+    document.exitFullscreen = document.exitFullscreen ||
+                            document.webkitExitFullscreen ||
+                            document.mozCancelFullScreen ||
+                            document.msExitFullscreen;
+
+    if (!fullScreenElement && element.requestFullScreen) {
+      element.requestFullScreen();
+    } else if (fullScreenElement) {
+      document.exitFullscreen();
+    }
   }
 
   //------------------------------------------------------------------
@@ -33,7 +128,7 @@ Game.graphics = (function() {
   //
   //------------------------------------------------------------------
   function clear() {
-    context.clear();
+    context.clear(0, 0, canvas.width, canvas.height);
   }
 
   //------------------------------------------------------------------
@@ -60,70 +155,128 @@ Game.graphics = (function() {
   //
   //------------------------------------------------------------------
   function rotateCanvas(center, rotation) {
-    context.translate(center.x * canvas.width, center.y * canvas.width);
+    context.translate((center.x - viewport.left) * world.size + world.left, (center.y - viewport.top) * world.size + world.top);
     context.rotate(rotation);
-    context.translate(-center.x * canvas.width, -center.y * canvas.width);
+    context.translate(-((center.x - viewport.left) * world.size + world.left), -((center.y - viewport.top) * world.size + world.top));
   }
 
-  //------------------------------------------------------------------
-  //
-  // Draw an image into the local canvas coordinate system.
-  //
-  //------------------------------------------------------------------
-  function drawImage(texture, center, size) {
-    let localCenter = {
-      x: center.x * canvas.width,
-      y: center.y * canvas.width
-    };
-    let localSize = {
-      width: size.width * canvas.width,
-      height: size.height * canvas.height
-    };
-
-    context.drawImage(texture,
-      localCenter.x - localSize.width / 2,
-      localCenter.y - localSize.height / 2,
-      localSize.width,
-      localSize.height);
-  }
   //------------------------------------------------------------------
   //
   // Draw an image out of a spritesheet into the local canvas coordinate system.
   //
   //------------------------------------------------------------------
   function drawImageSpriteSheet(spriteSheet, spriteSize, sprite, center, size) {
-    let localCenter = {
-      x: center.x * canvas.width,
-      y: center.y * canvas.width
-    };
-    let localSize = {
-      width: size.width * canvas.width,
-      height: size.height * canvas.height
-    };
-	
-    context.drawImage(spriteSheet,
-      sprite * spriteSize.width, 0,           // which sprite to render
-      spriteSize.width, spriteSize.height,    // size in the spritesheet
-      localCenter.x - localSize.width / 2,
-      localCenter.y - localSize.height / 2,
-      localSize.width, localSize.height);
-	
+    drawImage(
+      spriteSheet,
+      sprite * spriteSize.width,            // which sprite
+      0,
+      spriteSize.width,                     // size in the spritesheet
+      spriteSize.height,
+      center.x - size.width / 2,
+      center.y - size.height / 2,
+      size.width,
+      size.height,
+      true
+    );
   }
-
   //------------------------------------------------------------------
   //
   // Draw a circle into the local canvas coordinate system.
   //
   //------------------------------------------------------------------
-  function drawCircle(center, radius, color) {
+  function drawCircle(center, radius, color, useViewport) {
+    var adjustLeft = (useViewport === true) ? viewport.left : 0;
+    var adjustTop = (useViewport === true) ? viewport.top : 0;
+
     context.beginPath();
-    context.arc(center.x * canvas.width, center.y * canvas.width, 2 * radius * canvas.width, 2 * Math.PI, false);
+    context.arc(
+      0.5 + world.left + ((center.x - adjustLeft) * world.size), 
+      0.5 + world.top + ((center.y - adjustTop) * world.size), 
+      radius * world.size,
+      0,
+      2 * Math.PI, 
+    );
     context.closePath();
     context.fillStyle = color;
     context.fill();
   }
 
-  function drawHealth(x, y, health, max) {
+  //------------------------------------------------------------------
+  //
+  // Draw the clip for field of view
+  //
+  //------------------------------------------------------------------
+  function beginClip(angle,distance) {
+    context.save();
+
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(angle);
+
+    context.beginPath();
+    context.arc(0, 0, 25, 2*Math.PI, 0, false);
+    context.closePath();
+    context.strokeStyle='#0000FF';
+    context.lineWidth=10;
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(300, -canvas.height/2 );
+    context.arc(0, 0, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
+    context.lineTo(-300, -canvas.height/2);
+
+    context.strokeStyle='#FFFF00';
+    context.lineWidth=10;
+    context.stroke();
+    context.clip();
+    context.rotate(-angle);
+    context.translate(-canvas.width/2,-canvas.height/2);
+  }
+  
+  function endClip(angle) {
+    context.restore();
+  }
+  //------------------------------------------------------------------
+  //
+  // Draw the fog with a triangular field view cut out
+  //
+  //------------------------------------------------------------------
+  function drawFog(angle, distance) {
+    context.save();
+
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(angle);
+
+    //Path function, creates a polygon that the image will fill
+    context.beginPath();
+    context.moveTo(-canvas.width,-canvas.height);
+    context.lineTo(-300, -canvas.height/2);
+    context.arc(0, 0, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
+    context.lineTo(300, -canvas.height/2);
+    context.lineTo(canvas.width, -canvas.height );
+    context.lineTo(canvas.width, canvas.height );
+    context.lineTo(-canvas.width, canvas.height );
+    context.lineTo(-canvas.width,-canvas.height );
+    context.closePath();
+
+    //Debug to view fog draw
+    context.strokeStyle='#FF0000';
+    context.lineWidth=10;
+    context.stroke();
+
+    //create clip and draw picture inside of it
+    context.clip();
+    context.globalAlpha = 0.8;
+    context.drawImage(assets['clouds-light'],
+      -canvas.width/Math.sqrt(2),
+      -canvas.height/Math.sqrt(2),
+      canvas.width*Math.sqrt(2),
+      canvas.height*Math.sqrt(2));
+    context.rotate(-angle);
+    context.translate(-canvas.width/2,-canvas.height/2);
+    context.restore();
+  }
+
+  function drawHealth(health, max) {
     let percent = health/max;
 
     context.fillStyle = 'red';
@@ -153,11 +306,11 @@ Game.graphics = (function() {
    *   y    : #px         // the y location
    * }
    */
-  function write(spec) {
-    context.font = spec.font;
-    context.fillStyle = spec.color;
-    context.fillText(spec.text, spec.x, spec.y);
-  }
+  // function write(spec) {
+  // context.font = spec.font;
+  // context.fillStyle = spec.color;
+  // context.fillText(spec.text, spec.x, spec.y);
+  // }
 
   /**
    * write text given the lower right coordinate
@@ -199,68 +352,140 @@ Game.graphics = (function() {
     context.fillText(spec.text, spec.x-width/2, spec.y+height);
   }
 
+  //------------------------------------------------------------------
+  //
+  // Renders text based on provided spec
+  //
+  //------------------------------------------------------------------
+  function drawText(spec) {
+    context.font = spec.font;
+    context.fillStyle = spec.fill;
+    context.textBaseline = 'top';
+
+    context.fillText(
+      spec.text,
+      world.left + spec.position.x * world.size,
+      world.top + spec.position.y * world.size
+    );
+  }
 
   //------------------------------------------------------------------
   //
-  // This is used to create a texture object that can be used by client
-  // code for rendering.
+  // Returns the height of specified font, in world units
   //
   //------------------------------------------------------------------
-  function Texture(spec) {
-    let that = {},
-      ready = false,
+  function measureTextHeight(spec) {
+    var height = 0;
+    context.save();
 
-      image = spec.image;
+    context.font = spec.font;
+    context.fillStyle = spec.fill;
 
-    that.updateRotation = function(angle) {
-      spec.rotation += angle;
+    height = context.measureText('m').width / world.size;
+
+    context.restore();
+    return height;
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Returns the width of specified font, in world units
+  //
+  //------------------------------------------------------------------
+  function measureTextWidth(spec) {
+    var width = 0;
+    context.save();
+
+    context.font = spec.font;
+    context.fillStyle = spec.fill;
+
+    width = context.measureText(spec.text).width / world.size;
+
+    context.restore();
+    return width;
+  }
+
+  //------------------------------------------------------------------
+  //
+  // Pass-through that allows an image to be drawn
+  //
+  //------------------------------------------------------------------
+  function drawImage() {
+    var image = arguments[0],
+      sx, sy,
+      sWidth, sHeight,
+      dx, dy,
+      dWidth, dHeight,
+      useViewport;
+
+    // image texture, position, size
+    if (arguments.length === 3 || arguments.length === 4) {
+      let center = arguments[1];
+      let size = arguments[2];
+      sx = 0;
+      sy = 0;
+      sWidth = image.width;
+      sHeight = image.height;
+      dx = center.x - (size.width / 2);
+      dy = center.y - (size.height / 2);
+      dWidth = size.width;
+      dHeight = size.height;
+      useViewport = arguments[3];
+    }
+    // image texture, x, y, width, height
+    else if (arguments.length === 5 || arguments.length === 6) {
+      sx = 0;
+      sy = 0;
+      sWidth = image.width;
+      sHeight = image.height;
+      dx = arguments[1];
+      dy = arguments[2];
+      dWidth = arguments[3];
+      dHeight = arguments[4];
+      useViewport = arguments[5];
+    }
+    // for animated sprites
+    // image texture, x-clip, y-clip, width-clip, height-clip, 
+    //                x, y, width, height
+    else if (arguments.length === 9 || arguments.length === 10) {
+      sx = arguments[1];
+      sy = arguments[2];
+      sWidth = arguments[3];
+      sHeight = arguments[4];
+      dx = arguments[5];
+      dy = arguments[6];
+      dWidth = arguments[7];
+      dHeight = arguments[8];
+      useViewport = arguments[9];
+    }
+
+    // when using the viewport
+    if (useViewport) {
+      dx -= viewport.left;
+      dy -= viewport.top;
+    }
+
+    context.drawImage(
+      image,
+      sx, sy,
+      sWidth, sHeight,
+      Math.floor(dx * world.size + world.left),
+      Math.floor(dy * world.size + world.top),
+      Math.ceil(dWidth * world.size),
+      Math.ceil(dHeight * world.size)
+    );
+  }
+
+  //-------------------------------------------------------------------
+  //
+  // converst from client (pixel) coordinates to world coordinates
+  //
+  //-------------------------------------------------------------------
+  function clientToWorld(clientX, clientY) {
+    return {
+      x: (clientX - world.left) / world.size,
+      y: (clientY - world.top) / world.size
     };
-
-    that.rotateRight = function(elapsedTime) {
-      spec.rotation += spec.rotateRate * (elapsedTime / 1000);
-    };
-
-    that.rotateLeft = function(elapsedTime) {
-      spec.rotation -= spec.rotateRate * (elapsedTime / 1000);
-    };
-
-    that.moveLeft = function(elapsedTime) {
-      spec.center.x -= spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveRight = function(elapsedTime) {
-      spec.center.x += spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveUp = function(elapsedTime) {
-      spec.center.y -= spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveDown = function(elapsedTime) {
-      spec.center.y += spec.moveRate * (elapsedTime / 1000);
-    };
-
-    that.moveTo = function(center) {
-      spec.center = center;
-    };
-
-    that.draw = function() {
-      context.save();
-
-      context.translate(spec.center.x, spec.center.y);
-      context.rotate(spec.rotation);
-      context.translate(-spec.center.x, -spec.center.y);
-
-      context.drawImage(
-        image,
-        spec.center.x - spec.width/2,
-        spec.center.y - spec.height/2,
-        spec.width, spec.height);
-
-      context.restore();
-    };
-
-    return that;
   }
 
   return {
@@ -272,10 +497,20 @@ Game.graphics = (function() {
     drawImage,
     drawImageSpriteSheet,
     drawCircle,
+    beginClip,
+    endClip,
+    drawFog,
     drawHealth,
-    Texture,
+    toggleFullScreen,
+    drawText,
+    measureTextHeight,
+    measureTextWidth,
+    clientToWorld,
+    notifyResize,
     writeLowerRight,
     writeCenter,
+    get viewport() { return viewport; }    
+
 
   };
-}());
+}(Game.assets));
