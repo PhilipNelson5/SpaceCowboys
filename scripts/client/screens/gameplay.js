@@ -21,8 +21,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     explosions = {},
     networkQueue = Queue.create();
 
-  let mouseCapture = false,
-    myMouse = input.Mouse(),
+  // let mouseCapture = false,
+  let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
     cancelNextRequest = false;
 
@@ -402,13 +402,20 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     },
     input.KeyEvent.DOM_VK_SPACE, false);
 
-    myMouse.registerCommand('mousedown', function(e) {
-      mouseCapture = true;
-    });
+    myMouse.registerCommand('mousedown', function(e, elapsedTime) {
+      // mouseCapture = true;
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_FIRE
+      };
+      socket.emit(NetworkIds.INPUT, message);
 
-    myMouse.registerCommand('mouseup', function(e) {
-      mouseCapture = false;
-    });
+    }, true);
+
+    // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
+    // mouseCapture = false;
+    // });
 
     myMouse.registerCommand('mousemove', function(e) {
       // if (mouseCapture) { }
@@ -425,6 +432,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.update(elapsedTime);
 
     // rotates the player if needed and updates server
+    // this is an attempt to reduce load on the server
+    // by only sending one rotational update per frame
     if (playerSelf.model.rotate()) {
       let message = {
         id: messageId++,
@@ -470,15 +479,17 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function render() {
+
     graphics.clear();
 
     graphics.Tiled.render(background, graphics.viewport);
-
+    graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model, player.texture);
     }
+    graphics.endClip();
 
     for (let missile in missiles) {
       graphics.Missile.render(missiles[missile]);
@@ -487,6 +498,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
+
+    //draw Buildings AFTER clip or else they be underneath it
+
+    graphics.drawFog(playerSelf.model.direction + Math.PI/2);
+
+    //TODO 100 is the max health
+    graphics.drawHealth(playerSelf.model.health, 100);
 
   }
 
