@@ -30,8 +30,16 @@ function createPlayer() {
   let direction = random.nextDouble() * 2 * Math.PI; // Angle in radians
   let speed = 0.0004;              // unit distance per millisecond
   let rotateRate = Math.PI / 1000; // radians per millisecond
-  let health = 100;                // initial health
   let reportUpdate = false;        // Indicates if this model was updated during the last update
+  
+  //SERVER STATS
+  let health = 100;                // initial health
+  let shield = 0;
+  let ammo   = 0;
+  let score  = {
+	place : 0,
+	kills : 0
+  }
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -49,11 +57,6 @@ function createPlayer() {
     get: () => speed
   });
 
-  Object.defineProperty(that, 'health', {
-    get: () => health,
-    set: value => health = value
-  });
-
   Object.defineProperty(that, 'radius', {
     get: () => size.radius
   });
@@ -61,6 +64,30 @@ function createPlayer() {
   Object.defineProperty(that, 'reportUpdate', {
     get: () => reportUpdate,
     set: value => reportUpdate = value
+  });
+
+  //SERVER OBJECT STATS
+  Object.defineProperty(that, 'health', {
+    get: () => health,
+    set: value => health = value
+  });
+
+  Object.defineProperty(that, 'shield', {
+	get: () => shield,
+	set: value => shield = value
+  });
+
+  Object.defineProperty(that, 'ammo', {
+	get: () => ammo,
+	set: value => ammo = value
+  });
+
+  Object.defineProperty(that, 'score', {
+	get: () => score,
+	set: (value) => {
+	  score.place = value.place;
+	  score.kills = value.kills;
+	}
   });
 
 
