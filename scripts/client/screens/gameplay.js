@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, socket) {
+Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -21,6 +21,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
+	myKeys = keyBindings.keys,
     cancelNextRequest = false;
 
   let background = null;
@@ -397,7 +398,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       messageHistory.enqueue(message);
       playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
     },
-    input.KeyEvent.DOM_VK_W, true);
+    myKeys.forward, true);
 
     myKeyboard.registerHandler(elapsedTime => {
       let message = {
@@ -409,7 +410,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       messageHistory.enqueue(message);
       playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
     },
-    input.KeyEvent.DOM_VK_S, true);
+    myKeys.back, true);
 
     myKeyboard.registerHandler(elapsedTime => {
       let message = {
@@ -421,7 +422,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       messageHistory.enqueue(message);
       playerSelf.model.moveRight(playerSelf.texture,elapsedTime); 
     },
-    input.KeyEvent.DOM_VK_D, true);
+    myKeys.right, true);
 
     myKeyboard.registerHandler(elapsedTime => {
       let message = {
@@ -433,7 +434,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       messageHistory.enqueue(message);
       playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
     },
-    input.KeyEvent.DOM_VK_A, true);
+    myKeys.left, true);
 
     myMouse.registerCommand('mousedown', function(e, elapsedTime) {
       // mouseCapture = true;
@@ -574,4 +575,4 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     run
   };
 
-}(Game.menu, Game.input, Game.graphics, Game.assets, Game.components, Game.network.socket));
+}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.assets, Game.components, Game.network.socket));

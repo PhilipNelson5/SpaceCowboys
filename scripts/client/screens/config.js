@@ -1,7 +1,9 @@
-Game.screens['config'] = (function(menu) {
+Game.screens['config'] = (function(menu,keyBindings) {
   'use strict';
 
+
   function initialize() {
+	//TODO: Write a method that will capture the default keys and show them here.
     menu.addScreen('config',
       `
       <h1>Configs</h1>
@@ -24,4 +26,4 @@ Game.screens['config'] = (function(menu) {
     run
   };
 
-}(Game.menu));
+}(Game.menu,Game.keyBindings));
