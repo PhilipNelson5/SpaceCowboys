@@ -25,7 +25,6 @@ Game.components.Player = function() {
 
   let direction = 0;
   let rotateRate = 0;
-  let health = 0;
   let speed = 0.0004;
 
   // STATS
