@@ -30,6 +30,7 @@ let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
 let hits = [];
+let vector = null;
 
 //------------------------------------------------------------------
 //
@@ -436,6 +437,7 @@ function updateClient(elapsedTime) {
       position: client.player.position,
       health: client.player.health,
       updateWindow: lastUpdate,
+      vector: vector
     };
 
     if (client.player.reportUpdate) {

@@ -18,10 +18,33 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     explosions = {},
     networkQueue = Queue.create();
 
-  let mouseCapture = false,
-    myMouse = input.Mouse(),
+  // let mouseCapture = false,
+  let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
     cancelNextRequest = false;
+
+  let background = null;
+
+  let world = {
+    get left() { return 0; },
+    get top() { return 0; },
+    get width() { return 4.375; },
+    get height() { return 2.5; },
+    get bufferSize() { return 0.50 }
+  };
+
+  let worldBuffer = {
+    get left() { return world.left + world.bufferSize; },
+    get top() { return world.top + world.bufferSize; },
+    get right() { return world.width - world.bufferSize; },
+    get bottom() { return world.height - world.bufferSize; }
+  };
+
+  Object.defineProperty(world, 'buffer', {
+    get: function() { return worldBuffer },
+    enumerable: true,
+    configurable: false
+  });
 
   socket.on(NetworkIds.CONNECT_OTHER, data => {
     networkQueue.enqueue({
@@ -141,8 +164,14 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     playerOthers[data.clientId] = {
       model: model,
-      texture: Game.assets['player-other']
-    };
+      texture: components.AnimatedSprite ({
+	  spriteSheet: Game.assets['player-other'],
+      spriteSize: { width: 0.07, height : 0.07 },
+      spriteCenter: {x : 0.5, y : 0.5},
+      spriteCount: 10,
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+	  })
+	};
   }
 
   //------------------------------------------------------------------
@@ -161,7 +190,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function updatePlayerSelf(data) {
     playerSelf.model.position.x = data.position.x;
+    playerSelf.texture.center.x = data.position.x;
     playerSelf.model.position.y = data.position.y;
+    playerSelf.texture.center.y = data.position.y;
     playerSelf.model.direction = data.direction;
     playerSelf.model.health = data.health;
 
@@ -195,9 +226,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
       let model = playerOthers[data.clientId].model;
+	  let player = playerOthers[data.clientId].texture;
       model.goal.updateWindow = data.updateWindow;
-
+// Not sure if this is where the problem is or not.
       model.goal.position.x = data.position.x;
+      //player.center.x = data.position.x;
+      model.goal.position.y = data.position.y;
+      //player.center.y = data.position.y;
       model.goal.position.y = data.position.y;
       model.goal.direction = data.direction;
     }
@@ -303,11 +338,32 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function initialize() {
     menu.addScreen('gameplay',
       `
-      <canvas height=1000 width=1000 id='canvas-main'></canvas>
+      <canvas height=100% width=100% id='canvas-main'></canvas>
       `
     );
 
     graphics.initialize();
+
+    graphics.viewport.set(0, 0, 0.50);
+
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: world.width, height: world.height },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
+    });
+
+    /*
+    myTexture = graphics.Texture( {
+      image : assets['player-self'],
+      center : { x : 100, y : 100 },
+      width : 100, height : 100,
+      rotation : 0,
+      moveRate : 200,       // pixels per second
+      rotateRate : 3.14159  // Radians per second
+    });
+    */
 
     myKeyboard.registerHandler(elapsedTime => {
       let message = {
@@ -317,7 +373,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveUp(elapsedTime);
+      playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
     },
     input.KeyEvent.DOM_VK_W, true);
 
@@ -329,7 +385,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveDown(elapsedTime);
+      playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
     },
     input.KeyEvent.DOM_VK_S, true);
 
@@ -341,7 +397,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveRight(elapsedTime);
+      playerSelf.model.moveRight(playerSelf.texture,elapsedTime); 
     },
     input.KeyEvent.DOM_VK_D, true);
 
@@ -353,27 +409,24 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveLeft(elapsedTime);
+      playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
     },
     input.KeyEvent.DOM_VK_A, true);
 
-    myKeyboard.registerHandler(elapsedTime => {
+    myMouse.registerCommand('mousedown', function(e, elapsedTime) {
+      // mouseCapture = true;
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
         type: NetworkIds.INPUT_FIRE
       };
       socket.emit(NetworkIds.INPUT, message);
-    },
-    input.KeyEvent.DOM_VK_SPACE, false);
 
-    myMouse.registerCommand('mousedown', function(e) {
-      mouseCapture = true;
-    });
+    }, true);
 
-    myMouse.registerCommand('mouseup', function(e) {
-      mouseCapture = false;
-    });
+    // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
+    // mouseCapture = false;
+    // });
 
     myMouse.registerCommand('mousemove', function(e) {
       // if (mouseCapture) { }
@@ -390,6 +443,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.texture.update(elapsedTime);
 
     // rotates the player if needed and updates server
+    // this is an attempt to reduce load on the server
+    // by only sending one rotational update per frame
     if (playerSelf.model.rotate()) {
       let message = {
         id: messageId++,
@@ -403,7 +458,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     // update all other players
     for (let id in playerOthers) {
-      playerOthers[id].model.update(elapsedTime);
+      playerOthers[id].texture.update(elapsedTime);
     }
 
     let removeMissiles = [];
@@ -424,6 +479,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
     myKeyboard.update(elapsedTime);
     myMouse.update(elapsedTime);
+
+    // TODO: go here
+    graphics.viewport.update(playerSelf.model);
   }
 
   //------------------------------------------------------------------
@@ -432,7 +490,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function render() {
+
     graphics.clear();
+
+    graphics.Tiled.render(background, graphics.viewport);
+    graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
 
@@ -440,6 +502,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model,player.texture);
     }
+    graphics.endClip();
 
     for (let missile in missiles) {
       graphics.Missile.render(missiles[missile]);
@@ -448,6 +511,14 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
+
+    //draw Buildings AFTER clip or else they be underneath it
+
+    graphics.drawFog(playerSelf.model.direction + Math.PI/2);
+
+    //TODO 100 is the max health
+    graphics.drawHealth(playerSelf.model.health, 100);
+
   }
 
   //------------------------------------------------------------------
