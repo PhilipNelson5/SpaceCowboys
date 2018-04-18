@@ -90,7 +90,7 @@ Game.graphics.Tiled = ( function(graphics) {
         renderPosX,
         renderPosY,
         tileRenderWorldWidth,
-        tileRenderWorldHeight
+        tileRenderWorldHeight,
       );
 
       imageWorldXPos += tileRenderWorldWidth;

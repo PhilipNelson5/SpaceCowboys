@@ -18,7 +18,7 @@ Game.graphics = (function() {
   let viewport = Game.components.Viewport({
     left: 0,
     top: 0,
-    buffer: 0.15 // questions
+    buffer: 0.50 // questions
   });
 
   var resizeHandlers = [];

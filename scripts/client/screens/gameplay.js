@@ -33,7 +33,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     get top() { return 0; },
     get width() { return 4.375; },
     get height() { return 2.5; },
-    get bufferSize() { return 0.25 }
+    get bufferSize() { return 0.50 }
   };
 
   let worldBuffer = {
@@ -323,7 +323,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     graphics.initialize();
 
-    graphics.viewport.set(0, 0, 0.25);
+    graphics.viewport.set(0, 0, 0.50);
 
     var backgroundKey = 'background';
     background = components.Tiled( {
