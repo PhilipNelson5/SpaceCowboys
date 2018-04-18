@@ -45,7 +45,7 @@ Game.loader = (function() {
         message: 'World\tComponents\tlaoded',
         onComplete: null
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/animated-sprite-remote'],
         message: 'Player models\tloaded',
         onComplete: null
       }, {
@@ -53,7 +53,7 @@ Game.loader = (function() {
         message: 'Renderer\t\tloaded',
         onComplete: null
       }, {
-        scripts: ['rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
+        scripts: ['rendering/animated-sprite', 'rendering/animated-sprite-remote', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
         message: 'Graphics\t\tloaded',
         onComplete: null
       }, {

@@ -14,8 +14,8 @@ Game.graphics.PlayerRemote = (function(graphics) {
   // ------------------------------------------------------------------
   that.render = function(model, texture) {
     graphics.saveContext();
-    graphics.rotateCanvas(model.state.position, model.state.direction);
-	graphics.AnimatedSprite.render(texture);
+    graphics.rotateCanvas(texture.state.position, texture.state.direction);
+	graphics.AnimatedSpriteRemote.render(texture);
     graphics.restoreContext();
   };
 

@@ -149,28 +149,39 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function connectPlayerOther(data) {
     let model = components.PlayerRemote();
-    model.state.position.x = data.position.x;
+	let texture = components.AnimatedSpriteRemote ({
+	  spriteSheet: Game.assets['player-other'],
+      spriteSize: { width: 0.07, height : 0.07 },
+      spriteCount: 10,
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+	});
+    
+	model.state.position.x = data.position.x;
     model.state.position.y = data.position.y;
     model.state.direction = data.direction;
     model.state.lastUpdate = performance.now();
+    
+	texture.state.position.x = data.position.x;
+	texture.state.position.y = data.position.y;
+    texture.state.direction = data.direction;
+	texture.state.lastUpdate = performance.now();
 
     model.goal.position.x = data.position.x;
     model.goal.position.y = data.position.y;
     model.goal.direction = data.direction;
     model.goal.updateWindow = 0;
 
+    texture.goal.position.x = data.position.x;
+    texture.goal.position.y = data.position.y;
+    texture.goal.direction = data.direction;
+    texture.goal.updateWindow = 0;
+
     model.size.x = data.size.x;
     model.size.y = data.size.y;
 
     playerOthers[data.clientId] = {
       model: model,
-      texture: components.AnimatedSprite ({
-	  spriteSheet: Game.assets['player-other'],
-      spriteSize: { width: 0.07, height : 0.07 },
-      spriteCenter: {x : 0.5, y : 0.5},
-      spriteCount: 10,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
-	  })
+	  texture: texture
 	};
   }
 
@@ -227,14 +238,16 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     if (playerOthers.hasOwnProperty(data.clientId)) {
       let model = playerOthers[data.clientId].model;
 	  let player = playerOthers[data.clientId].texture;
-      model.goal.updateWindow = data.updateWindow;
-// Not sure if this is where the problem is or not.
+      
+	  model.goal.updateWindow = data.updateWindow;
       model.goal.position.x = data.position.x;
-      //player.center.x = data.position.x;
-      model.goal.position.y = data.position.y;
-      //player.center.y = data.position.y;
       model.goal.position.y = data.position.y;
       model.goal.direction = data.direction;
+      
+	  player.goal.position.x = data.position.x;
+      player.goal.position.y = data.position.y;
+      player.goal.updateWindow = data.updateWindow;
+      player.goal.direction = data.direction;
     }
   }
 
