@@ -41,12 +41,20 @@ Game.loader = (function() {
         message: 'Input\t\t\tloaded',
         onComplete: null
       }, {
-        scripts: ['rendering/graphics'],
-        message: 'Renderer\t\tloaded',
+        scripts: ['components/viewport', 'components/tiled'],
+        message: 'World\tComponents\tlaoded',
         onComplete: null
       }, {
         scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
         message: 'Player models\tloaded',
+        onComplete: null
+      }, {
+        scripts: ['rendering/graphics'],
+        message: 'Renderer\t\tloaded',
+        onComplete: null
+      }, {
+        scripts: ['rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
+        message: 'Graphics\t\tloaded',
         onComplete: null
       }, {
         scripts: [
@@ -66,14 +74,6 @@ Game.loader = (function() {
         scripts: ['main'],
         message: 'Game model\t\tloaded',
         onComplete: null,
-      }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
-        message: 'Player models\tloaded',
-        onComplete: null
-      }, {
-        scripts: ['rendering/graphics', 'rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote'],
-        message: 'Graphics\t\tloaded',
-        onComplete: null
       }], // end scriptOrder
 
     assetOrder = [{
@@ -92,6 +92,52 @@ Game.loader = (function() {
       key: 'clouds-dark',
       source: 'assets/clouds_dark.png'
     }]; // end assetOrder
+
+  //------------------------------------------------------------------
+  //
+  // Zero pad a number
+  //
+  //------------------------------------------------------------------
+  function numberPad(n, p, c) {
+    var pad_char = typeof c !== 'undefined' ? c : '0';
+    var pad = new Array(1 + p).join(pad_char);
+
+    return (pad + n).slice(-pad.length);
+  }
+
+  //------------------------------------------------------------------
+  //
+  // helper function used to generate the asset entries necessary
+  // to load a tiled image into memeory
+  //
+  //------------------------------------------------------------------
+  function prepareTiledImage(assetArray, rootName, rootKey, sizeX, sizeY, tileSize) {
+    var numberX = sizeX / tileSize;
+    var numberY = sizeY / tileSize;
+    var tileFile = '';
+    var tileSource = '';
+    var tileKey = '';
+    var tileX = 0;
+    var tileY = 0;
+
+    Game.assets[rootKey] = {
+      width: sizeX,
+      height: sizeY,
+      tileSize: tileSize
+    }
+
+    for (tileY = 0; tileY < numberY; tileY += 1) {
+      for (tileX = 0; tileX < numberX; tileX += 1) {
+        tileFile = numberPad((tileY * numberX + tileX), 4);
+        tileSource = rootName + tileFile + '.jpg';
+        tileKey = rootKey + '-' + tileFile;
+        assetArray.push({
+          key: tileKey,
+          source: tileSource
+        });
+      }
+    }
+  }
 
   //------------------------------------------------------------------
   //
@@ -216,6 +262,7 @@ Game.loader = (function() {
 
   // Start with loading the assets, then the scripts.
   console.log('Starting to dynamically load project assets...');
+  prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 4480, 2560, 128);
   loadAssets(assetOrder, //source
     function(source, asset) { //onSuccess store the asset in Game.assets
       Game.assets[source.key] = asset;

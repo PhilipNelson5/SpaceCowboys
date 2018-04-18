@@ -16,7 +16,7 @@ const SIMULATION_UPDATE_RATE_MS = 50;
 const STATE_UPDATE_RATE_MS = 100;
 
 const TIMER_MS = 3000;           // timer countdown in milliseconds
-const LOBBY_MAX = 1;             // max player count for lobby
+const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -30,6 +30,7 @@ let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
 let hits = [];
+let vector = null;
 
 //------------------------------------------------------------------
 //
@@ -436,6 +437,7 @@ function updateClient(elapsedTime) {
       position: client.player.position,
       health: client.player.health,
       updateWindow: lastUpdate,
+      vector: vector
     };
 
     if (client.player.reportUpdate) {

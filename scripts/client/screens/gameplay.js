@@ -26,6 +26,29 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     myKeyboard = input.Keyboard(),
     cancelNextRequest = false;
 
+  let background = null;
+
+  let world = {
+    get left() { return 0; },
+    get top() { return 0; },
+    get width() { return 4.375; },
+    get height() { return 2.5; },
+    get bufferSize() { return 0.50 }
+  };
+
+  let worldBuffer = {
+    get left() { return world.left + world.bufferSize; },
+    get top() { return world.top + world.bufferSize; },
+    get right() { return world.width - world.bufferSize; },
+    get bottom() { return world.height - world.bufferSize; }
+  };
+
+  Object.defineProperty(world, 'buffer', {
+    get: function() { return worldBuffer },
+    enumerable: true,
+    configurable: false
+  });
+
   socket.on(NetworkIds.CONNECT_OTHER, data => {
     networkQueue.enqueue({
       type: NetworkIds.CONNECT_OTHER,
@@ -294,11 +317,32 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function initialize() {
     menu.addScreen('gameplay',
       `
-      <canvas height=1000 width=1000 id='canvas-main'></canvas>
+      <canvas height=100% width=100% id='canvas-main'></canvas>
       `
     );
 
     graphics.initialize();
+
+    graphics.viewport.set(0, 0, 0.50);
+
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: world.width, height: world.height },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
+    });
+
+    /*
+    myTexture = graphics.Texture( {
+      image : assets['player-self'],
+      center : { x : 100, y : 100 },
+      width : 100, height : 100,
+      rotation : 0,
+      moveRate : 200,       // pixels per second
+      rotateRate : 3.14159  // Radians per second
+    });
+    */
 
     myKeyboard.registerHandler(elapsedTime => {
       let message = {
@@ -332,7 +376,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveRight(elapsedTime);
+      playerSelf.model.moveRight(elapsedTime); 
     },
     input.KeyEvent.DOM_VK_D, true);
 
@@ -424,6 +468,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
     myKeyboard.update(elapsedTime);
     myMouse.update(elapsedTime);
+
+    // TODO: go here
+    graphics.viewport.update(playerSelf.model);
   }
 
   //------------------------------------------------------------------
@@ -434,6 +481,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function render() {
 
     graphics.clear();
+
+    graphics.Tiled.render(background, graphics.viewport);
     graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
     graphics.Player.render(playerSelf.model, playerSelf.texture);
     for (let id in playerOthers) {
