@@ -175,7 +175,8 @@ Game.graphics = (function() {
       center.x - size.width / 2,
       center.y - size.height / 2,
       size.width,
-      size.height
+      size.height,
+      true
     );
   }
 
@@ -184,11 +185,14 @@ Game.graphics = (function() {
   // Draw a circle into the local canvas coordinate system.
   //
   //------------------------------------------------------------------
-  function drawCircle(center, radius, color) {
+  function drawCircle(center, radius, color, useViewport) {
+    var adjustLeft = (useViewport === true) ? viewport.left : 0;
+    var adjustTop = (useViewport === true) ? viewport.top : 0;
+
     context.beginPath();
     context.arc(
-      0.5 + world.left + (center.x * world.size), 
-      0.5 + world.top + (center.y * world.size), 
+      0.5 + world.left + ((center.x - adjustLeft) * world.size), 
+      0.5 + world.top + ((center.y - adjustTop) * world.size), 
       radius * world.size,
       0,
       2 * Math.PI, 
