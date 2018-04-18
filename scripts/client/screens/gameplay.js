@@ -105,6 +105,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     model.rotateRate = data.rotateRate;
 
     model.health = data.health;
+	model.shield = data.shield;
+	model.ammo   = data.ammo;
+	model.score.place = data.score.place;
+	model.score.kills = data.score.kills;
 
 	playerSelf = {
 	  model: model,
@@ -164,6 +168,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.position.y = data.position.y;
     playerSelf.model.direction = data.direction;
     playerSelf.model.health = data.health;
+	playerSelf.model.shield = data.shield;
+	playerSelf.model.ammo   = data.ammo;
+	playerSelf.model.score.place = data.score.place;
+	playerSelf.model.score.kills = data.score.kills;
+
 
     //
     // Remove messages from the queue up through the last one identified
