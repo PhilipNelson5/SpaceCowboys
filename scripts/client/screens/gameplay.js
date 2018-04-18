@@ -376,7 +376,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveRight(elapsedTime);
+      playerSelf.model.moveRight(elapsedTime); 
     },
     input.KeyEvent.DOM_VK_D, true);
 
