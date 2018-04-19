@@ -179,7 +179,6 @@ Game.graphics = (function(assets) {
       true
     );
   }
-
   //------------------------------------------------------------------
   //
   // Draw a circle into the local canvas coordinate system.
