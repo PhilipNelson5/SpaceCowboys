@@ -23,7 +23,6 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     myKeyboard = input.Keyboard(),
 	myKeys = keyBindings.keys,
     cancelNextRequest = false;
-
   let background = null;
 
   let world = {
@@ -465,6 +464,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   function update(elapsedTime) {
     playerSelf.texture.update(elapsedTime);
 
+    console.log(myKeys);
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
     // by only sending one rotational update per frame

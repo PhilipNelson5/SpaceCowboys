@@ -159,7 +159,6 @@ Game.input.Keyboard = function() {
     if (rate === undefined) {
       rate = 0;
     }
-
     //
     // Each entry is an array of handlers to allow multiple handlers per keyboard input
     if (!handlers.hasOwnProperty(key)) {

@@ -8,6 +8,24 @@ Game.keyBindings = (function() {
 	//fire    : undefined
   }
 
+/*
+  function keyUp(e) {
+	if(!e) e = event;
+	forward = e.keyCode;
+  }
+  
+  function keyDown(e) {
+	back = e.keyCode;
+  }
+  
+  function keyLeft(e) {
+	left = e.keyCode;
+  }
+
+  function keyDown(e) {
+	right = e.keyCode;
+  }
+*/
 	return {keys : keys};
 
 }());
