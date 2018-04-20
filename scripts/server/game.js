@@ -10,7 +10,8 @@ const present = require('present'),
   NetworkIds = require('../shared/network-ids'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
-  Missile = require('./missile');
+  Missile = require('./missile'),
+  Utils = require('./utils.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
@@ -257,6 +258,8 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
+        let loot = Utils.genLoot(numLobbyClients);
+
         setTimeout( () => {
           for (let id in lobbyClients) {
             let newPlayer = Player.create();
@@ -285,8 +288,10 @@ function initializeSocketIO(httpServer) {
             }
           }
 
-          for (let id in lobbyClients)
+          for (let id in lobbyClients) {
+            io.to(id).emit(NetworkIds.STARTING_LOOT, {loot});
             io.to(id).emit(NetworkIds.START_GAME);
+          }
 
           gameLoop(present(), 0);
 

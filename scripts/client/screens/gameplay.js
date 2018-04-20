@@ -18,6 +18,16 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     explosions = {},
     networkQueue = Queue.create();
 
+  let loot = {
+    health    : [],
+    shield    : [],
+    ammo      : [],
+    weapon    : [],
+    rangeUp   : [],
+    damageUp  : [],
+    speedUp   : []
+  };
+
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
@@ -107,6 +117,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   socket.on(NetworkIds.MISSILE_HIT_YOU, data => {
     networkQueue.enqueue({
       type: NetworkIds.MISSILE_HIT_YOU,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.STARTING_LOOT, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.STARTING_LOOT,
       data: data
     });
   });
@@ -305,6 +322,17 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.health -= data;
   }
 
+  function initLoot(data) {
+    loot.health    = data.loot.health;
+    loot.shield    = data.loot.shield;
+    loot.ammo      = data.loot.ammo;
+    loot.weapon    = data.loot.weapon;
+    loot.rangeUp   = data.loot.rangeUp;
+    loot.damageUp = data.loot.damageUp;
+    loot.speedUp   = data.loot.speedUp;
+    console.log(JSON.stringify(data.loot.shield));
+  }
+
   //------------------------------------------------------------------
   //
   // Process the registered input handlers here.
@@ -348,6 +376,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         break;
       case NetworkIds.MISSILE_HIT_YOU:
         missileHitYou(message.data);
+        break;
+      case NetworkIds.STARTING_LOOT:
+        initLoot(message.data);
         break;
       }
     }
@@ -552,13 +583,16 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
     if (playerSelf.model.health>0)
       graphics.Player.render(playerSelf.model, playerSelf.texture);
-    //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
 
     for (let id in playerOthers) {
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model,player.texture);
     }
+
+    graphics.Loot.render(loot);
+
     graphics.endClip();
+    //draw Buildings AFTER clip or else they be underneath it
 
     for (let missile in missiles) {
       graphics.Missile.render(missiles[missile]);
