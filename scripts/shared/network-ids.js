@@ -151,6 +151,10 @@
     'STARTING_LOOT': {
       value: 'starting-loot',
       writable: false
+    },
+    'LOOT_UPDATE': {
+      value: 'loot-update',
+      writable: false
     }
 
   });

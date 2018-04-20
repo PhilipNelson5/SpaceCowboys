@@ -30,6 +30,7 @@ let newMissiles = [];
 let activeMissiles = [];
 let hits = [];
 let vector = null;
+let loot = {};
 
 //------------------------------------------------------------------
 //
@@ -257,7 +258,7 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        let loot = Utils.genLoot(numLobbyClients);
+        loot = Utils.genLoot(numLobbyClients);
 
         setTimeout( () => {
           for (let id in lobbyClients) {
@@ -422,6 +423,25 @@ function update(elapsedTime, currentTime) {
   }
   activeMissiles = keepMissiles;
   //TODO: other things for collisions
+
+  // collision for loot
+  let takenLoot = [];
+  for (let clientId in lobbyClients) {
+    for (let l in loot) {
+      for (let e = 0; e < loot[l].length; ++e) {
+        if (loot[l][e] && collided(lobbyClients[clientId].player, loot[l][e])) {
+          takenLoot.push(loot[l][e].id);
+          console.log('loot taken: ', JSON.stringify(loot[l][e].id));
+          //TODO apply powerup to player
+          delete loot[l][e];
+
+        }
+      }
+    }
+  }
+
+  if (takenLoot.length !== 0)
+    io.emit(NetworkIds.LOOT_UPDATE, { takenLoot });
 }
 
 function updateClient(elapsedTime) {

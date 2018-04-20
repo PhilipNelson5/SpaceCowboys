@@ -126,6 +126,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     });
   });
 
+  socket.on(NetworkIds.LOOT_UPDATE, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.LOOT_UPDATE,
+      data: data
+    });
+  });
+
   //------------------------------------------------------------------
   //
   // Handler for when the server ack's the socket connection.  We receive
@@ -331,6 +338,23 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     console.log(JSON.stringify(data.loot.shield));
   }
 
+  function lootUpdate(data) {
+    let found = false;
+    for (let id of data.takenLoot) {
+      found = false;
+      for (let l in loot) {
+        for (let e = 0; e < loot[l].length; ++e) {
+          if (id === loot[l][e].id) {
+            delete loot[l][e];
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+    }
+  }
+
   //------------------------------------------------------------------
   //
   // Process the registered input handlers here.
@@ -377,6 +401,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         break;
       case NetworkIds.STARTING_LOOT:
         initLoot(message.data);
+        break;
+      case NetworkIds.LOOT_UPDATE:
+        lootUpdate(message.data);
         break;
       }
     }

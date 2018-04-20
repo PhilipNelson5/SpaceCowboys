@@ -10,15 +10,15 @@ const r = require ('./random');
 function genLoot(n) {
 
   let loot = {
-    health    : [], // n  - 50pts
-    shield    : [], // 2n - 25pts
-    ammo      : [], // 3n - avg15 stdev15
-    weapon    : [], // n  - one per person
-    rangeUp   : [], // 1/3 n
-    damageUp  : [], // 1/3 n
-    speedUp   : []  // 1/3 n
-  };
-  console.log(JSON.stringify(loot));
+      health    : [], // n  - 50pts
+      shield    : [], // 2n - 25pts
+      ammo      : [], // 3n - avg15 stdev15
+      weapon    : [], // n  - one per person
+      rangeUp   : [], // 1/3 n
+      damageUp  : [], // 1/3 n
+      speedUp   : []  // 1/3 n
+    },
+    id = 0;
 
   let tot;
   const MIN = 0.5,
@@ -31,7 +31,9 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:50
+      radius: 0.02,
+      val: 50,
+      id : ++id
     });
   }
 
@@ -42,10 +44,10 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:25
+      val: 25,
+      id : ++id
     });
   }
-  console.log(JSON.stringify(loot));
 
   tot = 3*n;
   for (let i = 0; i < tot; ++i) {
@@ -54,7 +56,8 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:r.nextGaussian(15,10)
+      val: r.nextGaussian(15,10),
+      id : ++id
     });
   }
 
@@ -65,8 +68,9 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:0}
-    );
+      val: 0,
+      id : ++id
+    });
   }
 
   tot = Math.floor(n/3);
@@ -77,7 +81,8 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:750
+      val: 750,
+      id : ++id
     });
   }
 
@@ -89,7 +94,8 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:10
+      val: 10,
+      id : ++id
     });
   }
 
@@ -101,8 +107,9 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
-      val:0.0001}
-    );
+      val: 0.0001,
+      id : ++id
+    });
   }
 
   console.log(JSON.stringify(loot));
