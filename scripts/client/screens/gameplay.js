@@ -30,7 +30,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     get top() { return 0; },
     get width() { return 4.375; },
     get height() { return 2.5; },
-    get bufferSize() { return 0.50 }
+    get bufferSize() { return 0.50; }
   };
 
   let worldBuffer = {
@@ -41,7 +41,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   };
 
   Object.defineProperty(world, 'buffer', {
-    get: function() { return worldBuffer },
+    get: function() { return worldBuffer; },
     enumerable: true,
     configurable: false
   });
@@ -116,7 +116,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function connectPlayerSelf(data) {
-	let model = components.Player();
+    let model = components.Player();
     model.position.x = data.position.x;
     model.position.y = data.position.y;
 
@@ -129,16 +129,16 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     model.health = data.health;
 
-	playerSelf = {
-	  model: model,
+    playerSelf = {
+      model: model,
       texture: components.AnimatedSprite ({
-	  spriteSheet: Game.assets['player-self'],
-      spriteSize: { width: 0.07, height : 0.07 },
-      spriteCenter: {x : 0.5, y : 0.5},
-      spriteCount: 10,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
-	  })
-	};
+        spriteSheet: Game.assets['player-self'],
+        spriteSize: { width: 0.07, height : 0.07 },
+        spriteCenter: {x : 0.5, y : 0.5},
+        spriteCount: 10,
+        spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+      })
+    };
   }
 
   //------------------------------------------------------------------
@@ -149,22 +149,22 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function connectPlayerOther(data) {
     let model = components.PlayerRemote();
-	let texture = components.AnimatedSpriteRemote ({
-	  spriteSheet: Game.assets['player-other'],
+    let texture = components.AnimatedSpriteRemote ({
+      spriteSheet: Game.assets['player-other'],
       spriteSize: { width: 0.07, height : 0.07 },
       spriteCount: 10,
       spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
-	});
+    });
     
-	model.state.position.x = data.position.x;
+    model.state.position.x = data.position.x;
     model.state.position.y = data.position.y;
     model.state.direction = data.direction;
     model.state.lastUpdate = performance.now();
     
-	texture.state.position.x = data.position.x;
-	texture.state.position.y = data.position.y;
+    texture.state.position.x = data.position.x;
+    texture.state.position.y = data.position.y;
     texture.state.direction = data.direction;
-	texture.state.lastUpdate = performance.now();
+    texture.state.lastUpdate = performance.now();
 
     model.goal.position.x = data.position.x;
     model.goal.position.y = data.position.y;
@@ -181,8 +181,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     playerOthers[data.clientId] = {
       model: model,
-	  texture: texture
-	};
+      texture: texture
+    };
   }
 
   //------------------------------------------------------------------
@@ -237,14 +237,14 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
       let model = playerOthers[data.clientId].model;
-	  let player = playerOthers[data.clientId].texture;
+      let player = playerOthers[data.clientId].texture;
       
-	  model.goal.updateWindow = data.updateWindow;
+      model.goal.updateWindow = data.updateWindow;
       model.goal.position.x = data.position.x;
       model.goal.position.y = data.position.y;
       model.goal.direction = data.direction;
       
-	  player.goal.position.x = data.position.x;
+      player.goal.position.x = data.position.x;
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
       player.goal.direction = data.direction;
@@ -310,7 +310,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     //
     // Start with the keyboard updates so those messages can get in transit
     // while the local updating of received network messages are processed.
-    myKeyboard.update(elapsedTime);
+    if (playerSelf.model != null && playerSelf.model.health > 0)
+      myKeyboard.update(elapsedTime);
 
     //
     // Double buffering on the queue so we don't asynchronously receive messages
@@ -453,12 +454,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function update(elapsedTime) {
-    playerSelf.texture.update(elapsedTime);
+    if (playerSelf.model.health > 0)
+      playerSelf.texture.update(elapsedTime);
 
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
     // by only sending one rotational update per frame
-    if (playerSelf.model.rotate()) {
+    if (playerSelf.model.rotate() && playerSelf.model.health > 0) {
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
@@ -490,11 +492,15 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         delete explosions[id];
       }
     }
-    myKeyboard.update(elapsedTime);
-    myMouse.update(elapsedTime);
+    
+    if (playerSelf.model.health>0) {
+      myKeyboard.update(elapsedTime);
+      myMouse.update(elapsedTime);
+    }
 
     // TODO: go here
-    graphics.viewport.update(playerSelf.model);
+    if (playerSelf.model.health > 0)
+      graphics.viewport.update(playerSelf.model);
   }
 
   //------------------------------------------------------------------
@@ -508,7 +514,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     graphics.Tiled.render(background, graphics.viewport);
     graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
-    graphics.Player.render(playerSelf.model, playerSelf.texture);
+    if (playerSelf.model.health>0)
+      graphics.Player.render(playerSelf.model, playerSelf.texture);
     //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
 
     for (let id in playerOthers) {
