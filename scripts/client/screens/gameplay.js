@@ -440,7 +440,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         socket.emit(NetworkIds.INPUT, message);
         messageHistory.enqueue(message);
     },
-    myKeys.fire.key, myKeys.fire.id,true);
+    myKeys.fire.key, myKeys.fire.id,false);
 
     myMouse.registerCommand('mousedown', function(e, elapsedTime) {
       // mouseCapture = true;
