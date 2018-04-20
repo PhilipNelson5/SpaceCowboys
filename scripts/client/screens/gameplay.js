@@ -153,7 +153,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         spriteSize: { width: 0.07, height : 0.07 },
         spriteCenter: {x : 0.5, y : 0.5},
         spriteCount: 10,
-        spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+        spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ],
       })
     };
   }
@@ -170,7 +170,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       spriteSheet: Game.assets['player-other'],
       spriteSize: { width: 0.07, height : 0.07 },
       spriteCount: 10,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
     });
 
     model.state.position.x = data.position.x;
@@ -208,7 +208,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function disconnectPlayerOther(data) {
+    console.log(JSON.stringify(playerOthers));
     delete playerOthers[data.clientId];
+    console.log(JSON.stringify(playerOthers));
   }
 
   //------------------------------------------------------------------
@@ -299,12 +301,12 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       spriteSize: { width: 0.07, height: 0.07 },
       spriteCenter: data.position,
       spriteCount: 16,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
     });
 
     //
     // When we receive a hit notification, go ahead and remove the
-    // associated missle from the client model.
+    // associated missile from the client model.
     delete missiles[data.missileId];
   }
 
