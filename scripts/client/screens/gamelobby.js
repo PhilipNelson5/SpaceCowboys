@@ -62,7 +62,7 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     // dynamic character count
     //----------------------------------------------------------
-    document.getElementById('msg').onkeyup = function(e) {
+    document.getElementById('msg').onkeyup = function(/* e */) {
       document.getElementById('char-count').innerHTML = 'Char Count: ' + this.value.length + '/300';
     };
 
