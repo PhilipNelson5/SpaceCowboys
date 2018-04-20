@@ -14,7 +14,7 @@ function genLoot(n) {
     ammo      : [], // 3n - avg15 stdev15
     weapon    : [], // n  - one per person
     rangeUp   : [], // 1/3 n
-    dammageUp : [], // 1/3 n
+    damageUp  : [], // 1/3 n
     speedUp   : []  // 1/3 n
   };
 
@@ -71,7 +71,7 @@ function genLoot(n) {
   tot = Math.floor(n/3);
   tot = (tot === 0) ? 1 : tot;
   for (let i = 0; i < tot; ++i) {
-    loot.dammageUp.push({
+    loot.damageUp.push({
       x:r.nextDoubleRange(MIN, MAX),
       y:r.nextDoubleRange(MIN, MAX),
       val:10

@@ -22,13 +22,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     networkQueue = Queue.create();
 
   let loot = {
-    health         : [],
-    shield         : [],
-    ammo           : [],
-    weapon         : [],
-    rangeUp        : [],
-    dammageUp      : [],
-    missileSpeedUp : []
+    health    : [],
+    shield    : [],
+    ammo      : [],
+    weapon    : [],
+    rangeUp   : [],
+    damageUp  : [],
+    speedUp   : []
   };
 
   // let mouseCapture = false,
@@ -285,7 +285,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   }
 
   function initLoot(data) {
-    loot = data.loot;
+    loot.health    = data.loot.health;
+    loot.shield    = data.loot.shield;
+    loot.ammo      = data.loot.ammo;
+    loot.weapon    = data.loot.weapon;
+    loot.rangeUp   = data.loot.rangeUp;
+    loot.dammageUp = data.loot.dammageUp;
+    loot.speedUp   = data.loot.speedUp;
   }
 
   //------------------------------------------------------------------

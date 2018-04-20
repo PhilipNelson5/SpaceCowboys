@@ -91,7 +91,29 @@ Game.loader = (function() {
     }, {
       key: 'clouds-dark',
       source: 'assets/clouds_dark.png'
-    }]; // end assetOrder
+    }, {
+      key: 'loot-health',
+      source: 'assets/loot-health.png'
+    }, {
+      key: 'loot-shield',
+      source: 'assets/loot-shield.png'
+    }, {
+      key: 'loot-ammo',
+      source: 'assets/loot-ammo.png'
+    }, {
+      key: 'loot-weapon',
+      source: 'assets/loot-weapon.png'
+    }, {
+      key: 'loot-rangeUp',
+      source: 'assets/loot-rangeUp.png'
+    }, {
+      key: 'loot-damageUp',
+      source: 'assets/loot-damageUp.png'
+    }, {
+      key: 'loot-speedUp',
+      source: 'assets/loot-speedUp.png'
+    }
+    ]; // end assetOrder
 
   //------------------------------------------------------------------
   //
