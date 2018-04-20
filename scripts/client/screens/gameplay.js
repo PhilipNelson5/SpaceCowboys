@@ -428,6 +428,17 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       }
     },
     myKeys.left.key, myKeys.left.id,true);
+	
+	myKeyboard.registerHandler(elapsedTime => {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_FIRE
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+    },
+    myKeys.fire.key, myKeys.fire.id,true);
 
     myMouse.registerCommand('mousedown', function(e, elapsedTime) {
       // mouseCapture = true;
