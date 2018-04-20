@@ -1,31 +1,22 @@
 Game.keyBindings = (function() {
-
+	
+  
   let keys = {
-	forward : 87,
-	back    : 83,
-	left    : 65,
-	right   : 68
-	//fire    : undefined
+	keysChanged : false,
+	forward : {key : 87, id : 0},
+	back    : {key : 83, id : 1},
+	left    : {key : 65, id : 2},
+	right   : {key : 68, id : 3},
+	fire    : {key : undefined, id : 4},
+	oldF    : {key :  0, id : 0},
+	oldB    : {key :  0, id : 1},
+	oldL    : {key :  0, id : 2},
+	oldR    : {key :  0, id : 3},
+	oldFire : {key : undefined, id : 4},
   }
 
-/*
-  function keyUp(e) {
-	if(!e) e = event;
-	forward = e.keyCode;
-  }
-  
-  function keyDown(e) {
-	back = e.keyCode;
-  }
-  
-  function keyLeft(e) {
-	left = e.keyCode;
-  }
-
-  function keyDown(e) {
-	right = e.keyCode;
-  }
-*/
-	return {keys : keys};
+	return {
+		keys : keys,
+	};
 
 }());
