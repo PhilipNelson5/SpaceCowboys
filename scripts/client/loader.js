@@ -45,7 +45,7 @@ Game.loader = (function() {
         message: 'World\tComponents\tlaoded',
         onComplete: null
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite'],
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/animated-sprite-remote'],
         message: 'Player models\tloaded',
         onComplete: null
       }, {
@@ -53,7 +53,7 @@ Game.loader = (function() {
         message: 'Renderer\t\tloaded',
         onComplete: null
       }, {
-        scripts: ['rendering/animated-sprite', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
+        scripts: ['rendering/animated-sprite', 'rendering/animated-sprite-remote', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
         message: 'Graphics\t\tloaded',
         onComplete: null
       }, {
@@ -78,10 +78,10 @@ Game.loader = (function() {
 
     assetOrder = [{
       key: 'player-self',
-      source: 'assets/playerShip1_blue.png'
+      source: 'assets/blue_ship.png'
     }, {
       key: 'player-other',
-      source: 'assets/playerShip1_red.png'
+      source: 'assets/red_ship.png'
     }, {
       key: 'explosion',
       source: 'assets/explosion.png'
@@ -112,6 +112,9 @@ Game.loader = (function() {
     }, {
       key: 'loot-speedUp',
       source: 'assets/loot-speedUp.png'
+    }, {
+      key: 'background-mini',
+      source: 'assets/background/cropped.jpg'
     }
     ]; // end assetOrder
 
@@ -146,7 +149,7 @@ Game.loader = (function() {
       width: sizeX,
       height: sizeY,
       tileSize: tileSize
-    }
+    };
 
     for (tileY = 0; tileY < numberY; tileY += 1) {
       for (tileX = 0; tileX < numberX; tileX += 1) {
@@ -284,7 +287,9 @@ Game.loader = (function() {
 
   // Start with loading the assets, then the scripts.
   console.log('Starting to dynamically load project assets...');
-  prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 4480, 2560, 128);
+  //prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 4992, 4992, 128);
+  //prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 5000, 5000, 200);
+  prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 2048, 2048, 128);
   loadAssets(assetOrder, //source
     function(source, asset) { //onSuccess store the asset in Game.assets
       Game.assets[source.key] = asset;

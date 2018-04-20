@@ -14,9 +14,7 @@ const present = require('present'),
   Utils = require('./utils.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
-const STATE_UPDATE_RATE_MS = 100;
-
-const TIMER_MS = 3000;           // timer countdown in milliseconds
+const TIMER_MS = 1000;           // timer countdown in milliseconds
 const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
@@ -57,7 +55,7 @@ function createMissile(clientId, playerModel) {
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
-  let end;
+  // let end;
 
   /**
    * When a new client connects
@@ -310,7 +308,7 @@ function initializeSocketIO(httpServer) {
 }
 
 
-function processInput(elapsedTime) {
+function processInput(/* elapsedTime */) {
 
   let processMe = inputQueue;
   inputQueue = Queue.create();
@@ -508,8 +506,8 @@ function initialize(httpServer) {
  * stops the game simulation and processing
  *
  */
-function terminate() {
-  this.quit = true;
-}
+// function terminate() {
+// this.quit = true;
+// }
 
 module.exports.initialize = initialize;
