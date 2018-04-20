@@ -265,7 +265,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
       player.goal.direction = data.direction;
-      console.log(data.position.x + ' : ' + data.position.y);
     }
   }
 
@@ -325,8 +324,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     loot.ammo      = data.loot.ammo;
     loot.weapon    = data.loot.weapon;
     loot.rangeUp   = data.loot.rangeUp;
-    loot.dammageUp = data.loot.dammageUp;
+    loot.damageUp = data.loot.damageUp;
     loot.speedUp   = data.loot.speedUp;
+    console.log(JSON.stringify(data.loot.shield));
   }
 
   //------------------------------------------------------------------
@@ -555,7 +555,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         delete explosions[id];
       }
     }
-    
+
     if (playerSelf.model.health>0) {
       myKeyboard.update(elapsedTime);
       myMouse.update(elapsedTime);
@@ -579,13 +579,16 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
     if (playerSelf.model.health>0)
       graphics.Player.render(playerSelf.model, playerSelf.texture);
-    //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
 
     for (let id in playerOthers) {
       let player = playerOthers[id];
       graphics.PlayerRemote.render(player.model,player.texture);
     }
+
+    graphics.Loot.render(loot);
+
     graphics.endClip();
+    //draw Buildings AFTER clip or else they be underneath it
 
     for (let missile in missiles) {
       graphics.Missile.render(missiles[missile]);
@@ -595,7 +598,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       graphics.AnimatedSprite.render(explosions[id]);
     }
 
-    //draw Buildings AFTER clip or else they be underneath it
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 

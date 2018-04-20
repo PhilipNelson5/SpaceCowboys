@@ -8,6 +8,7 @@
 const r = require ('./random');
 
 function genLoot(n) {
+
   let loot = {
     health    : [], // n  - 50pts
     shield    : [], // 2n - 25pts
@@ -17,6 +18,7 @@ function genLoot(n) {
     damageUp  : [], // 1/3 n
     speedUp   : []  // 1/3 n
   };
+  console.log(JSON.stringify(loot));
 
   let tot;
   const MIN = 0.5,
@@ -25,8 +27,10 @@ function genLoot(n) {
   tot = n;
   for (let i = 0; i < tot; ++i) {
     loot.health.push({
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:50
     });
   }
@@ -34,17 +38,22 @@ function genLoot(n) {
   tot = 2*n;
   for (let i = 0; i < tot; ++i) {
     loot.shield.push({
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:25
     });
   }
+  console.log(JSON.stringify(loot));
 
   tot = 3*n;
   for (let i = 0; i < tot; ++i) {
     loot.ammo.push({
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:r.nextGaussian(15,10)
     });
   }
@@ -52,8 +61,10 @@ function genLoot(n) {
   tot = n;
   for (let i = 0; i < tot; ++i) {
     loot.weapon.push( {
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:0}
     );
   }
@@ -62,8 +73,10 @@ function genLoot(n) {
   tot = (tot === 0) ? 1 : tot;
   for (let i = 0; i < tot; ++i) {
     loot.rangeUp.push({
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:750
     });
   }
@@ -72,8 +85,10 @@ function genLoot(n) {
   tot = (tot === 0) ? 1 : tot;
   for (let i = 0; i < tot; ++i) {
     loot.damageUp.push({
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:10
     });
   }
@@ -82,12 +97,15 @@ function genLoot(n) {
   tot = (tot === 0) ? 1 : tot;
   for (let i = 0; i < tot; ++i) {
     loot.speedUp.push( {
-      x:r.nextDoubleRange(MIN, MAX),
-      y:r.nextDoubleRange(MIN, MAX),
+      position : {
+        x:r.nextDoubleRange(MIN, MAX),
+        y:r.nextDoubleRange(MIN, MAX),
+      },
       val:0.0001}
     );
   }
 
+  console.log(JSON.stringify(loot));
   return loot;
 
 }

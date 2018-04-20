@@ -237,7 +237,7 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        let loot = Utils.genLoot();
+        let loot = Utils.genLoot(numLobbyClients);
 
         setTimeout( () => {
           for (let id in lobbyClients) {
