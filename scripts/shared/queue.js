@@ -19,6 +19,10 @@
       return that.shift();
     };
 
+    that.remove = function(removeId) {
+      that = that.filter((elem) => elem.clientId !== removeId);
+    };
+
     Object.defineProperty(that, 'front', {
       get: () => that[0]
     });

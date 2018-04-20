@@ -30,7 +30,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     get top() { return 0; },
     get width() { return 4.0; },
     get height() { return 4.0; },
-    get bufferSize() { return 0.52 }
+    get bufferSize() { return 0.52; }
   };
 
   let worldBuffer = {
@@ -140,7 +140,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         spriteSize: { width: 0.07, height : 0.07 },
         spriteCenter: {x : 0.5, y : 0.5},
         spriteCount: 10,
-        spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+        spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ],
       })
     };
   }
@@ -157,14 +157,14 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       spriteSheet: Game.assets['player-other'],
       spriteSize: { width: 0.07, height : 0.07 },
       spriteCount: 10,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
     });
-    
+
     model.state.position.x = data.position.x;
     model.state.position.y = data.position.y;
     model.state.direction = data.direction;
     model.state.lastUpdate = performance.now();
-    
+
     texture.state.position.x = data.position.x;
     texture.state.position.y = data.position.y;
     texture.state.direction = data.direction;
@@ -195,7 +195,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function disconnectPlayerOther(data) {
+    console.log(JSON.stringify(playerOthers));
     delete playerOthers[data.clientId];
+    console.log(JSON.stringify(playerOthers));
   }
 
   //------------------------------------------------------------------
@@ -247,12 +249,12 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     if (playerOthers.hasOwnProperty(data.clientId)) {
       let model = playerOthers[data.clientId].model;
       let player = playerOthers[data.clientId].texture;
-      
+
       model.goal.updateWindow = data.updateWindow;
       model.goal.position.x = data.position.x;
       model.goal.position.y = data.position.y;
       model.goal.direction = data.direction;
-      
+
       player.goal.position.x = data.position.x;
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
@@ -292,12 +294,12 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       spriteSize: { width: 0.07, height: 0.07 },
       spriteCenter: data.position,
       spriteCount: 16,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
+      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
     });
 
     //
     // When we receive a hit notification, go ahead and remove the
-    // associated missle from the client model.
+    // associated missile from the client model.
     delete missiles[data.missileId];
   }
 
@@ -396,11 +398,11 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     myKeys.back.key, myKeys.back.id,true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveRight(playerSelf.texture,elapsedTime); 
+      playerSelf.model.moveRight(playerSelf.texture,elapsedTime);
       if (playerSelf.model.position.x >= world.buffer.right || playerSelf.texture.center.x >= world.buffer.right) {
         playerSelf.model.position.x = world.buffer.right;
         playerSelf.texture.center.x = world.buffer.right;
-      } else { 
+      } else {
         let message = {
           id: messageId++,
           elapsedTime: elapsedTime,
@@ -417,7 +419,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       if (playerSelf.model.position.x <= world.buffer.left || playerSelf.texture.center.x <= world.buffer.left) {
         playerSelf.model.position.x = world.buffer.left;
         playerSelf.texture.center.x = world.buffer.left;
-      } else { 
+      } else {
         let message = {
           id: messageId++,
           elapsedTime: elapsedTime,
@@ -593,7 +595,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         delete explosions[id];
       }
     }
-    
+
     if (playerSelf.model.health>0) {
       myKeyboard.update(elapsedTime);
       myMouse.update(elapsedTime);
