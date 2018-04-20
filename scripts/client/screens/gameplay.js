@@ -28,8 +28,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   let world = {
     get left() { return 0; },
     get top() { return 0; },
-    get width() { return 4.375; },
-    get height() { return 2.5; },
+    get width() { return 4.0; },
+    get height() { return 4.0; },
     get bufferSize() { return 0.52 }
   };
 

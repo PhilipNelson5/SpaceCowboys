@@ -262,7 +262,9 @@ Game.loader = (function() {
 
   // Start with loading the assets, then the scripts.
   console.log('Starting to dynamically load project assets...');
-  prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 4480, 2560, 128);
+  //prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 4992, 4992, 128);
+  //prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 5000, 5000, 200);
+  prepareTiledImage(assetOrder, '../../assets/background/tiles', 'background', 2048, 2048, 128);
   loadAssets(assetOrder, //source
     function(source, asset) { //onSuccess store the asset in Game.assets
       Game.assets[source.key] = asset;
