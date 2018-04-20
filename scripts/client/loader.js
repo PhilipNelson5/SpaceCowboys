@@ -45,7 +45,7 @@ Game.loader = (function() {
         message: 'World\tComponents\tlaoded',
         onComplete: null
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/animated-sprite-remote'],
+        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/animated-sprite-remote', 'components/asteroids'],
         message: 'Player models\tloaded',
         onComplete: null
       }, {

@@ -569,7 +569,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
 
     for (let a in asteroids) {
-      graphics.drawImage(asteroids[a].image, asteroids[a].position, asteroids[a].size, true);
+      graphics.drawImage(assets['asteroid'], asteroids[a].position, asteroids[a].size, true);
     }
 
     //draw Buildings AFTER clip or else they be underneath it
