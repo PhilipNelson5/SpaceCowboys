@@ -15,7 +15,7 @@ Game.graphics.Player = (function(graphics) {
   that.render = function(model, texture) {
     graphics.saveContext();
     graphics.rotateCanvas(texture.center, model.direction);
-	graphics.AnimatedSprite.render(texture); 
+  	graphics.AnimatedSprite.render(texture); 
     graphics.restoreContext();
 
   };
