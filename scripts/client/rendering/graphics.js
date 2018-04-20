@@ -306,13 +306,13 @@ Game.graphics = (function(assets) {
 
     context.strokeRect(x, y, width, height);
     context.drawImage(map, x+1, y+1, width-2, height-2);
-    context.stroke(); 
+    context.stroke();
 
     context.beginPath();
     context.moveTo(posX + 3, posY);
     context.arc(posX, posY, 3, 0, 2*Math.PI);
     context.closePath();
-    context.fill(); 
+    context.fill();
   }
 
   /**
