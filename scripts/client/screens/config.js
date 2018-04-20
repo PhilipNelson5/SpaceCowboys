@@ -1,8 +1,6 @@
 Game.screens['config'] = (function(menu,keyBindings,input) {
   'use strict';
 
-  //document.getElementById("myModal");
-
   let up = false;
   let down = false;
   let left = false;
@@ -11,6 +9,22 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
 
 // This is 100% garbage, but this is how the page listens. 
 
+  function checkKeys(key)
+  {
+	 if(key === keyBindings.keys.forward.key || key === keyBindings.keys.back.key || key === keyBindings.keys.left.key || key === keyBindings.keys.right.key || key === keyBindings.keys.fire.key)
+	 {
+		document.getElementById("rebind").innerHTML = "Key Already bound!";
+		up = false;
+		down = false;
+		right = false;
+		left = false;
+		fire = false;
+	 }
+	 else {
+		document.getElementById("rebind").innerHTML = "Please Press a Button to Rebind";
+	    keyBindings.keys.keysChanged = true;
+	 }
+  }	
   
   document.addEventListener("keydown", e => {
 	if(e.keyCode === 32)
@@ -29,8 +43,7 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
   function keydown(e) {
 	if(!e) e = event;
 	document.removeEventListener("keydown",keydown);
-	document.getElementById("rebind").innerHTML = "Please Press a Button to Rebind";
-	//modal.style.display = "none";
+	checkKeys(e.keyCode);
 	if (up === true) {
 	  keyBindings.keys.forward.key = e.keyCode;
 	  document.getElementById("up").innerHTML = getBinding(e.keyCode);
@@ -56,7 +69,6 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
 	    document.getElementById("fire").innerHTML = getBinding(e.keyCode);
 	    fire = false;
 	}
-	keyBindings.keys.keysChanged = true;
 	document.getElementById("id-config-keyUp").disabled = false;
 	document.getElementById("id-config-keyLeft").disabled = false;
 	document.getElementById("id-config-keyRight").disabled = false;
@@ -66,7 +78,6 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
   }
 
 
-//	  <dialog id = "myDialog">Press Any Key</dialog>
   function initialize() {
 	//TODO: Write a method that will capture the default keys and show them here.
     menu.addScreen('config',
@@ -83,7 +94,6 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
       </ul>
     `);
 
-	//var modal = document.getElementById("myModal");
     document.getElementById('id-config-back').addEventListener(
       'click',
       function() { menu.showScreen('main-menu'); });
