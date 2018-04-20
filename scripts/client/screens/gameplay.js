@@ -33,6 +33,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     get bufferSize() { return 0.52; }
   };
 
+  let asteroids = components.Asteroid(world);
+
   let worldBuffer = {
     get left() { return world.left + world.bufferSize; },
     get top() { return world.top + world.bufferSize; },
@@ -250,7 +252,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
       player.goal.direction = data.direction;
-      console.log(data.position.x + ' : ' + data.position.y);
     }
   }
 
@@ -567,13 +568,17 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       graphics.AnimatedSprite.render(explosions[id]);
     }
 
+    for (let a in asteroids) {
+      graphics.drawImage(asteroids[a].image, asteroids[a].position, asteroids[a].size, true);
+    }
+
     //draw Buildings AFTER clip or else they be underneath it
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
     //TODO 100 is the max health
     graphics.drawHealth(playerSelf.model.health, 100);
-    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height);
+    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
 
   }
 

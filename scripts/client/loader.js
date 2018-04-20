@@ -94,6 +94,9 @@ Game.loader = (function() {
     }, {
       key: 'background-mini',
       source: 'assets/background/cropped.jpg'
+    }, {
+      key: 'asteroid',
+      source: 'assets/asteroid.png'
     }]; // end assetOrder
 
   //------------------------------------------------------------------

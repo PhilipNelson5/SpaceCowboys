@@ -27,6 +27,7 @@ let inputQueue = Queue.create();
 let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
+let asteroids = [];
 let hits = [];
 let vector = null;
 
