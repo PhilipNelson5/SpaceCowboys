@@ -88,6 +88,7 @@ function initializeSocketIO(httpServer) {
       delete activeClients[socket.id];
       --numActiveClients;
       if (lobbyClients[socket.id] != undefined) {
+        inputQueue.remove(socket.id);
         delete lobbyClients[socket.id];
         --numLobbyClients;
         socket.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients);
