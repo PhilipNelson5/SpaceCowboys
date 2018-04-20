@@ -265,6 +265,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
       player.goal.direction = data.direction;
+      console.log(data.position.x + ' : ' + data.position.y);
     }
   }
 
@@ -337,7 +338,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     //
     // Start with the keyboard updates so those messages can get in transit
     // while the local updating of received network messages are processed.
-    myKeyboard.update(elapsedTime);
+    if (playerSelf.model != null && playerSelf.model.health > 0)
+      myKeyboard.update(elapsedTime);
 
     //
     // Double buffering on the queue so we don't asynchronously receive messages
@@ -503,12 +505,25 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function update(elapsedTime) {
-    playerSelf.texture.update(elapsedTime);
+
+    if (playerSelf.model.health <= 0 ) {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.DIE,
+        data: { }
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
+    }
+
+    if (playerSelf.model.health > 0)
+      playerSelf.texture.update(elapsedTime);
 
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
     // by only sending one rotational update per frame
-    if (playerSelf.model.rotate()) {
+    if (playerSelf.model.rotate() && playerSelf.model.health > 0) {
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
@@ -540,11 +555,15 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         delete explosions[id];
       }
     }
-    myKeyboard.update(elapsedTime);
-    myMouse.update(elapsedTime);
+    
+    if (playerSelf.model.health>0) {
+      myKeyboard.update(elapsedTime);
+      myMouse.update(elapsedTime);
+    }
 
     // TODO: go here
-    graphics.viewport.update(playerSelf.model);
+    if (playerSelf.model.health > 0)
+      graphics.viewport.update(playerSelf.model);
   }
 
   //------------------------------------------------------------------
@@ -558,7 +577,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     graphics.Tiled.render(background, graphics.viewport);
     graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
-    graphics.Player.render(playerSelf.model, playerSelf.texture);
+    if (playerSelf.model.health>0)
+      graphics.Player.render(playerSelf.model, playerSelf.texture);
     //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
 
     for (let id in playerOthers) {
