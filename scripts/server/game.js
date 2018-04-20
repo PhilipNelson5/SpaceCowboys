@@ -32,6 +32,23 @@ let vector = null;
 
 //------------------------------------------------------------------
 //
+// Notifies the already connected clients about the disconnect of
+// another client.
+//
+//------------------------------------------------------------------
+function notifyDisconnectInGame(playerId) {
+  for (let clientId in lobbyClients) {
+    let client = lobbyClients[clientId];
+    if (playerId !== clientId) {
+      client.socket.emit(NetworkIds.DISCONNECT_OTHER, {
+        clientId: playerId
+      });
+    }
+  }
+}
+
+//------------------------------------------------------------------
+//
 // Create a missile in response to user input.
 //
 //------------------------------------------------------------------
@@ -88,9 +105,12 @@ function initializeSocketIO(httpServer) {
       delete activeClients[socket.id];
       --numActiveClients;
       if (lobbyClients[socket.id] != undefined) {
+        inputQueue.remove(socket.id);
         delete lobbyClients[socket.id];
         --numLobbyClients;
         socket.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients);
+        if (inSession)
+          notifyDisconnectInGame(socket.id);
       }
 
       console.log('DISCONNECT: ' + numActiveClients + ' active clients');
@@ -331,6 +351,9 @@ function processInput(/* elapsedTime */) {
     case NetworkIds.INPUT_FIRE:
       createMissile(input.clientId, client.player);
       break;
+    case NetworkIds.DIE:
+      client.player.die();
+      break;
     }
   }
 }
@@ -372,10 +395,10 @@ function update(elapsedTime, currentTime) {
   keepMissiles = [];
   for (let missile = 0; missile < activeMissiles.length; ++missile) {
     let hit = false;
-    for (let clientId in activeClients) {
+    for (let clientId in lobbyClients) {
       //
-      // Don't allow a missile to hit the player it was fired from.
-      if (clientId !== activeMissiles[missile].clientId) {
+      // Don't allow a missile to hit the player it was fired from or a dead player
+      if (clientId !== activeMissiles[missile].clientId && lobbyClients[clientId].player.health > 0) {
         if (collided(activeMissiles[missile], activeClients[clientId].player)) {
           hit = true;
           hits.push({
