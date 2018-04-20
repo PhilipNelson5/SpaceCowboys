@@ -13,7 +13,7 @@ let usePrevious = false,
 //
 // Generate a uniformly selected random number
 //
-// ------------------------------------------------------------------ 
+// ------------------------------------------------------------------
 function nextDouble() {
   return Math.random();
 }
@@ -24,9 +24,16 @@ function nextDouble() {
 //
 // ------------------------------------------------------------------
 function nextRange(min, max) {
-  let range = max - min + 1;
+  return Math.floor((Math.random() * (max - min + 1)) + min);
+}
 
-  return Math.floor((Math.random() * range) + min);
+// ------------------------------------------------------------------
+//
+// Generate a uniformly selected random 'integer' within the range [min, max).
+//
+// ------------------------------------------------------------------
+function nextDoubleRange(min, max) {
+  return (Math.random() * (max - min)) + min;
 }
 
 // ------------------------------------------------------------------
@@ -47,9 +54,6 @@ function nextCircleVector(scale) {
 // ------------------------------------------------------------------
 //
 // Generate a normally distributed random number.
-//
-// NOTE: This code is adapted from a wiki reference I found a long time ago.  I originally
-// wrote the code in C# and am now converting it over to JavaScript.
 //
 // ------------------------------------------------------------------
 function nextGaussian(mean, stdDev) {
@@ -84,5 +88,6 @@ function nextGaussian(mean, stdDev) {
 
 module.exports.nextDouble = nextDouble;
 module.exports.nextRange = nextRange;
+module.exports.nextDoubleRange = nextDoubleRange;
 module.exports.nextCircleVector = nextCircleVector;
 module.exports.nextGaussian = nextGaussian;
