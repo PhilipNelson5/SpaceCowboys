@@ -32,6 +32,23 @@ let vector = null;
 
 //------------------------------------------------------------------
 //
+// Notifies the already connected clients about the disconnect of
+// another client.
+//
+//------------------------------------------------------------------
+function notifyDisconnectInGame(playerId) {
+  for (let clientId in lobbyClients) {
+    let client = lobbyClients[clientId];
+    if (playerId !== clientId) {
+      client.socket.emit(NetworkIds.DISCONNECT_OTHER, {
+        clientId: playerId
+      });
+    }
+  }
+}
+
+//------------------------------------------------------------------
+//
 // Create a missile in response to user input.
 //
 //------------------------------------------------------------------
@@ -88,9 +105,12 @@ function initializeSocketIO(httpServer) {
       delete activeClients[socket.id];
       --numActiveClients;
       if (lobbyClients[socket.id] != undefined) {
+        inputQueue.remove(socket.id);
         delete lobbyClients[socket.id];
         --numLobbyClients;
         socket.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients);
+        if (inSession)
+          notifyDisconnectInGame(socket.id);
       }
 
       console.log('DISCONNECT: ' + numActiveClients + ' active clients');
