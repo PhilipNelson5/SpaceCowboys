@@ -15,6 +15,8 @@ Game.keyBindings = (function() {
 	oldFire : {key : undefined, id : 4},
   }
 
+  
+
 	return {
 		keys : keys,
 	};
