@@ -11,6 +11,21 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
 
 // This is 100% garbage, but this is how the page listens. 
 
+  
+  document.addEventListener("keydown", e => {
+	if(e.keyCode === 32)
+	{
+		e.preventDefault();	
+	}
+  });
+  
+  document.addEventListener("keyup", e => {
+	if(e.keyCode === 32)
+	{
+		e.preventDefault();	
+	}
+  });
+
   function keydown(e) {
 	if(!e) e = event;
 	document.removeEventListener("keydown",keydown);
@@ -37,11 +52,17 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
 	  right = false;
 	}
 	if (fire === true) {
-	  keyBindings.keys.fire.key = e.keyCode;
-	  document.getElementById("fire").innerHTML = getBinding(e.keyCode);
-	  fire = false;
+		keyBindings.keys.fire.key = e.keyCode;
+	    document.getElementById("fire").innerHTML = getBinding(e.keyCode);
+	    fire = false;
 	}
 	keyBindings.keys.keysChanged = true;
+	document.getElementById("id-config-keyUp").disabled = false;
+	document.getElementById("id-config-keyLeft").disabled = false;
+	document.getElementById("id-config-keyRight").disabled = false;
+	document.getElementById("id-config-keyDown").disabled = false;
+	document.getElementById("id-config-keyFire").disabled = false;
+	document.getElementById("id-config-back").disabled = false;
   }
 
 
@@ -73,6 +94,11 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
 		console.log(keyBindings.keys.forward.key); 
 		keyBindings.keys.oldF.key = keyBindings.keys.forward.key;
 		up = true; 
+		document.getElementById("id-config-keyLeft").disabled = true;
+		document.getElementById("id-config-keyDown").disabled = true;
+		document.getElementById("id-config-keyRight").disabled = true;
+		document.getElementById("id-config-keyFire").disabled = true;
+		document.getElementById("id-config-back").disabled = true;
 		document.getElementById("rebind").innerHTML = "Press a Key To Rebind";
 	    document.addEventListener("keydown", keydown);
 	  });
@@ -82,6 +108,11 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
       function() { 
 		keyBindings.keys.oldB.key = keyBindings.keys.back.key;
 		down = true; 
+		document.getElementById("id-config-keyUp").disabled = true;
+		document.getElementById("id-config-keyLeft").disabled = true;
+		document.getElementById("id-config-keyRight").disabled = true;
+		document.getElementById("id-config-keyFire").disabled = true;
+		document.getElementById("id-config-back").disabled = true;
 		document.getElementById("rebind").innerHTML = "Press a Key To Rebind";
 	    document.addEventListener("keydown", keydown);
 	  });
@@ -91,6 +122,11 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
       function() { 
 		keyBindings.keys.oldL.key  = keyBindings.keys.left.key;
 		left = true; 
+		document.getElementById("id-config-keyUp").disabled = true;
+		document.getElementById("id-config-keyDown").disabled = true;
+		document.getElementById("id-config-keyRight").disabled = true;
+		document.getElementById("id-config-keyFire").disabled = true;
+		document.getElementById("id-config-back").disabled = true;
 		document.getElementById("rebind").innerHTML = "Press a Key To Rebind";
 	    document.addEventListener("keydown", keydown);
 	  });
@@ -100,6 +136,11 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
       function() { 
 		keyBindings.keys.oldR.key  = keyBindings.keys.right.key;
 		right = true; 
+		document.getElementById("id-config-keyUp").disabled = true;
+		document.getElementById("id-config-keyLeft").disabled = true;
+		document.getElementById("id-config-keyDown").disabled = true;
+		document.getElementById("id-config-keyFire").disabled = true;
+		document.getElementById("id-config-back").disabled = true;
 		document.getElementById("rebind").innerHTML = "Press a Key To Rebind";
 	    document.addEventListener("keydown", keydown);
 	  });
@@ -107,8 +148,13 @@ Game.screens['config'] = (function(menu,keyBindings,input) {
 	document.getElementById('id-config-keyFire').addEventListener(
       'click',
       function() { 
-		keyBindings.keys.oldFire.key  = keyBindings.keys.fire.key;
+		keyBindings.keys.oldFire.key = keyBindings.keys.fire.key;
 		fire = true; 
+		document.getElementById("id-config-keyUp").disabled = true;
+		document.getElementById("id-config-keyLeft").disabled = true;
+		document.getElementById("id-config-keyRight").disabled = true;
+		document.getElementById("id-config-keyDown").disabled = true;
+		document.getElementById("id-config-back").disabled = true;
 		document.getElementById("rebind").innerHTML = "Press a Key To Rebind";
 	    document.addEventListener("keydown", keydown);
 	  });
