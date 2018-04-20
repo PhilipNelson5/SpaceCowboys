@@ -296,6 +296,25 @@ Game.graphics = (function(assets) {
     });
   }
 
+  function drawMini(map, position, worldWidth, worldHeight) {
+    let x = (3 * canvas.width)/ 4;
+    let y = 5;
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+    let posX = position.x / worldWidth * (width - 2) + x;
+    let posY = position.y / worldHeight * (height - 2) + y;
+
+    context.strokeRect(x, y, width, height);
+    context.drawImage(map, x+1, y+1, width-2, height-2);
+    context.stroke(); 
+
+    context.beginPath();
+    context.moveTo(posX + 3, posY);
+    context.arc(posX, posY, 3, 0, 2*Math.PI);
+    context.closePath();
+    context.fill(); 
+  }
+
   /**
    * write text given the top right coordinate
    * spec {
@@ -501,6 +520,7 @@ Game.graphics = (function(assets) {
     endClip,
     drawFog,
     drawHealth,
+    drawMini,
     toggleFullScreen,
     drawText,
     measureTextHeight,

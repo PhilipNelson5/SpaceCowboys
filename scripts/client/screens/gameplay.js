@@ -28,9 +28,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   let world = {
     get left() { return 0; },
     get top() { return 0; },
-    get width() { return 4.375; },
-    get height() { return 2.5; },
-    get bufferSize() { return 0.50; }
+    get width() { return 4.0; },
+    get height() { return 4.0; },
+    get bufferSize() { return 0.52 }
   };
 
   let worldBuffer = {
@@ -379,50 +379,70 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     */
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_UP
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.y <= world.buffer.top || playerSelf.texture.center.y <= world.buffer.top) {
+        playerSelf.model.position.y = world.buffer.top;
+        playerSelf.texture.center.y = world.buffer.top;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_UP
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     input.KeyEvent.DOM_VK_W, true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_DOWN
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.y >= world.buffer.bottom || playerSelf.texture.center.y >= world.buffer.bottom) {
+        playerSelf.model.position.y = world.buffer.bottom;
+        playerSelf.texture.center.y = world.buffer.bottom;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_DOWN
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     input.KeyEvent.DOM_VK_S, true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_RIGHT
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveRight(playerSelf.texture,elapsedTime); 
+      if (playerSelf.model.position.x >= world.buffer.right || playerSelf.texture.center.x >= world.buffer.right) {
+        playerSelf.model.position.x = world.buffer.right;
+        playerSelf.texture.center.x = world.buffer.right;
+      } else { 
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_RIGHT
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     input.KeyEvent.DOM_VK_D, true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_LEFT
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.x <= world.buffer.left || playerSelf.texture.center.x <= world.buffer.left) {
+        playerSelf.model.position.x = world.buffer.left;
+        playerSelf.texture.center.x = world.buffer.left;
+      } else { 
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_LEFT
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     input.KeyEvent.DOM_VK_A, true);
 
@@ -531,6 +551,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     //TODO 100 is the max health
     graphics.drawHealth(playerSelf.model.health, 100);
+    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height);
 
   }
 
