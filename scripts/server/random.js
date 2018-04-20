@@ -13,7 +13,7 @@ let usePrevious = false,
 //
 // Generate a uniformly selected random number
 //
-// ------------------------------------------------------------------ 
+// ------------------------------------------------------------------
 function nextDouble() {
   return Math.random();
 }

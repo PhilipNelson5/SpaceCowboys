@@ -28,9 +28,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   let world = {
     get left() { return 0; },
     get top() { return 0; },
-    get width() { return 4.375; },
-    get height() { return 2.5; },
-    get bufferSize() { return 0.50 }
+    get width() { return 4.0; },
+    get height() { return 4.0; },
+    get bufferSize() { return 0.52 }
   };
 
   let worldBuffer = {
@@ -41,7 +41,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   };
 
   Object.defineProperty(world, 'buffer', {
-    get: function() { return worldBuffer },
+    get: function() { return worldBuffer; },
     enumerable: true,
     configurable: false
   });
@@ -116,7 +116,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function connectPlayerSelf(data) {
-	let model = components.Player();
+    let model = components.Player();
     model.position.x = data.position.x;
     model.position.y = data.position.y;
 
@@ -133,16 +133,16 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 	model.score.place = data.score.place;
 	model.score.kills = data.score.kills;
 
-	playerSelf = {
-	  model: model,
+    playerSelf = {
+      model: model,
       texture: components.AnimatedSprite ({
-	  spriteSheet: Game.assets['player-self'],
-      spriteSize: { width: 0.07, height : 0.07 },
-      spriteCenter: {x : 0.5, y : 0.5},
-      spriteCount: 10,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
-	  })
-	};
+        spriteSheet: Game.assets['player-self'],
+        spriteSize: { width: 0.07, height : 0.07 },
+        spriteCenter: {x : 0.5, y : 0.5},
+        spriteCount: 10,
+        spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+      })
+    };
   }
 
   //------------------------------------------------------------------
@@ -153,22 +153,22 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //------------------------------------------------------------------
   function connectPlayerOther(data) {
     let model = components.PlayerRemote();
-	let texture = components.AnimatedSpriteRemote ({
-	  spriteSheet: Game.assets['player-other'],
+    let texture = components.AnimatedSpriteRemote ({
+      spriteSheet: Game.assets['player-other'],
       spriteSize: { width: 0.07, height : 0.07 },
       spriteCount: 10,
       spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50]
-	});
+    });
     
-	model.state.position.x = data.position.x;
+    model.state.position.x = data.position.x;
     model.state.position.y = data.position.y;
     model.state.direction = data.direction;
     model.state.lastUpdate = performance.now();
     
-	texture.state.position.x = data.position.x;
-	texture.state.position.y = data.position.y;
+    texture.state.position.x = data.position.x;
+    texture.state.position.y = data.position.y;
     texture.state.direction = data.direction;
-	texture.state.lastUpdate = performance.now();
+    texture.state.lastUpdate = performance.now();
 
     model.goal.position.x = data.position.x;
     model.goal.position.y = data.position.y;
@@ -185,8 +185,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
     playerOthers[data.clientId] = {
       model: model,
-	  texture: texture
-	};
+      texture: texture
+    };
   }
 
   //------------------------------------------------------------------
@@ -246,17 +246,18 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   function updatePlayerOther(data) {
     if (playerOthers.hasOwnProperty(data.clientId)) {
       let model = playerOthers[data.clientId].model;
-	  let player = playerOthers[data.clientId].texture;
+      let player = playerOthers[data.clientId].texture;
       
-	  model.goal.updateWindow = data.updateWindow;
+      model.goal.updateWindow = data.updateWindow;
       model.goal.position.x = data.position.x;
       model.goal.position.y = data.position.y;
       model.goal.direction = data.direction;
       
-	  player.goal.position.x = data.position.x;
+      player.goal.position.x = data.position.x;
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
       player.goal.direction = data.direction;
+      console.log(data.position.x + ' : ' + data.position.y);
     }
   }
 
@@ -319,7 +320,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     //
     // Start with the keyboard updates so those messages can get in transit
     // while the local updating of received network messages are processed.
-    myKeyboard.update(elapsedTime);
+    if (playerSelf.model != null && playerSelf.model.health > 0)
+      myKeyboard.update(elapsedTime);
 
     //
     // Double buffering on the queue so we don't asynchronously receive messages
@@ -360,50 +362,70 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   function registerControls() {
 	
 	myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_UP
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.y <= world.buffer.top || playerSelf.texture.center.y <= world.buffer.top) {
+        playerSelf.model.position.y = world.buffer.top;
+        playerSelf.texture.center.y = world.buffer.top;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_UP
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     myKeys.forward.key, myKeys.forward.id,true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_DOWN
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.y >= world.buffer.bottom || playerSelf.texture.center.y >= world.buffer.bottom) {
+        playerSelf.model.position.y = world.buffer.bottom;
+        playerSelf.texture.center.y = world.buffer.bottom;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_DOWN
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     myKeys.back.key, myKeys.back.id,true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_RIGHT
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveRight(playerSelf.texture,elapsedTime); 
+      if (playerSelf.model.position.x >= world.buffer.right || playerSelf.texture.center.x >= world.buffer.right) {
+        playerSelf.model.position.x = world.buffer.right;
+        playerSelf.texture.center.x = world.buffer.right;
+      } else { 
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_RIGHT
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     myKeys.right.key, myKeys.right.id,true);
 
     myKeyboard.registerHandler(elapsedTime => {
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_MOVE_LEFT
-      };
-      socket.emit(NetworkIds.INPUT, message);
-      messageHistory.enqueue(message);
       playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.x <= world.buffer.left || playerSelf.texture.center.x <= world.buffer.left) {
+        playerSelf.model.position.x = world.buffer.left;
+        playerSelf.texture.center.x = world.buffer.left;
+      } else { 
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_LEFT
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
     },
     myKeys.left.key, myKeys.left.id,true);
 
@@ -426,6 +448,41 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       // if (mouseCapture) { }
       playerSelf.model.target = {x : e.clientX, y : e.clientY};
     });
+
+  }
+
+  function initialize() {
+    menu.addScreen('gameplay',
+      `
+      <canvas height=100% width=100% id='canvas-main'></canvas>
+      `
+    );
+
+    graphics.initialize();
+
+    graphics.viewport.set(0, 0, 0.50);
+
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: world.width, height: world.height },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
+    });
+
+    /*
+    myTexture = graphics.Texture( {
+      image : assets['player-self'],
+      center : { x : 100, y : 100 },
+      width : 100, height : 100,
+      rotation : 0,
+      moveRate : 200,       // pixels per second
+      rotateRate : 3.14159  // Radians per second
+    });
+    */
+	
+	registerControls();
+    
   }
 
   function unRegisterControls() {
@@ -468,7 +525,20 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function update(elapsedTime) {
-    playerSelf.texture.update(elapsedTime);
+
+    if (playerSelf.model.health <= 0 ) {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.DIE,
+        data: { }
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
+    }
+
+    if (playerSelf.model.health > 0)
+      playerSelf.texture.update(elapsedTime);
 
 		
 	if (myKeys.keysChanged === true)
@@ -480,7 +550,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
     // by only sending one rotational update per frame
-    if (playerSelf.model.rotate()) {
+    if (playerSelf.model.rotate() && playerSelf.model.health > 0) {
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
@@ -512,11 +582,15 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         delete explosions[id];
       }
     }
-    myKeyboard.update(elapsedTime);
-    myMouse.update(elapsedTime);
+    
+    if (playerSelf.model.health>0) {
+      myKeyboard.update(elapsedTime);
+      myMouse.update(elapsedTime);
+    }
 
     // TODO: go here
-    graphics.viewport.update(playerSelf.model);
+    if (playerSelf.model.health > 0)
+      graphics.viewport.update(playerSelf.model);
   }
 
   //------------------------------------------------------------------
@@ -530,7 +604,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
     graphics.Tiled.render(background, graphics.viewport);
     graphics.beginClip(playerSelf.model.direction + Math.PI/2, 50);
-    graphics.Player.render(playerSelf.model, playerSelf.texture);
+    if (playerSelf.model.health>0)
+      graphics.Player.render(playerSelf.model, playerSelf.texture);
     //graphics.AnimatedSprite.render(playerSelf.texture,playerSelf.model.direction);
 
     for (let id in playerOthers) {
@@ -553,6 +628,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
     //TODO 100 is the max health
     graphics.drawHealth(playerSelf.model.health, 100);
+    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height);
 
   }
 

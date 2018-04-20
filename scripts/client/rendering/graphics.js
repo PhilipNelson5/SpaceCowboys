@@ -190,11 +190,11 @@ Game.graphics = (function(assets) {
 
     context.beginPath();
     context.arc(
-      0.5 + world.left + ((center.x - adjustLeft) * world.size), 
-      0.5 + world.top + ((center.y - adjustTop) * world.size), 
+      0.5 + world.left + ((center.x - adjustLeft) * world.size),
+      0.5 + world.top + ((center.y - adjustTop) * world.size),
       radius * world.size,
       0,
-      2 * Math.PI, 
+      2 * Math.PI
     );
     context.closePath();
     context.fillStyle = color;
@@ -206,7 +206,7 @@ Game.graphics = (function(assets) {
   // Draw the clip for field of view
   //
   //------------------------------------------------------------------
-  function beginClip(angle,distance) {
+  function beginClip(angle /*,distance */) {
     context.save();
 
     context.translate(canvas.width/2,canvas.height/2);
@@ -231,8 +231,8 @@ Game.graphics = (function(assets) {
     context.rotate(-angle);
     context.translate(-canvas.width/2,-canvas.height/2);
   }
-  
-  function endClip(angle) {
+
+  function endClip() {
     context.restore();
   }
   //------------------------------------------------------------------
@@ -240,7 +240,7 @@ Game.graphics = (function(assets) {
   // Draw the fog with a triangular field view cut out
   //
   //------------------------------------------------------------------
-  function drawFog(angle, distance) {
+  function drawFog(angle /*, distance */) {
     context.save();
 
     context.translate(canvas.width/2,canvas.height/2);
@@ -266,13 +266,13 @@ Game.graphics = (function(assets) {
     //create clip and draw picture inside of it
     context.clip();
     context.globalAlpha = 0.8;
-    context.drawImage(assets['clouds-light'],
-      -canvas.width/Math.sqrt(2),
-      -canvas.height/Math.sqrt(2),
-      canvas.width*Math.sqrt(2),
-      canvas.height*Math.sqrt(2));
     context.rotate(-angle);
     context.translate(-canvas.width/2,-canvas.height/2);
+    context.drawImage(assets['clouds-light'],
+      0,
+      0,
+      canvas.width,
+      canvas.height);
     context.restore();
   }
 
@@ -294,6 +294,25 @@ Game.graphics = (function(assets) {
       x    : .5,        // the x location
       y    : 9/10       // the y location
     });
+  }
+
+  function drawMini(map, position, worldWidth, worldHeight) {
+    let x = (3 * canvas.width)/ 4;
+    let y = 5;
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+    let posX = position.x / worldWidth * (width - 2) + x;
+    let posY = position.y / worldHeight * (height - 2) + y;
+
+    context.strokeRect(x, y, width, height);
+    context.drawImage(map, x+1, y+1, width-2, height-2);
+    context.stroke(); 
+
+    context.beginPath();
+    context.moveTo(posX + 3, posY);
+    context.arc(posX, posY, 3, 0, 2*Math.PI);
+    context.closePath();
+    context.fill(); 
   }
 
   /**
@@ -445,7 +464,7 @@ Game.graphics = (function(assets) {
       useViewport = arguments[5];
     }
     // for animated sprites
-    // image texture, x-clip, y-clip, width-clip, height-clip, 
+    // image texture, x-clip, y-clip, width-clip, height-clip,
     //                x, y, width, height
     else if (arguments.length === 9 || arguments.length === 10) {
       sx = arguments[1];
@@ -501,6 +520,7 @@ Game.graphics = (function(assets) {
     endClip,
     drawFog,
     drawHealth,
+    drawMini,
     toggleFullScreen,
     drawText,
     measureTextHeight,
@@ -509,7 +529,7 @@ Game.graphics = (function(assets) {
     notifyResize,
     writeLowerRight,
     writeCenter,
-    get viewport() { return viewport; }    
+    get viewport() { return viewport; }
 
 
   };

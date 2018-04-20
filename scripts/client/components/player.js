@@ -25,11 +25,11 @@ Game.components.Player = function() {
 
   let direction = 0;
   let rotateRate = 0;
-  let speed = 0.0004;
+  let speed = 0.0002;
 
   // STATS
 
-  let health = 0;
+  let health = 1;
   let shield = 0;
   let ammo   = 0;
   let score = {
@@ -99,22 +99,22 @@ Game.components.Player = function() {
   //------------------------------------------------------------------
   that.moveUp = function(sprite,elapsedTime) {
     position.y -= elapsedTime * speed;
-	sprite.center.y -= elapsedTime * speed;
+    sprite.center.y -= elapsedTime * speed;
   };
 
   that.moveDown = function(sprite,elapsedTime) {
     position.y += elapsedTime * speed;
-	sprite.center.y += elapsedTime * speed;
+    sprite.center.y += elapsedTime * speed;
   };
 
   that.moveLeft = function(sprite,elapsedTime) {
     position.x -= elapsedTime * speed;
-	sprite.center.x -= elapsedTime * speed;
+    sprite.center.x -= elapsedTime * speed;
   };
 
   that.moveRight = function(sprite,elapsedTime) {
     position.x += elapsedTime * speed;
-	sprite.center.x += elapsedTime * speed;
+    sprite.center.x += elapsedTime * speed;
   };
 
   function tolerance(value, test, tolerance) {
@@ -161,7 +161,7 @@ Game.components.Player = function() {
 
   };
 
-  that.update = function(elapsedTime) {
+  that.update = function(/* elapsedTime */) {
   };
 
   return that;

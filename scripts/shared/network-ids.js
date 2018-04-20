@@ -32,6 +32,10 @@
       value: 'move-left',
       writable: false
     },
+    'DIE': {
+      value: 'die',
+      writable: false
+    },
     'INPUT_FIRE': {
       value: 'fire',
       writable: false
