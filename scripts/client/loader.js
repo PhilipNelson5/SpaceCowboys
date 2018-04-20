@@ -124,7 +124,7 @@ Game.loader = (function() {
       width: sizeX,
       height: sizeY,
       tileSize: tileSize
-    }
+    };
 
     for (tileY = 0; tileY < numberY; tileY += 1) {
       for (tileX = 0; tileX < numberX; tileX += 1) {
