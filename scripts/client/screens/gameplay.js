@@ -41,7 +41,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   };
 
   Object.defineProperty(world, 'buffer', {
-    get: function() { return worldBuffer },
+    get: function() { return worldBuffer; },
     enumerable: true,
     configurable: false
   });
