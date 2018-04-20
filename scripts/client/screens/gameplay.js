@@ -248,6 +248,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       player.goal.position.y = data.position.y;
       player.goal.updateWindow = data.updateWindow;
       player.goal.direction = data.direction;
+      console.log(data.position.x + ' : ' + data.position.y);
     }
   }
 
@@ -454,6 +455,18 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function update(elapsedTime) {
+
+    if (playerSelf.model.health <= 0 ) {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.DIE,
+        data: { }
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
+    }
+
     if (playerSelf.model.health > 0)
       playerSelf.texture.update(elapsedTime);
 

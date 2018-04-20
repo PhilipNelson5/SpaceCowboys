@@ -14,7 +14,7 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
-const LOBBY_MAX = 1;             // max player count for lobby
+const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -331,6 +331,9 @@ function processInput(/* elapsedTime */) {
     case NetworkIds.INPUT_FIRE:
       createMissile(input.clientId, client.player);
       break;
+    case NetworkIds.DIE:
+      client.player.die();
+      break;
     }
   }
 }
@@ -372,10 +375,10 @@ function update(elapsedTime, currentTime) {
   keepMissiles = [];
   for (let missile = 0; missile < activeMissiles.length; ++missile) {
     let hit = false;
-    for (let clientId in activeClients) {
+    for (let clientId in lobbyClients) {
       //
-      // Don't allow a missile to hit the player it was fired from.
-      if (clientId !== activeMissiles[missile].clientId) {
+      // Don't allow a missile to hit the player it was fired from or a dead player
+      if (clientId !== activeMissiles[missile].clientId && lobbyClients[clientId].player.health > 0) {
         if (collided(activeMissiles[missile], activeClients[clientId].player)) {
           hit = true;
           hits.push({
