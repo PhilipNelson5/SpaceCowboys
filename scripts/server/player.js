@@ -108,8 +108,8 @@ function createPlayer() {
 
   };
 
-  that.hit = function(dammage) {
-    health -= dammage;
+  that.hit = function(damage) {
+    health -= damage;
   };
 
   console.log('creating new player');
