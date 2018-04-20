@@ -551,6 +551,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     //TODO 100 is the max health
     graphics.drawHealth(playerSelf.model.health, 100);
+    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height);
 
   }
 

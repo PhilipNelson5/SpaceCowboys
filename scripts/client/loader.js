@@ -91,6 +91,9 @@ Game.loader = (function() {
     }, {
       key: 'clouds-dark',
       source: 'assets/clouds_dark.png'
+    }, {
+      key: 'background-mini',
+      source: 'assets/background/cropped.jpg'
     }]; // end assetOrder
 
   //------------------------------------------------------------------
