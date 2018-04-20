@@ -63,7 +63,6 @@ function createPlayer() {
     set: value => reportUpdate = value
   });
 
-
   //------------------------------------------------------------------
   //
   // Public functions that move the player in the specified direction.
@@ -94,12 +93,19 @@ function createPlayer() {
     direction = message.data.direction;
   };
 
+  that.die = function() {
+    reportUpdate = true;
+    position.x = null;
+    position.y = null;
+  };
+
   //------------------------------------------------------------------
   //
   // Function used to update the player during the game loop.
   //
   //------------------------------------------------------------------
   that.update = function(/* when */) {
+
   };
 
   that.hit = function(dammage) {

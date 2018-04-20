@@ -25,7 +25,7 @@ Game.components.Player = function() {
 
   let direction = 0;
   let rotateRate = 0;
-  let health = 0;
+  let health = 1;
   let speed = 0.0002;
 
   Object.defineProperty(that, 'position', {
@@ -71,22 +71,22 @@ Game.components.Player = function() {
   //------------------------------------------------------------------
   that.moveUp = function(sprite,elapsedTime) {
     position.y -= elapsedTime * speed;
-	sprite.center.y -= elapsedTime * speed;
+    sprite.center.y -= elapsedTime * speed;
   };
 
   that.moveDown = function(sprite,elapsedTime) {
     position.y += elapsedTime * speed;
-	sprite.center.y += elapsedTime * speed;
+    sprite.center.y += elapsedTime * speed;
   };
 
   that.moveLeft = function(sprite,elapsedTime) {
     position.x -= elapsedTime * speed;
-	sprite.center.x -= elapsedTime * speed;
+    sprite.center.x -= elapsedTime * speed;
   };
 
   that.moveRight = function(sprite,elapsedTime) {
     position.x += elapsedTime * speed;
-	sprite.center.x += elapsedTime * speed;
+    sprite.center.x += elapsedTime * speed;
   };
 
   function tolerance(value, test, tolerance) {
