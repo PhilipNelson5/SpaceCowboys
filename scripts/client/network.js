@@ -10,7 +10,7 @@ Game.network = (function() {
   const socket = io({reconnection: false});
 
   socket.on(NetworkIds.CONNECT_ACK, data => {
-    console.log('┌ connection acknowledged\n└ client socket : ' + socket.id);
+    console.log('┌ connection acknowledged\n│' + data + '\n└ client socket : ' + socket.id );
   });
 
   function initialize() {}

@@ -29,7 +29,6 @@ function createPlayer() {
 
   let direction = random.nextDouble() * 2 * Math.PI; // Angle in radians
   let speed = 0.0004;              // unit distance per millisecond
-  let rotateRate = Math.PI / 1000; // radians per millisecond
   let health = 100;                // initial health
   let reportUpdate = false;        // Indicates if this model was updated during the last update
 
@@ -99,7 +98,7 @@ function createPlayer() {
   // Function used to update the player during the game loop.
   //
   //------------------------------------------------------------------
-  that.update = function(when) {
+  that.update = function(/* when */) {
   };
 
   that.hit = function(dammage) {
