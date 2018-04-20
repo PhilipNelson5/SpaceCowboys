@@ -21,6 +21,16 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     explosions = {},
     networkQueue = Queue.create();
 
+  let loot = {
+    health         : [],
+    shield         : [],
+    ammo           : [],
+    weapon         : [],
+    rangeUp        : [],
+    dammageUp      : [],
+    missileSpeedUp : []
+  };
+
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
@@ -108,6 +118,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   socket.on(NetworkIds.MISSILE_HIT_YOU, data => {
     networkQueue.enqueue({
       type: NetworkIds.MISSILE_HIT_YOU,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.STARTING_LOOT, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.STARTING_LOOT,
       data: data
     });
   });
@@ -267,6 +284,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.health -= data;
   }
 
+  function initLoot(data) {
+    loot = data.loot;
+  }
+
   //------------------------------------------------------------------
   //
   // Process the registered input handlers here.
@@ -309,6 +330,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         break;
       case NetworkIds.MISSILE_HIT_YOU:
         missileHitYou(message.data);
+        break;
+      case NetworkIds.STARTING_LOOT:
+        initLoot(message.data);
         break;
       }
     }
@@ -376,7 +400,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
-      playerSelf.model.moveRight(elapsedTime); 
+      playerSelf.model.moveRight(elapsedTime);
     },
     input.KeyEvent.DOM_VK_D, true);
 
