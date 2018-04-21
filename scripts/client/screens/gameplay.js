@@ -27,13 +27,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     damageUp  : [],
     speedUp   : []
   };
-  
+
   let asteroids = [];
 
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
-	myKeys = keyBindings.keys,
+    myKeys = keyBindings.keys,
     cancelNextRequest = false;
   let background = null;
 
@@ -128,6 +128,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     });
   });
 
+  socket.on(NetworkIds.LOOT_UPDATE, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.LOOT_UPDATE,
+      data: data
+    });
+  });
+
   socket.on(NetworkIds.STARTING_ASTEROIDS, data=> {
     networkQueue.enqueue({
       type: NetworkIds.STARTING_ASTEROIDS,
@@ -167,10 +174,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     model.rotateRate = data.rotateRate;
 
     model.health = data.health;
-	model.shield = data.shield;
-	model.ammo   = data.ammo;
-	model.score.place = data.score.place;
-	model.score.kills = data.score.kills;
+    model.shield = data.shield;
+
+    model.ammo = data.ammo;
+    model.hasWeapon = data.hasWeapon;
+
+    model.score.place = data.score.place;
+    model.score.kills = data.score.kills;
 
     playerSelf = {
       model: model,
@@ -234,9 +244,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function disconnectPlayerOther(data) {
-    console.log(JSON.stringify(playerOthers));
     delete playerOthers[data.clientId];
-    console.log(JSON.stringify(playerOthers));
   }
 
   //------------------------------------------------------------------
@@ -251,11 +259,11 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     playerSelf.texture.center.y = data.position.y;
     playerSelf.model.direction = data.direction;
     playerSelf.model.health = data.health;
-	playerSelf.model.shield = data.shield;
-	playerSelf.model.ammo   = data.ammo;
-	playerSelf.model.score.place = data.score.place;
-	playerSelf.model.score.kills = data.score.kills;
-
+    playerSelf.model.shield = data.shield;
+    playerSelf.model.ammo = data.ammo;
+    playerSelf.model.hasWeapon = data.hasWeapon;
+    playerSelf.model.score.kills = data.score.kills;
+    playerSelf.model.score.place = data.score.place;
 
     //
     // Remove messages from the queue up through the last one identified
@@ -348,7 +356,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //------------------------------------------------------------------
   function missileHitYou(data) {
     // TODO: Some effect to alert the player that they were hit
-    playerSelf.model.health -= data;
+    playerSelf.model.health = data.health;
+    playerSelf.model.shield = data.shield;
   }
 
   function initLoot(data) {
@@ -357,9 +366,25 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     loot.ammo      = data.loot.ammo;
     loot.weapon    = data.loot.weapon;
     loot.rangeUp   = data.loot.rangeUp;
-    loot.damageUp = data.loot.damageUp;
+    loot.damageUp  = data.loot.damageUp;
     loot.speedUp   = data.loot.speedUp;
-    console.log(JSON.stringify(data.loot.shield));
+  }
+
+  function lootUpdate(data) {
+    let found = false;
+    for (let id of data.takenLoot) {
+      found = false;
+      for (let l in loot) {
+        for (let e = 0; e < loot[l].length; ++e) {
+          if (id === loot[l][e].id) {
+            loot[l].splice(e, 1);
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+    }
   }
 
   //------------------------------------------------------------------
@@ -409,6 +434,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       case NetworkIds.STARTING_LOOT:
         initLoot(message.data);
         break;
+      case NetworkIds.LOOT_UPDATE:
+        lootUpdate(message.data);
+        break;
       case NetworkIds.STARTING_ASTEROIDS:
         asteroids = message.data.asteroids;
         break;
@@ -416,8 +444,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     }
   }
 
-  function registerControls() {	
-	  // MOVE UP
+  function registerControls() {
+    // MOVE UP
     myKeyboard.registerHandler(elapsedTime => {
       let player = {
         position: {
@@ -429,7 +457,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           y: playerSelf.texture.center.y - (elapsedTime * playerSelf.model.speed)
         },
         radius: playerSelf.model.radius
-      }
+      };
 
       if (player.position.y <= world.buffer.top || player.texture.y <= world.buffer.top) {
         playerSelf.model.position.y = world.buffer.top;
@@ -453,7 +481,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_DOWN
-          }
+          };
           playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
         }
@@ -473,7 +501,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           y: playerSelf.texture.center.y + (elapsedTime * playerSelf.model.speed)
         },
         radius: playerSelf.model.radius
-      }
+      };
 
       if (player.position.y >= world.buffer.bottom || player.texture.y >= world.buffer.bottom) {
         playerSelf.model.position.y = world.buffer.bottom;
@@ -497,7 +525,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_UP
-          }
+          };
           playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
         }
@@ -517,7 +545,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           y: playerSelf.texture.center.y
         },
         radius: playerSelf.model.radius
-      }
+      };
 
       if (player.position.x >= world.buffer.right || player.texture.x >= world.buffer.right) {
         playerSelf.model.position.x = world.buffer.right;
@@ -541,7 +569,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_LEFT
-          }
+          };
           playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
         }
@@ -561,7 +589,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           y: playerSelf.texture.center.y
         },
         radius: playerSelf.model.radius
-      }
+      };
 
       if (player.position.x <= world.buffer.left || player.texture.x <= world.buffer.left) {
         playerSelf.model.position.x = world.buffer.left;
@@ -586,22 +614,22 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_RIGHT
-          }
+          };
           playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
         }
       }
     },
     myKeys.left.key, myKeys.left.id,true);
-	
-	myKeyboard.registerHandler(elapsedTime => {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_FIRE
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
+
+    myKeyboard.registerHandler(elapsedTime => {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_FIRE
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
     },
     myKeys.fire.key, myKeys.fire.id,false);
 
@@ -627,48 +655,14 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
   }
 
-  function initialize() {
-    menu.addScreen('gameplay',
-      `
-      <canvas height=100% width=100% id='canvas-main'></canvas>
-      `
-    );
-
-    graphics.initialize();
-
-    graphics.viewport.set(0, 0, 0.50);
-
-    var backgroundKey = 'background';
-    background = components.Tiled( {
-      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
-      size: { width: world.width, height: world.height },
-      tileSize: assets[backgroundKey].tileSize,
-      assetKey: backgroundKey
-    });
-
-    /*
-    myTexture = graphics.Texture( {
-      image : assets['player-self'],
-      center : { x : 100, y : 100 },
-      width : 100, height : 100,
-      rotation : 0,
-      moveRate : 200,       // pixels per second
-      rotateRate : 3.14159  // Radians per second
-    });
-    */
-	
-	  registerControls();
-    
-  }
-
   function unRegisterControls() {
-	
-	myKeyboard.unregisterHandler(myKeys.oldF.key,myKeys.oldF.id);
-	myKeyboard.unregisterHandler(myKeys.oldB.key,myKeys.oldB.id);
-	myKeyboard.unregisterHandler(myKeys.oldL.key,myKeys.oldL.id);
-	myKeyboard.unregisterHandler(myKeys.oldR.key,myKeys.oldR.id);
 
-	registerControls();
+    myKeyboard.unregisterHandler(myKeys.oldF.key,myKeys.oldF.id);
+    myKeyboard.unregisterHandler(myKeys.oldB.key,myKeys.oldB.id);
+    myKeyboard.unregisterHandler(myKeys.oldL.key,myKeys.oldL.id);
+    myKeyboard.unregisterHandler(myKeys.oldR.key,myKeys.oldR.id);
+
+    registerControls();
   }
 
   function initialize() {
@@ -690,9 +684,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       assetKey: backgroundKey
     });
 
-	
-	registerControls();
-    
+    registerControls();
   }
 
   //------------------------------------------------------------------
@@ -716,12 +708,12 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     if (playerSelf.model.health > 0)
       playerSelf.texture.update(elapsedTime);
 
-		
-	if (myKeys.keysChanged === true)
-	{
-		unRegisterControls();
-		myKeys.keysChanged = false;
-	}
+
+    if (myKeys.keysChanged === true)
+    {
+      unRegisterControls();
+      myKeys.keysChanged = false;
+    }
 
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
@@ -811,8 +803,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
-    //TODO 100 is the max health
-    graphics.drawHealth(playerSelf.model.health, 100);
+    //TODO 100 is the max health and shield
+    graphics.drawHealth(playerSelf.model.health, 100, playerSelf.model.shield, 100);
+    graphics.drawAmmo(playerSelf.model.ammo);
+    graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
 
   }

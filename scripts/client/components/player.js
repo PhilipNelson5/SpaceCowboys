@@ -35,8 +35,8 @@ Game.components.Player = function() {
   let shield = 0;
   let ammo   = 0;
   let score = {
-	place : 0,
-	kills : 0
+    place : 0,
+    kills : 0
   };
 
   Object.defineProperty(that, 'position', {
@@ -62,7 +62,7 @@ Game.components.Player = function() {
     set: value => { rotateRate = value; }
   });
 
-  
+
   Object.defineProperty(that, 'target', {
     get: () => target,
     set: (value) => {
@@ -70,16 +70,16 @@ Game.components.Player = function() {
       target.y=value.y;
     }
   });
-  
-  // STATS OBJECTS	
+
+  // STATS OBJECTS
   Object.defineProperty(that, 'health', {
     get: () => health,
     set: value => health = value
   });
 
   Object.defineProperty(that, 'shield', {
-	get: () => shield,
-	set: value => shield = value
+    get: () => shield,
+    set: value => shield = value
   });
 
   Object.defineProperty(that, 'ammo', {
@@ -94,9 +94,9 @@ Game.components.Player = function() {
   Object.defineProperty(that, 'score', {
     get: () => score,
     set: (value) => {
-	    score.place = value.place;
-	    score.kills = value.kills;
-	  }
+      score.place = value.place;
+      score.kills = value.kills;
+    }
   });
 
   //------------------------------------------------------------------

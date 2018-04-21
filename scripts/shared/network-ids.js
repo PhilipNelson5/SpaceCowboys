@@ -152,6 +152,10 @@
       value: 'starting-loot',
       writable: false
     },
+    'LOOT_UPDATE': {
+      value: 'loot-update',
+      writable: false
+    },
     'STARTING_ASTEROIDS': {
       value: 'starting-asteroids',
       writable: false

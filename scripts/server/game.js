@@ -11,8 +11,8 @@ const present = require('present'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
   Missile = require('./missile'),
-  Utils = require('./utils.js'),
-  Asteroids = require('./asteroids.js')
+  Loot = require('./loot.js'),
+  Asteroids = require('./asteroids.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
@@ -29,9 +29,10 @@ let inputQueue = Queue.create();
 let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
-let asteroids = []; 
+let asteroids = [];
 let hits = [];
 let vector = null;
+let loot = {};
 
 //------------------------------------------------------------------
 //
@@ -64,13 +65,22 @@ function createMissile(clientId, playerModel) {
       y: playerModel.position.y
     },
     direction: playerModel.direction,
-    speed: playerModel.speed,
-    dammage: 10
+    speed: playerModel.missileSpeed,
+    damage: playerModel.missileDamage,
+    range : playerModel.missileRange
   });
 
   newMissiles.push(missile);
 }
 
+
+function fireWeapon(clientId, playerModel) {
+  if (playerModel.hasWeapon && playerModel.ammo > 0) {
+    createMissile(clientId, playerModel);
+    playerModel.ammo -= 1;
+    playerModel.reportUpdate = true;
+  }
+}
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -259,7 +269,8 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        let loot = Utils.genLoot(numLobbyClients);
+        loot = Loot.genLoot(numLobbyClients);
+
         asteroids = Asteroids.getAsteroids();
 
         setTimeout( () => {
@@ -270,12 +281,12 @@ function initializeSocketIO(httpServer) {
               direction: newPlayer.direction,
               position: newPlayer.position,
               size: newPlayer.size,
-              rotateRate: newPlayer.rotateRate,
-              speed : newPlayer.speed,
+              speed: newPlayer.speed,
               health: newPlayer.health,
-			  shield: newPlayer.shield,
-			  ammo  : newPlayer.ammo,
-			  score : newPlayer.score
+              shield: newPlayer.shield,
+              ammo: newPlayer.ammo,
+              hasWeapon : newPlayer.hasWeapon,
+              score : newPlayer.score
             });
 
             for (let id2 in lobbyClients) {
@@ -287,9 +298,9 @@ function initializeSocketIO(httpServer) {
                   rotateRate: newPlayer.rotateRate,
                   speed : newPlayer.speed,
                   health: newPlayer.health,
-				  shield: newPlayer.shield,
-				  ammo  : newPlayer.ammo,
-				  score : newPlayer.score,
+                  shield: newPlayer.shield,
+                  ammo  : newPlayer.ammo,
+                  score : newPlayer.score,
                   clientId: id
                 });
               }
@@ -322,7 +333,7 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-     * Enqueues inputs from clients to be processed
+     * Enqueue inputs from clients to be processed
      */
     socket.on(NetworkIds.INPUT, data => {
       inputQueue.enqueue({
@@ -346,7 +357,7 @@ function processInput(/* elapsedTime */) {
   while (!processMe.empty) {
     let input =  processMe.dequeue();
     let client = lobbyClients[input.clientId];
-    let move = true;
+    // let move = true;
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
     case NetworkIds.INPUT_MOVE_UP:
@@ -365,7 +376,7 @@ function processInput(/* elapsedTime */) {
       client.player.rotate(input.message);
       break;
     case NetworkIds.INPUT_FIRE:
-      createMissile(input.clientId, client.player);
+      fireWeapon(input.clientId, client.player);
       break;
     case NetworkIds.DIE:
       client.player.die();
@@ -387,6 +398,8 @@ function collided(obj1, obj2) {
 
   return distance <= radii;
 }
+
+let takenLoot = [];
 
 function update(elapsedTime, currentTime) {
   for (let client in lobbyClients) {
@@ -410,21 +423,39 @@ function update(elapsedTime, currentTime) {
 
   // Check to see if any missiles collide with any players (no friendly fire)
   keepMissiles = [];
+  let client;
   for (let missile = 0; missile < activeMissiles.length; ++missile) {
     let hit = false;
     for (let clientId in lobbyClients) {
+      client = lobbyClients[clientId];
       //
       // Don't allow a missile to hit the player it was fired from or a dead player
-      if (clientId !== activeMissiles[missile].clientId && lobbyClients[clientId].player.health > 0) {
-        if (collided(activeMissiles[missile], activeClients[clientId].player)) {
+      if (clientId !== activeMissiles[missile].clientId && client.player.health > 0) {
+        if (collided(activeMissiles[missile], client.player)) {
           hit = true;
           hits.push({
             clientId: clientId,
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
-          lobbyClients[clientId].player.health -= activeMissiles[missile].dammage;
-          lobbyClients[clientId].socket.emit(NetworkIds.MISSILE_HIT_YOU, activeMissiles[missile].dammage);
+          //
+          // take damage from shield first
+          if (client.player.shield > 0) {
+            client.player.shield = client.player.shield - activeMissiles[missile].damage;
+            if (client.player.shield < 0) {
+              client.player.health = client.player.health + client.player.shield;
+              client.player.shield = 0;
+            }
+          }
+          else {
+            client.player.health = client.player.health - activeMissiles[missile].damage;
+            if (client.player.health < 0)
+              client.player.health = 0;
+          }
+          client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
+            health : client.player.health,
+            shield : client.player.shield
+          });
         }
       }
     }
@@ -455,10 +486,24 @@ function update(elapsedTime, currentTime) {
   }
 
   activeMissiles = keepMissiles;
+
+  // collision for loot
+  takenLoot = [];
+  for (let clientId in lobbyClients) {
+    for (let l in loot) {
+      for (let e = loot[l].length-1; e >= 0; --e) {
+        if (collided(lobbyClients[clientId].player, loot[l][e])) {
+          if (Loot.apply(loot[l][e], lobbyClients[clientId].player)) {
+            takenLoot.push(loot[l][e].id);
+            loot[l].splice(e, 1);
+          }
+        }
+      }
+    }
+  }
 }
 
 function updateClient(elapsedTime) {
-  // simulate network lag
   lastUpdate += elapsedTime;
   // if (lastUpdate < STATE_UPDATE_RATE_MS) {
   // return;
@@ -495,9 +540,10 @@ function updateClient(elapsedTime) {
       direction : client.player.direction,
       position: client.player.position,
       health: client.player.health,
-	  shield: client.player.shield,
-	  ammo  : client.player.ammo,
-	  score : client.player.score,
+      shield: client.player.shield,
+      ammo: client.player.ammo,
+      hasWeapon: client.player.hasWeapon,
+      score : client.player.score,
       updateWindow: lastUpdate,
       vector: vector
     };
@@ -524,15 +570,22 @@ function updateClient(elapsedTime) {
       client.socket.emit(NetworkIds.MISSILE_HIT, hits[hit]);
     }
 
+    if (takenLoot.length !== 0) {
+      client.socket.emit(NetworkIds.LOOT_UPDATE, { takenLoot });
+    }
+
   }
 
   for (let clientId in lobbyClients) {
     lobbyClients[clientId].player.reportUpdate = false;
   }
 
-  hits.length = 0;
-  //Reset time since last update so we know when to put out next update
+  // Reset time since last update so we know when to put out next update
   lastUpdate = 0;
+  // Reset the loot taken array
+  takenLoot.length = 0;
+  // Reset the hits array
+  hits.length = 0;
 
 }
 

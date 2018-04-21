@@ -155,9 +155,17 @@ Game.graphics = (function(assets) {
   //
   //------------------------------------------------------------------
   function rotateCanvas(center, rotation) {
-    context.translate((center.x - viewport.left) * world.size + world.left, (center.y - viewport.top) * world.size + world.top);
+    context.translate(
+      (center.x - viewport.left) * world.size + world.left,
+      (center.y - viewport.top) * world.size + world.top
+    );
+
     context.rotate(rotation);
-    context.translate(-((center.x - viewport.left) * world.size + world.left), -((center.y - viewport.top) * world.size + world.top));
+
+    context.translate(
+      -((center.x - viewport.left) * world.size + world.left),
+      -((center.y - viewport.top) * world.size + world.top)
+    );
   }
 
   //------------------------------------------------------------------
@@ -276,24 +284,125 @@ Game.graphics = (function(assets) {
     context.restore();
   }
 
-  function drawHealth(health, max) {
-    let percent = health/max;
+  function drawWeapon(hasWeapon) {
+    if (hasWeapon) {
+      context.drawImage(
+        assets['loot-weapon'],
+        canvas.width/2.5,
+        canvas.height*8.5/10,
+        50,
+        25
+      );
+    } else {
+      context.drawImage(
+        assets['weapon-icon'],
+        canvas.width/2.5,
+        canvas.height*8.5/10,
+        50,
+        25
+      );
+      context.drawImage(
+        assets['no-icon'],
+        canvas.width/2.45,
+        canvas.height*8.5/10,
+        25,
+        25
+      );
+    }
+  }
 
-    context.fillStyle = 'red';
-    context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*8/10, 25);
+  function drawAmmo(ammo) {
+    writeLeftCenter({
+      color: 'black',
+      font : '23px sans serif', // the font size and font name
+      text : ammo,              // the text to be written
+      x    : .51,               // the x location
+      y    : 8.5/10             // the y location
+    });
+
+    context.drawImage(
+      assets['ammo-icon'],
+      canvas.width/2.1,
+      canvas.height*8.5/10,
+      25,
+      25
+    );
+  }
+
+  function drawHealth(health, maxH, shield, maxS) {
+    // SHIELD
+    let percentS = shield/maxS;
+
+    context.fillStyle = 'gray';
+    context.fillRect(
+      canvas.width/10,
+      canvas.height*9/10,
+      canvas.width*8/10,
+      25
+    );
+
+    if (shield > 0) {
+      context.fillStyle = '#548bd0';
+      context.fillRect(
+        canvas.width/10,
+        canvas.height*9/10,
+        canvas.width*percentS*8/10,
+        25
+      );
+    } else { shield = 0; }
+
+    writeCenter({
+      color: 'black',
+      font : '23px sans serif', // the font size and font name
+      text : shield + ' / ' + maxS,     // the text to be written
+      x    : .5,        // the x location
+      y    : 9/10       // the y location
+    });
+
+    context.drawImage(
+      assets['shield-icon'],
+      canvas.width/15,
+      canvas.height*9/10,
+      25,
+      25
+    );
+
+    // HEALTH
+    let percentH = health/maxH;
+
+    context.fillStyle = 'gray';
+    context.fillRect(
+      canvas.width/10,
+      canvas.height*19/20,
+      canvas.width*8/10,
+      25
+    );
 
     if (health > 0) {
-      context.fillStyle = 'green';
-      context.fillRect(canvas.width/10, canvas.height*9/10, canvas.width*percent*8/10, 25);
+      context.fillStyle = '#67DB44';
+      context.fillRect(
+        canvas.width/10,
+        canvas.height*19/20,
+        canvas.width*percentH*8/10,
+        25
+      );
     } else { health = 0; }
 
     writeCenter({
       color: 'black',
       font : '23px sans serif', // the font size and font name
-      text : health + ' / ' + max,     // the text to be written
+      text : health + ' / ' + maxH,     // the text to be written
       x    : .5,        // the x location
-      y    : 9/10       // the y location
+      y    : 19/20       // the y location
     });
+
+    context.drawImage(
+      assets['health-icon'],
+      canvas.width/15,
+      canvas.height*19/20,
+      25,
+      25
+    );
   }
 
   function drawMini(map, position, worldWidth, worldHeight, asteroids) {
@@ -337,11 +446,14 @@ Game.graphics = (function(assets) {
    *   y    : #px         // the y location
    * }
    */
-  // function write(spec) {
-  // context.font = spec.font;
-  // context.fillStyle = spec.color;
-  // context.fillText(spec.text, spec.x, spec.y);
-  // }
+  function writeLeftCenter(spec) {
+    context.font = spec.font;
+    context.fillStyle = spec.color;
+    spec.x*=canvas.width;
+    spec.y*=canvas.height;
+    let height = context.measureText('M').width;
+    context.fillText(spec.text, spec.x, spec.y+height);
+  }
 
   /**
    * write text given the lower right coordinate
@@ -509,7 +621,7 @@ Game.graphics = (function(assets) {
 
   //-------------------------------------------------------------------
   //
-  // converst from client (pixel) coordinates to world coordinates
+  // converts from client (pixel) coordinates to world coordinates
   //
   //-------------------------------------------------------------------
   function clientToWorld(clientX, clientY) {
@@ -531,6 +643,8 @@ Game.graphics = (function(assets) {
     beginClip,
     endClip,
     drawFog,
+    drawWeapon,
+    drawAmmo,
     drawHealth,
     drawMini,
     toggleFullScreen,
