@@ -14,11 +14,15 @@ let random = require ('./random');
 //
 //------------------------------------------------------------------
 function createPlayer() {
+
+  const MIN = 0.52;
+  const MAX = 3.48;
+
   let that = {};
 
   let position = {
-    x: 1,
-    y: 0.75
+    x: random.nextDoubleRange(MIN, MAX),
+    y: random.nextDoubleRange(MIN, MAX)
   };
 
   let size = {

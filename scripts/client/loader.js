@@ -50,8 +50,7 @@ Game.loader = (function() {
           'components/player-remote',
           'components/missile',
           'components/animated-sprite',
-          'components/animated-sprite-remote',
-          'components/asteroids'
+          'components/animated-sprite-remote'
         ],
         message: 'Player models\tloaded',
         onComplete: null

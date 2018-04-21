@@ -151,6 +151,10 @@
     'STARTING_LOOT': {
       value: 'starting-loot',
       writable: false
+    },
+    'STARTING_ASTEROIDS': {
+      value: 'starting-asteroids',
+      writable: false
     }
 
   });

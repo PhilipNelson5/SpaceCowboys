@@ -11,7 +11,8 @@ const present = require('present'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
   Missile = require('./missile'),
-  Utils = require('./utils.js');
+  Utils = require('./utils.js'),
+  Asteroids = require('./asteroids.js')
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
@@ -28,7 +29,7 @@ let inputQueue = Queue.create();
 let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
-let asteroids = [];
+let asteroids = []; 
 let hits = [];
 let vector = null;
 
@@ -259,6 +260,7 @@ function initializeSocketIO(httpServer) {
         }
 
         let loot = Utils.genLoot(numLobbyClients);
+        asteroids = Asteroids.getAsteroids();
 
         setTimeout( () => {
           for (let id in lobbyClients) {
@@ -290,6 +292,7 @@ function initializeSocketIO(httpServer) {
 
           for (let id in lobbyClients) {
             io.to(id).emit(NetworkIds.STARTING_LOOT, {loot});
+            io.to(id).emit(NetworkIds.STARTING_ASTEROIDS, {asteroids});
             io.to(id).emit(NetworkIds.START_GAME);
           }
 

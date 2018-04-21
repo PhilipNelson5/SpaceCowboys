@@ -27,6 +27,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     damageUp  : [],
     speedUp   : []
   };
+  
+  let asteroids = [];
 
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
@@ -42,8 +44,6 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     get height() { return 4.0; },
     get bufferSize() { return 0.52; }
   };
-
-  let asteroids = components.Asteroid(world);
 
   let worldBuffer = {
     get left() { return world.left + world.bufferSize; },
@@ -124,6 +124,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   socket.on(NetworkIds.STARTING_LOOT, data => {
     networkQueue.enqueue({
       type: NetworkIds.STARTING_LOOT,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.STARTING_ASTEROIDS, data=> {
+    networkQueue.enqueue({
+      type: NetworkIds.STARTING_ASTEROIDS,
       data: data
     });
   });
@@ -380,6 +387,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       case NetworkIds.STARTING_LOOT:
         initLoot(message.data);
         break;
+      case NetworkIds.STARTING_ASTEROIDS:
+        asteroids = message.data.asteroids;
+        break;
       }
     }
   }
@@ -603,7 +613,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
 
     for (let a in asteroids) {
-      graphics.drawImage(assets['asteroid'], asteroids[a].position, asteroids[a].size, true);
+      if (asteroids[a].position != undefined) {
+        graphics.drawImage(assets['asteroid'], asteroids[a].position, asteroids[a].size, true);
+      }
     }
 
     //draw Buildings AFTER clip or else they be underneath it
