@@ -129,6 +129,21 @@ Game.loader = (function() {
     }, {
       key: 'background-mini',
       source: 'assets/background/cropped.jpg'
+    }, {
+      key: 'shield-icon',
+      source: 'assets/shield-icon.png'
+    }, {
+      key: 'health-icon',
+      source: 'assets/health-icon.png'
+    }, {
+      key: 'ammo-icon',
+      source: 'assets/ammo-icon.png'
+    }, {
+      key: 'weapon-icon',
+      source: 'assets/weapon-icon.png'
+    }, {
+      key: 'no-icon',
+      source: 'assets/no-icon.png'
     }
     ]; // end assetOrder
 

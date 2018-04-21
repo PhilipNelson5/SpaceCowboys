@@ -37,6 +37,7 @@ function createPlayer() {
   let missileRange  = 1500;     // Time that a missile will travel
   let hasWeapon     = false;    // Players do not start out with a gun
   let ammo          = 0;        // Player ammo, starts with none
+  let loot = [];
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -96,6 +97,11 @@ function createPlayer() {
   Object.defineProperty(that, 'ammo', {
     get: () => ammo,
     set: value => ammo = value
+  });
+
+  Object.defineProperty(that, 'loot', {
+    get: () => loot,
+    set: value => loot = value
   });
 
   //------------------------------------------------------------------

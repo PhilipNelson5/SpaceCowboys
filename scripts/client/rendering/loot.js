@@ -65,7 +65,7 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawImage(
         assets['loot-weapon'],
         e.position,
-        {width:0.04, height:0.04},
+        {width:0.08, height:0.04},
         true
       );
     }

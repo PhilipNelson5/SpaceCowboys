@@ -11,12 +11,11 @@ const present = require('present'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
   Missile = require('./missile'),
-  r = require ('./random'),
   Loot = require('./loot.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
-const LOBBY_MAX = 2;             // max player count for lobby
+const LOBBY_MAX = 1;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -74,7 +73,6 @@ function createMissile(clientId, playerModel) {
 
 
 function fireWeapon(clientId, playerModel) {
-  console.log(JSON.stringify({weapon:playerModel.hasWeapon, ammo:playerModel.ammo}));
   if (playerModel.hasWeapon && playerModel.ammo > 0) {
     createMissile(clientId, playerModel);
     playerModel.ammo -= 1;
@@ -280,7 +278,10 @@ function initializeSocketIO(httpServer) {
               size: newPlayer.size,
               rotateRate: newPlayer.rotateRate,
               speed: newPlayer.speed,
-              health: newPlayer.health
+              health: newPlayer.health,
+              shield: newPlayer.shield,
+              ammo: newPlayer.ammo,
+              hasWeapon : newPlayer.hasWeapon
             });
 
             for (let id2 in lobbyClients) {
@@ -411,21 +412,39 @@ function update(elapsedTime, currentTime) {
   activeMissiles = keepMissiles;
   // Check to see if any missiles collide with any players (no friendly fire)
   keepMissiles = [];
+  let client;
   for (let missile = 0; missile < activeMissiles.length; ++missile) {
     let hit = false;
     for (let clientId in lobbyClients) {
+      client = lobbyClients[clientId];
       //
       // Don't allow a missile to hit the player it was fired from or a dead player
-      if (clientId !== activeMissiles[missile].clientId && lobbyClients[clientId].player.health > 0) {
-        if (collided(activeMissiles[missile], activeClients[clientId].player)) {
+      if (clientId !== activeMissiles[missile].clientId && client.player.health > 0) {
+        if (collided(activeMissiles[missile], client.player)) {
           hit = true;
           hits.push({
             clientId: clientId,
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
-          lobbyClients[clientId].player.health -= activeMissiles[missile].damage;
-          lobbyClients[clientId].socket.emit(NetworkIds.MISSILE_HIT_YOU, activeMissiles[missile].damage);
+          //
+          // take damage from shield first
+          if (client.player.shield > 0) {
+            client.player.shield = client.player.shield - activeMissiles[missile].damage;
+            if (client.player.shield < 0) {
+              client.player.health = client.player.health + client.player.shield;
+              client.player.shield = 0;
+            }
+          }
+          else {
+            client.player.health = client.player.health - activeMissiles[missile].damage;
+            if (client.player.health < 0)
+              client.player.health = 0;
+          }
+          client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
+            health : client.player.health,
+            shield : client.player.shield
+          });
         }
       }
     }
@@ -434,7 +453,6 @@ function update(elapsedTime, currentTime) {
     }
   }
   activeMissiles = keepMissiles;
-  //TODO: other things for collisions
 
   // collision for loot
   takenLoot = [];
@@ -442,9 +460,10 @@ function update(elapsedTime, currentTime) {
     for (let l in loot) {
       for (let e = loot[l].length-1; e >= 0; --e) {
         if (collided(lobbyClients[clientId].player, loot[l][e])) {
-          takenLoot.push(loot[l][e].id);
-          Loot.apply(loot[l][e], lobbyClients[clientId].player);
-          loot[l].splice(e, 1);
+          if (Loot.apply(loot[l][e], lobbyClients[clientId].player)) {
+            takenLoot.push(loot[l][e].id);
+            loot[l].splice(e, 1);
+          }
         }
       }
     }
@@ -452,7 +471,6 @@ function update(elapsedTime, currentTime) {
 }
 
 function updateClient(elapsedTime) {
-  // simulate network lag
   lastUpdate += elapsedTime;
   // if (lastUpdate < STATE_UPDATE_RATE_MS) {
   // return;
@@ -489,6 +507,9 @@ function updateClient(elapsedTime) {
       direction : client.player.direction,
       position: client.player.position,
       health: client.player.health,
+      shield: client.player.shield,
+      ammo: client.player.ammo,
+      hasWeapon: client.player.hasWeapon,
       updateWindow: lastUpdate,
       vector: vector
     };
@@ -538,7 +559,6 @@ function gameLoop(currentTime, elapsedTime) {
   processInput(elapsedTime);
   update(elapsedTime,currentTime);
   updateClient(elapsedTime);
-  console.log(Math.floor(r.nextGaussian(35, 10)));
 
   if (!quit) {
     setTimeout(() => {

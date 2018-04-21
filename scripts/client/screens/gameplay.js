@@ -152,6 +152,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     model.rotateRate = data.rotateRate;
 
     model.health = data.health;
+    model.shield = data.shield;
+
+    model.ammo = data.ammo;
+    model.hasWeapon = data.hasWeapon;
 
     playerSelf = {
       model: model,
@@ -230,6 +234,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.texture.center.y = data.position.y;
     playerSelf.model.direction = data.direction;
     playerSelf.model.health = data.health;
+    playerSelf.model.shield = data.shield;
+    playerSelf.model.ammo = data.ammo;
+    playerSelf.model.hasWeapon = data.hasWeapon;
 
     //
     // Remove messages from the queue up through the last one identified
@@ -322,7 +329,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //------------------------------------------------------------------
   function missileHitYou(data) {
     // TODO: Some effect to alert the player that they were hit
-    playerSelf.model.health -= data;
+    playerSelf.model.health = data.health;
+    playerSelf.model.shield = data.shield;
   }
 
   function initLoot(data) {
@@ -627,8 +635,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
-    //TODO 100 is the max health
-    graphics.drawHealth(playerSelf.model.health, 100);
+    //TODO 100 is the max health and shield
+    graphics.drawHealth(playerSelf.model.health, 100, playerSelf.model.shield, 100);
+    graphics.drawAmmo(playerSelf.model.ammo);
+    graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height);
 
   }

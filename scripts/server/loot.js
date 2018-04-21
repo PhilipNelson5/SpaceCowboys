@@ -137,35 +137,46 @@ function genLoot(n) {
     });
   }
 
-  console.log(JSON.stringify(loot));
   return loot;
-
 }
 
 function apply(loot, player) {
   switch (loot.type) {
   case type.health:
+    if (player.health >= 100) return false; // don't pickup health if at max
+    console.log(player.health);
     player.health = player.health + loot.val;
+    if (player.health > 100) player.health = 100;
     break;
   case type.shield:
+    if (player.shield >= 100) return false; // don't pickup shield if at max
+    console.log(player.shield);
     player.shield = player.shield + loot.val;
+    if (player.shield > 100) player.shield = 100;
     break;
   case type.ammo:
     player.ammo = player.ammo + loot.val;
     break;
   case type.weapon:
+    if (player.hasWeapon) return false; // only have one weapon
+    console.log(player.hasWeapon);
     player.hasWeapon = true;
     break;
   case type.rangeUp:
     player.missileRange = player.missileRange + loot.val;
+    player.loot.push(type.rangeUp);
     break;
   case type.damageUp:
     player.missileDamage = player.missileDamage + loot.val;
+    player.loot.push(type.damageUp);
     break;
   case type.speedUp:
     player.missileSpeed = player.missileSpeed + loot.val;
+    player.loot.push(type.speedUp);
     break;
   }
+
+  return true;
 }
 
 module.exports.genLoot = genLoot;
