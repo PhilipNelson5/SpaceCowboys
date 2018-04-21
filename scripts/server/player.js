@@ -39,9 +39,9 @@ function createPlayer() {
   let ammo          = 0;        // Player ammo, starts with none
   let loot = [];
   let score  = {
-	  place : 0,
-	  kills : 0
-  }
+    place : 0,
+    kills : 0
+  };
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -107,13 +107,13 @@ function createPlayer() {
     get: () => loot,
     set: value => loot = value
   });
-  
+
   Object.defineProperty(that, 'score', {
-	  get: () => score,
-	  set: (value) => {
-	    score.place = value.place;
-	    score.kills = value.kills;
-	  }
+    get: () => score,
+    set: (value) => {
+      score.place = value.place;
+      score.kills = value.kills;
+    }
   });
 
   //------------------------------------------------------------------

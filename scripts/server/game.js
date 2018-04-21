@@ -15,7 +15,7 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
-const LOBBY_MAX = 1;             // max player count for lobby
+const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -280,10 +280,8 @@ function initializeSocketIO(httpServer) {
               health: newPlayer.health,
               shield: newPlayer.shield,
               ammo: newPlayer.ammo,
-              hasWeapon : newPlayer.hasWeapon
-              ammo  : newPlayer.ammo,
+              hasWeapon : newPlayer.hasWeapon,
               score : newPlayer.score
-
             });
 
             for (let id2 in lobbyClients) {
@@ -295,9 +293,9 @@ function initializeSocketIO(httpServer) {
                   rotateRate: newPlayer.rotateRate,
                   speed : newPlayer.speed,
                   health: newPlayer.health,
-				  shield: newPlayer.shield,
-				  ammo  : newPlayer.ammo,
-				  score : newPlayer.score,
+                  shield: newPlayer.shield,
+                  ammo  : newPlayer.ammo,
+                  score : newPlayer.score,
                   clientId: id
                 });
               }
@@ -515,7 +513,7 @@ function updateClient(elapsedTime) {
       shield: client.player.shield,
       ammo: client.player.ammo,
       hasWeapon: client.player.hasWeapon,
-	    score : client.player.score,
+      score : client.player.score,
       updateWindow: lastUpdate,
       vector: vector
     };

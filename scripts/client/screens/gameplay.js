@@ -31,7 +31,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
-	myKeys = keyBindings.keys,
+    myKeys = keyBindings.keys,
     cancelNextRequest = false;
   let background = null;
 
@@ -157,8 +157,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     model.ammo = data.ammo;
     model.hasWeapon = data.hasWeapon;
 
-	  model.score.place = data.score.place;
-	  model.score.kills = data.score.kills;
+    model.score.place = data.score.place;
+    model.score.kills = data.score.kills;
 
     playerSelf = {
       model: model,
@@ -420,8 +420,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   }
 
   function registerControls() {
-	
-	myKeyboard.registerHandler(elapsedTime => {
+
+    myKeyboard.registerHandler(elapsedTime => {
       playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
       if (playerSelf.model.position.y <= world.buffer.top || playerSelf.texture.center.y <= world.buffer.top) {
         playerSelf.model.position.y = world.buffer.top;
@@ -488,15 +488,15 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       }
     },
     myKeys.left.key, myKeys.left.id,true);
-	
-	myKeyboard.registerHandler(elapsedTime => {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_FIRE
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
+
+    myKeyboard.registerHandler(elapsedTime => {
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_FIRE
+      };
+      socket.emit(NetworkIds.INPUT, message);
+      messageHistory.enqueue(message);
     },
     myKeys.fire.key, myKeys.fire.id,false);
 
@@ -522,48 +522,14 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
   }
 
-  function initialize() {
-    menu.addScreen('gameplay',
-      `
-      <canvas height=100% width=100% id='canvas-main'></canvas>
-      `
-    );
-
-    graphics.initialize();
-
-    graphics.viewport.set(0, 0, 0.50);
-
-    var backgroundKey = 'background';
-    background = components.Tiled( {
-      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
-      size: { width: world.width, height: world.height },
-      tileSize: assets[backgroundKey].tileSize,
-      assetKey: backgroundKey
-    });
-
-    /*
-    myTexture = graphics.Texture( {
-      image : assets['player-self'],
-      center : { x : 100, y : 100 },
-      width : 100, height : 100,
-      rotation : 0,
-      moveRate : 200,       // pixels per second
-      rotateRate : 3.14159  // Radians per second
-    });
-    */
-	
-	registerControls();
-    
-  }
-
   function unRegisterControls() {
-	
-	myKeyboard.unregisterHandler(myKeys.oldF.key,myKeys.oldF.id);
-	myKeyboard.unregisterHandler(myKeys.oldB.key,myKeys.oldB.id);
-	myKeyboard.unregisterHandler(myKeys.oldL.key,myKeys.oldL.id);
-	myKeyboard.unregisterHandler(myKeys.oldR.key,myKeys.oldR.id);
 
-	registerControls();
+    myKeyboard.unregisterHandler(myKeys.oldF.key,myKeys.oldF.id);
+    myKeyboard.unregisterHandler(myKeys.oldB.key,myKeys.oldB.id);
+    myKeyboard.unregisterHandler(myKeys.oldL.key,myKeys.oldL.id);
+    myKeyboard.unregisterHandler(myKeys.oldR.key,myKeys.oldR.id);
+
+    registerControls();
   }
 
   function initialize() {
@@ -585,9 +551,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       assetKey: backgroundKey
     });
 
-	
-	registerControls();
-    
+
+    registerControls();
+
   }
 
   //------------------------------------------------------------------
@@ -611,12 +577,12 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     if (playerSelf.model.health > 0)
       playerSelf.texture.update(elapsedTime);
 
-		
-	if (myKeys.keysChanged === true)
-	{
-		unRegisterControls();
-		myKeys.keysChanged = false;
-	}
+
+    if (myKeys.keysChanged === true)
+    {
+      unRegisterControls();
+      myKeys.keysChanged = false;
+    }
 
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
