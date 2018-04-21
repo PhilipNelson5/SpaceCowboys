@@ -11,6 +11,7 @@ const present = require('present'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
   Missile = require('./missile'),
+  r = require ('./random'),
   Loot = require('./loot.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
@@ -71,6 +72,14 @@ function createMissile(clientId, playerModel) {
   newMissiles.push(missile);
 }
 
+
+function fireWeapon(clientId, playerModel) {
+  console.log(JSON.stringify({weapon:playerModel.hasWeapon, ammo:playerModel.ammo}));
+  if (playerModel.hasWeapon && playerModel.ammo > 0) {
+    createMissile(clientId, playerModel);
+    playerModel.ammo -= 1;
+  }
+}
 
 function initializeSocketIO(httpServer) {
   let io = require('socket.io')(httpServer);
@@ -356,7 +365,7 @@ function processInput(/* elapsedTime */) {
       client.player.rotate(input.message);
       break;
     case NetworkIds.INPUT_FIRE:
-      createMissile(input.clientId, client.player);
+      fireWeapon(input.clientId, client.player);
       break;
     case NetworkIds.DIE:
       client.player.die();
@@ -529,6 +538,7 @@ function gameLoop(currentTime, elapsedTime) {
   processInput(elapsedTime);
   update(elapsedTime,currentTime);
   updateClient(elapsedTime);
+  console.log(Math.floor(r.nextGaussian(35, 10)));
 
   if (!quit) {
     setTimeout(() => {

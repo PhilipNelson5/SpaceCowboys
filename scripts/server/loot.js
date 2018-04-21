@@ -22,7 +22,7 @@ function genLoot(n) {
   let loot = {
       health    : [], // n  - 50pts
       shield    : [], // 2n - 25pts
-      ammo      : [], // 3n - avg15 stdev15
+      ammo      : [], // 3n - avg 15 stdev 5
       weapon    : [], // n  - one per person
       rangeUp   : [], // 1/3 n
       damageUp  : [], // 1/3 n
@@ -30,7 +30,7 @@ function genLoot(n) {
     },
     id = 0;
 
-  let tot;
+  let tot, val;
   const MIN = 0.5,
     MAX = 3.5;
 
@@ -64,13 +64,15 @@ function genLoot(n) {
 
   tot = 3*n;
   for (let i = 0; i < tot; ++i) {
+    val = Math.floor(r.nextGaussian(35,10));
+    val = val > 5 ? val : 5;
     loot.ammo.push({
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
       radius: 0.02,
-      val: r.nextGaussian(15,10),
+      val: val,
       type: type.ammo,
       id : ++id
     });
@@ -152,7 +154,7 @@ function apply(loot, player) {
     player.ammo = player.ammo + loot.val;
     break;
   case type.weapon:
-    player.weapon = true;
+    player.hasWeapon = true;
     break;
   case type.rangeUp:
     player.missileRange = player.missileRange + loot.val;
