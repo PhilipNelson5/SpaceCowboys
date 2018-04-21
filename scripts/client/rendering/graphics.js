@@ -310,10 +310,14 @@ Game.graphics = (function(assets) {
 
     for (let i = 0; i < asteroids.length; i++) {
       let a = asteroids[i];
-      let aposX = (a.position.x - a.size.width / 2) / worldWidth * (width - 2) + x;
-      let aposY = (a.position.y - a.size.height / 2) / worldHeight * (height - 2) + y;
-      context.fillRect(aposX, aposY, a.size.width / worldWidth * (width - 2), a.size.height / worldHeight * (width - 2));
-      context.stroke();
+      let aposX = (a.position.x) / worldWidth * (width - 2) + x;
+      let aposY = (a.position.y) / worldHeight * (height - 2) + y;
+      let radius = (a.size.width / 2) / worldWidth * (width - 2);
+      context.beginPath();
+      context.moveTo(aposX + radius, aposY);
+      context.arc(aposX, aposY, radius, 0, 2*Math.PI);
+      context.closePath();
+      context.fill();
     }
 
     context.beginPath();
