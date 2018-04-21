@@ -13,6 +13,8 @@ Game.components.Player = function() {
     y: 0
   };
 
+  let radius = 0.02;
+
   let size = {
     width: 0.05,
     height: 0.05
@@ -62,6 +64,10 @@ Game.components.Player = function() {
       target.x = value.x;
       target.y=value.y;
     }
+  });
+
+  Object.defineProperty(that, 'radius', {
+    get: () => radius
   });
 
   //------------------------------------------------------------------

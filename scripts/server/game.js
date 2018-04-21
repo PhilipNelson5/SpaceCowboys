@@ -340,6 +340,7 @@ function processInput(/* elapsedTime */) {
   while (!processMe.empty) {
     let input =  processMe.dequeue();
     let client = lobbyClients[input.clientId];
+    let move = true;
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
     case NetworkIds.INPUT_MOVE_UP:
