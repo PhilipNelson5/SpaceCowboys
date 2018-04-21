@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, socket) {
+Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -33,8 +33,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
+	myKeys = keyBindings.keys,
     cancelNextRequest = false;
-
   let background = null;
 
   let world = {
@@ -167,6 +167,10 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     model.rotateRate = data.rotateRate;
 
     model.health = data.health;
+	model.shield = data.shield;
+	model.ammo   = data.ammo;
+	model.score.place = data.score.place;
+	model.score.kills = data.score.kills;
 
     playerSelf = {
       model: model,
@@ -247,6 +251,11 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.texture.center.y = data.position.y;
     playerSelf.model.direction = data.direction;
     playerSelf.model.health = data.health;
+	playerSelf.model.shield = data.shield;
+	playerSelf.model.ammo   = data.ammo;
+	playerSelf.model.score.place = data.score.place;
+	playerSelf.model.score.kills = data.score.kills;
+
 
     //
     // Remove messages from the queue up through the last one identified
@@ -407,37 +416,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
   }
 
-  function initialize() {
-    menu.addScreen('gameplay',
-      `
-      <canvas height=100% width=100% id='canvas-main'></canvas>
-      `
-    );
-
-    graphics.initialize();
-
-    graphics.viewport.set(0, 0, 0.50);
-
-    var backgroundKey = 'background';
-    background = components.Tiled( {
-      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
-      size: { width: world.width, height: world.height },
-      tileSize: assets[backgroundKey].tileSize,
-      assetKey: backgroundKey
-    });
-
-    /*
-    myTexture = graphics.Texture( {
-      image : assets['player-self'],
-      center : { x : 100, y : 100 },
-      width : 100, height : 100,
-      rotation : 0,
-      moveRate : 200,       // pixels per second
-      rotateRate : 3.14159  // Radians per second
-    });
-    */
-
-    // MOVE UP
+  function registerControls() {	
+	  // MOVE UP
     myKeyboard.registerHandler(elapsedTime => {
       let player = {
         position: {
@@ -479,7 +459,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         }
       }
     },
-    input.KeyEvent.DOM_VK_W, true);
+    myKeys.forward.key, myKeys.forward.id,true);
 
     // MOVE DOWN
     myKeyboard.registerHandler(elapsedTime => {
@@ -523,7 +503,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         }
       }
     },
-    input.KeyEvent.DOM_VK_S, true);
+    myKeys.back.key, myKeys.back.id,true);
 
     // MOVE RIGHT
     myKeyboard.registerHandler(elapsedTime => {
@@ -567,7 +547,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         }
       }
     },
-    input.KeyEvent.DOM_VK_D, true);
+    myKeys.right.key, myKeys.right.id,true);
 
     // MOVE LEFT
     myKeyboard.registerHandler(elapsedTime => {
@@ -612,7 +592,18 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
         }
       }
     },
-    input.KeyEvent.DOM_VK_A, true);
+    myKeys.left.key, myKeys.left.id,true);
+	
+	myKeyboard.registerHandler(elapsedTime => {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_FIRE
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+    },
+    myKeys.fire.key, myKeys.fire.id,false);
 
     myMouse.registerCommand('mousedown', function(e, elapsedTime) {
       // mouseCapture = true;
@@ -633,6 +624,75 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       // if (mouseCapture) { }
       playerSelf.model.target = {x : e.clientX, y : e.clientY};
     });
+
+  }
+
+  function initialize() {
+    menu.addScreen('gameplay',
+      `
+      <canvas height=100% width=100% id='canvas-main'></canvas>
+      `
+    );
+
+    graphics.initialize();
+
+    graphics.viewport.set(0, 0, 0.50);
+
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: world.width, height: world.height },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
+    });
+
+    /*
+    myTexture = graphics.Texture( {
+      image : assets['player-self'],
+      center : { x : 100, y : 100 },
+      width : 100, height : 100,
+      rotation : 0,
+      moveRate : 200,       // pixels per second
+      rotateRate : 3.14159  // Radians per second
+    });
+    */
+	
+	  registerControls();
+    
+  }
+
+  function unRegisterControls() {
+	
+	myKeyboard.unregisterHandler(myKeys.oldF.key,myKeys.oldF.id);
+	myKeyboard.unregisterHandler(myKeys.oldB.key,myKeys.oldB.id);
+	myKeyboard.unregisterHandler(myKeys.oldL.key,myKeys.oldL.id);
+	myKeyboard.unregisterHandler(myKeys.oldR.key,myKeys.oldR.id);
+
+	registerControls();
+  }
+
+  function initialize() {
+    menu.addScreen('gameplay',
+      `
+      <canvas height=100% width=100% id='canvas-main'></canvas>
+      `
+    );
+
+    graphics.initialize();
+
+    graphics.viewport.set(0, 0, 0.50);
+
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: world.width, height: world.height },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
+    });
+
+	
+	registerControls();
+    
   }
 
   //------------------------------------------------------------------
@@ -655,6 +715,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     if (playerSelf.model.health > 0)
       playerSelf.texture.update(elapsedTime);
+
+		
+	if (myKeys.keysChanged === true)
+	{
+		unRegisterControls();
+		myKeys.keysChanged = false;
+	}
 
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
@@ -781,4 +848,4 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     run
   };
 
-}(Game.menu, Game.input, Game.graphics, Game.assets, Game.components, Game.network.socket));
+}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.assets, Game.components, Game.network.socket));
