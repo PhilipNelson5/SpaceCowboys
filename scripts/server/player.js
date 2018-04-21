@@ -38,6 +38,10 @@ function createPlayer() {
   let hasWeapon     = false;    // Players do not start out with a gun
   let ammo          = 0;        // Player ammo, starts with none
   let loot = [];
+  let score  = {
+	  place : 0,
+	  kills : 0
+  }
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -102,6 +106,14 @@ function createPlayer() {
   Object.defineProperty(that, 'loot', {
     get: () => loot,
     set: value => loot = value
+  });
+  
+  Object.defineProperty(that, 'score', {
+	  get: () => score,
+	  set: (value) => {
+	    score.place = value.place;
+	    score.kills = value.kills;
+	  }
   });
 
   //------------------------------------------------------------------

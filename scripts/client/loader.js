@@ -2,6 +2,7 @@ Game = {
   assets: {},
   components: {},
   input: {},
+  keyBindings: {},
   graphics: {},
   screens: {},
   utilities: {},
@@ -41,6 +42,10 @@ Game.loader = (function() {
         message: 'Input\t\t\tloaded',
         onComplete: null
       }, {
+        scripts: ['./keyBindings'],
+        message: 'KeyBindings\t\t\tloaded',
+        onComplete: null
+      },{
         scripts: ['components/viewport', 'components/tiled'],
         message: 'World\tComponents\tloaded',
         onComplete: null

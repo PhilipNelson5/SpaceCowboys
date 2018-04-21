@@ -152,21 +152,22 @@ Game.input.Keyboard = function() {
   // Allows the client code to register a keyboard handler.
   //
   // ------------------------------------------------------------------
-  that.registerHandler = function(handler, key, repeat, rate) {
+  that.registerHandler = function(handler, key, id, repeat, rate) {
     //
     // If no repeat rate was passed in, use a value of 0 so that no delay between
     // repeated keydown events occurs.
+
     if (rate === undefined) {
       rate = 0;
     }
-
     //
     // Each entry is an array of handlers to allow multiple handlers per keyboard input
-    if (!handlers.hasOwnProperty(key)) {
+    //if (!handlers.hasOwnProperty(key)) {
       handlers[key] = [];
-    }
+	console.log(handlers);
+    //}
     handlers[key].push({
-      id: nextHandlerId,
+      id: id,
       key: key,
       repeat: repeat,
       rate: rate,
@@ -174,8 +175,10 @@ Game.input.Keyboard = function() {
       handler: handler
     });
 
-    nextHandlerId += 1;
+    //nextHandlerId += 1;
+	console.log(key + ' ' + handlers[key][handlers[key].length-1].id);
 
+	//console.log(handlers);
     //
     // We return an handler id that client code must track if it is desired
     // to unregister the handler in the future.
@@ -188,9 +191,12 @@ Game.input.Keyboard = function() {
   //
   // ------------------------------------------------------------------
   that.unregisterHandler = function(key, id) {
+	console.log('Unregistering: ' + key + ' At ID: ' + id);
+	console.log(handlers);
     if (handlers.hasOwnProperty(key)) {
       for (let entry = 0; entry < handlers[key].length; entry += 1) {
         if (handlers[key][entry].id === id) {
+		  console.log(handlers);
           handlers[key].splice(entry, 1);
           break;
         }

@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, socket) {
+Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -31,8 +31,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
+	myKeys = keyBindings.keys,
     cancelNextRequest = false;
-
   let background = null;
 
   let world = {
@@ -157,6 +157,9 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     model.ammo = data.ammo;
     model.hasWeapon = data.hasWeapon;
 
+	  model.score.place = data.score.place;
+	  model.score.kills = data.score.kills;
+
     playerSelf = {
       model: model,
       texture: components.AnimatedSprite ({
@@ -237,6 +240,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     playerSelf.model.shield = data.shield;
     playerSelf.model.ammo = data.ammo;
     playerSelf.model.hasWeapon = data.hasWeapon;
+    playerSelf.model.score.kills = data.score.kills;
+    playerSelf.model.score.place = data.score.place;
 
     //
     // Remove messages from the queue up through the last one identified
@@ -414,6 +419,109 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     }
   }
 
+  function registerControls() {
+	
+	myKeyboard.registerHandler(elapsedTime => {
+      playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.y <= world.buffer.top || playerSelf.texture.center.y <= world.buffer.top) {
+        playerSelf.model.position.y = world.buffer.top;
+        playerSelf.texture.center.y = world.buffer.top;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_UP
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
+    },
+    myKeys.forward.key, myKeys.forward.id,true);
+
+    myKeyboard.registerHandler(elapsedTime => {
+      playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.y >= world.buffer.bottom || playerSelf.texture.center.y >= world.buffer.bottom) {
+        playerSelf.model.position.y = world.buffer.bottom;
+        playerSelf.texture.center.y = world.buffer.bottom;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_DOWN
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
+    },
+    myKeys.back.key, myKeys.back.id,true);
+
+    myKeyboard.registerHandler(elapsedTime => {
+      playerSelf.model.moveRight(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.x >= world.buffer.right || playerSelf.texture.center.x >= world.buffer.right) {
+        playerSelf.model.position.x = world.buffer.right;
+        playerSelf.texture.center.x = world.buffer.right;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_RIGHT
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
+    },
+    myKeys.right.key, myKeys.right.id,true);
+
+    myKeyboard.registerHandler(elapsedTime => {
+      playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
+      if (playerSelf.model.position.x <= world.buffer.left || playerSelf.texture.center.x <= world.buffer.left) {
+        playerSelf.model.position.x = world.buffer.left;
+        playerSelf.texture.center.x = world.buffer.left;
+      } else {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_MOVE_LEFT
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+      }
+    },
+    myKeys.left.key, myKeys.left.id,true);
+	
+	myKeyboard.registerHandler(elapsedTime => {
+        let message = {
+          id: messageId++,
+          elapsedTime: elapsedTime,
+          type: NetworkIds.INPUT_FIRE
+        };
+        socket.emit(NetworkIds.INPUT, message);
+        messageHistory.enqueue(message);
+    },
+    myKeys.fire.key, myKeys.fire.id,false);
+
+    myMouse.registerCommand('mousedown', function(e, elapsedTime) {
+      // mouseCapture = true;
+      let message = {
+        id: messageId++,
+        elapsedTime: elapsedTime,
+        type: NetworkIds.INPUT_FIRE
+      };
+      socket.emit(NetworkIds.INPUT, message);
+
+    }, true);
+
+    // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
+    // mouseCapture = false;
+    // });
+
+    myMouse.registerCommand('mousemove', function(e) {
+      // if (mouseCapture) { }
+      playerSelf.model.target = {x : e.clientX, y : e.clientY};
+    });
+
+  }
+
   function initialize() {
     menu.addScreen('gameplay',
       `
@@ -443,94 +551,43 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       rotateRate : 3.14159  // Radians per second
     });
     */
+	
+	registerControls();
+    
+  }
 
-    myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.y <= world.buffer.top || playerSelf.texture.center.y <= world.buffer.top) {
-        playerSelf.model.position.y = world.buffer.top;
-        playerSelf.texture.center.y = world.buffer.top;
-      } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_UP
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
-      }
-    },
-    input.KeyEvent.DOM_VK_W, true);
+  function unRegisterControls() {
+	
+	myKeyboard.unregisterHandler(myKeys.oldF.key,myKeys.oldF.id);
+	myKeyboard.unregisterHandler(myKeys.oldB.key,myKeys.oldB.id);
+	myKeyboard.unregisterHandler(myKeys.oldL.key,myKeys.oldL.id);
+	myKeyboard.unregisterHandler(myKeys.oldR.key,myKeys.oldR.id);
 
-    myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.y >= world.buffer.bottom || playerSelf.texture.center.y >= world.buffer.bottom) {
-        playerSelf.model.position.y = world.buffer.bottom;
-        playerSelf.texture.center.y = world.buffer.bottom;
-      } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_DOWN
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
-      }
-    },
-    input.KeyEvent.DOM_VK_S, true);
+	registerControls();
+  }
 
-    myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveRight(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.x >= world.buffer.right || playerSelf.texture.center.x >= world.buffer.right) {
-        playerSelf.model.position.x = world.buffer.right;
-        playerSelf.texture.center.x = world.buffer.right;
-      } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_RIGHT
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
-      }
-    },
-    input.KeyEvent.DOM_VK_D, true);
+  function initialize() {
+    menu.addScreen('gameplay',
+      `
+      <canvas height=100% width=100% id='canvas-main'></canvas>
+      `
+    );
 
-    myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.x <= world.buffer.left || playerSelf.texture.center.x <= world.buffer.left) {
-        playerSelf.model.position.x = world.buffer.left;
-        playerSelf.texture.center.x = world.buffer.left;
-      } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_LEFT
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
-      }
-    },
-    input.KeyEvent.DOM_VK_A, true);
+    graphics.initialize();
 
-    myMouse.registerCommand('mousedown', function(e, elapsedTime) {
-      // mouseCapture = true;
-      let message = {
-        id: messageId++,
-        elapsedTime: elapsedTime,
-        type: NetworkIds.INPUT_FIRE
-      };
-      socket.emit(NetworkIds.INPUT, message);
+    graphics.viewport.set(0, 0, 0.50);
 
-    }, true);
-
-    // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
-    // mouseCapture = false;
-    // });
-
-    myMouse.registerCommand('mousemove', function(e) {
-      // if (mouseCapture) { }
-      playerSelf.model.target = {x : e.clientX, y : e.clientY};
+    var backgroundKey = 'background';
+    background = components.Tiled( {
+      pixel: { width: assets[backgroundKey].width, height: assets[backgroundKey].height },
+      size: { width: world.width, height: world.height },
+      tileSize: assets[backgroundKey].tileSize,
+      assetKey: backgroundKey
     });
+
+	
+	registerControls();
+    
   }
 
   //------------------------------------------------------------------
@@ -553,6 +610,13 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
 
     if (playerSelf.model.health > 0)
       playerSelf.texture.update(elapsedTime);
+
+		
+	if (myKeys.keysChanged === true)
+	{
+		unRegisterControls();
+		myKeys.keysChanged = false;
+	}
 
     // rotates the player if needed and updates server
     // this is an attempt to reduce load on the server
@@ -674,4 +738,4 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     run
   };
 
-}(Game.menu, Game.input, Game.graphics, Game.assets, Game.components, Game.network.socket));
+}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.assets, Game.components, Game.network.socket));
