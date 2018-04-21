@@ -401,6 +401,7 @@ function update(elapsedTime, currentTime) {
     }
   }
   activeMissiles = keepMissiles;
+
   // Check to see if any missiles collide with any players (no friendly fire)
   keepMissiles = [];
   for (let missile = 0; missile < activeMissiles.length; ++missile) {
@@ -425,8 +426,29 @@ function update(elapsedTime, currentTime) {
       keepMissiles.push(activeMissiles[missile]);
     }
   }
+
+  // check to see if any missiles collided with asteroids
+  // TODO: there is an error here... gotta take care of
   activeMissiles = keepMissiles;
-  //TODO: other things for collisions
+  keepMissiles = [];
+  for (let missile = 0; missile < activeMissiles.length; ++missile) {
+    let hit = false;
+    for (let i = 0; i < asteroids.length; i++) {
+      if (collided(activeMissiles[missile], asteroids[i])) {
+        hit = true;
+        hits.push({
+          clientId: 0,
+          missileId: activeMissiles[missile].id,
+          position: activeMissiles[missile].position
+        });
+      }
+    }
+    if (!hit) {
+      keepMissiles.push(activeMissiles[missile]);
+    }
+  }
+
+  activeMissiles = keepMissiles;
 }
 
 function updateClient(elapsedTime) {
