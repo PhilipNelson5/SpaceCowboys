@@ -42,7 +42,7 @@ Game.loader = (function() {
         onComplete: null
       }, {
         scripts: ['components/viewport', 'components/tiled'],
-        message: 'World\tComponents\tlaoded',
+        message: 'World\tComponents\tloaded',
         onComplete: null
       }, {
         scripts: [

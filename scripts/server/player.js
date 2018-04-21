@@ -22,16 +22,21 @@ function createPlayer() {
   };
 
   let size = {
-    width: 0.01,
+    width : 0.01,
     height: 0.01,
     radius: 0.02
   };
 
   let direction = random.nextDouble() * 2 * Math.PI; // Angle in radians
-  let speed = 0.0002;              // unit distance per millisecond
-  //let rotateRate = Math.PI / 1000; // radians per millisecond
-  let health = 100;                // initial health
-  let reportUpdate = false;        // Indicates if this model was updated during the last update
+  let speed         = 0.0002;   // unit distance per millisecond
+  let health        = 100;      // initial health
+  let shield        = 0;        // initial shield
+  let reportUpdate  = false;    // Indicates if this model was updated during the last update
+  let missileSpeed  = .0005;    // How fast missiles fired by this player travel
+  let missileDamage = 10;       // How much damage a missile will do
+  let missileRange  = 1500;     // Time that a missile will travel
+  let hasWeapon     = false;    // Players do not start out with a gun
+  let ammo          = 0;        // Player ammo, starts with none
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -49,18 +54,48 @@ function createPlayer() {
     get: () => speed
   });
 
+  Object.defineProperty(that, 'radius', {
+    get: () => size.radius
+  });
+
   Object.defineProperty(that, 'health', {
     get: () => health,
     set: value => health = value
   });
 
-  Object.defineProperty(that, 'radius', {
-    get: () => size.radius
+  Object.defineProperty(that, 'shield', {
+    get: () => shield,
+    set: value => shield = value
   });
 
   Object.defineProperty(that, 'reportUpdate', {
     get: () => reportUpdate,
     set: value => reportUpdate = value
+  });
+
+  Object.defineProperty(that, 'missileSpeed', {
+    get: () => missileSpeed,
+    set: value => missileSpeed = value
+  });
+
+  Object.defineProperty(that, 'missileDamage', {
+    get: () => missileDamage,
+    set: value => missileDamage = value
+  });
+
+  Object.defineProperty(that, 'missileRange', {
+    get: () => missileRange,
+    set: value => missileRange = value
+  });
+
+  Object.defineProperty(that, 'hasWeapon', {
+    get: () => hasWeapon,
+    set: value => hasWeapon = value
+  });
+
+  Object.defineProperty(that, 'ammo', {
+    get: () => ammo,
+    set: value => ammo = value
   });
 
   //------------------------------------------------------------------

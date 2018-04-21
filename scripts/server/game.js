@@ -11,7 +11,7 @@ const present = require('present'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
   Missile = require('./missile'),
-  Utils = require('./utils.js');
+  Loot = require('./loot.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
@@ -63,8 +63,9 @@ function createMissile(clientId, playerModel) {
       y: playerModel.position.y
     },
     direction: playerModel.direction,
-    speed: playerModel.speed,
-    damage: 10
+    speed: playerModel.missileSpeed,
+    damage: playerModel.missileDamage,
+    range : playerModel.missileRange
   });
 
   newMissiles.push(missile);
@@ -258,7 +259,7 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        loot = Utils.genLoot(numLobbyClients);
+        loot = Loot.genLoot(numLobbyClients);
 
         setTimeout( () => {
           for (let id in lobbyClients) {
@@ -433,8 +434,7 @@ function update(elapsedTime, currentTime) {
       for (let e = loot[l].length-1; e >= 0; --e) {
         if (collided(lobbyClients[clientId].player, loot[l][e])) {
           takenLoot.push(loot[l][e].id);
-          console.log('loot taken: ', l,  JSON.stringify(loot[l][e].id));
-          //TODO apply power-up to player
+          Loot.apply(loot[l][e], lobbyClients[clientId].player);
           loot[l].splice(e, 1);
         }
       }
@@ -507,7 +507,6 @@ function updateClient(elapsedTime) {
     }
 
     if (takenLoot.length !== 0) {
-      console.log('updating loot');
       client.socket.emit(NetworkIds.LOOT_UPDATE, { takenLoot });
     }
 

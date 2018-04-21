@@ -14,26 +14,35 @@ function createMissile(spec) {
   let that = {};
 
   let radius = 0.0025;
-  let speed = spec.speed + 0.0002;    // unit distance per millisecond
-  let timeRemaining = 1500;   // milliseconds
+
+  // unit distance traveled per millisecond
+  let speed = spec.speed;
+
+  // the range of the missile -> current time left
+  let timeRemaining = spec.range;
 
   Object.defineProperty(that, 'clientId', {
+    // who fired the missile
     get: () => spec.clientId
   });
 
   Object.defineProperty(that, 'id', {
+    // missile id
     get: () => spec.id
   });
 
   Object.defineProperty(that, 'direction', {
+    // direction of missile
     get: () => spec.direction
   });
 
   Object.defineProperty(that, 'position', {
+    // position of missile
     get: () => spec.position
   });
 
   Object.defineProperty(that, 'radius', {
+    // size of missile for collision detection
     get: () => radius
   });
 
@@ -42,10 +51,11 @@ function createMissile(spec) {
   });
 
   Object.defineProperty(that, 'timeRemaining', {
-    get: () => timeRemaining
+    get: () => timeRemaining.range
   });
 
   Object.defineProperty(that, 'damage', {
+    // how much damage the missile does
     get: () => spec.damage
   });
 
