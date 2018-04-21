@@ -44,6 +44,7 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
+      radius: 0.02,
       val: 25,
       id : ++id
     });
@@ -56,6 +57,7 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
+      radius: 0.02,
       val: r.nextGaussian(15,10),
       id : ++id
     });
@@ -68,6 +70,7 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
+      radius: 0.02,
       val: 0,
       id : ++id
     });
@@ -81,6 +84,7 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
+      radius: 0.02,
       val: 750,
       id : ++id
     });
@@ -94,6 +98,7 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
+      radius: 0.02,
       val: 10,
       id : ++id
     });
@@ -107,6 +112,7 @@ function genLoot(n) {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
+      radius: 0.02,
       val: 0.0001,
       id : ++id
     });

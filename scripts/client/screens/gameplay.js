@@ -215,9 +215,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
   //
   //------------------------------------------------------------------
   function disconnectPlayerOther(data) {
-    console.log(JSON.stringify(playerOthers));
     delete playerOthers[data.clientId];
-    console.log(JSON.stringify(playerOthers));
   }
 
   //------------------------------------------------------------------
@@ -333,9 +331,8 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
     loot.ammo      = data.loot.ammo;
     loot.weapon    = data.loot.weapon;
     loot.rangeUp   = data.loot.rangeUp;
-    loot.damageUp = data.loot.damageUp;
+    loot.damageUp  = data.loot.damageUp;
     loot.speedUp   = data.loot.speedUp;
-    console.log(JSON.stringify(data.loot.shield));
   }
 
   function lootUpdate(data) {
@@ -345,7 +342,7 @@ Game.screens['gameplay'] = (function(menu, input, graphics, assets, components, 
       for (let l in loot) {
         for (let e = 0; e < loot[l].length; ++e) {
           if (id === loot[l][e].id) {
-            delete loot[l][e];
+            loot[l].splice(e, 1);
             found = true;
             break;
           }

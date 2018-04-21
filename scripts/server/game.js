@@ -378,6 +378,8 @@ function collided(obj1, obj2) {
   return distance <= radii;
 }
 
+let takenLoot = [];
+
 function update(elapsedTime, currentTime) {
   for (let client in lobbyClients) {
     lobbyClients[client].player.update(currentTime);
@@ -425,23 +427,20 @@ function update(elapsedTime, currentTime) {
   //TODO: other things for collisions
 
   // collision for loot
-  let takenLoot = [];
+  takenLoot = [];
   for (let clientId in lobbyClients) {
     for (let l in loot) {
-      for (let e = 0; e < loot[l].length; ++e) {
-        if (loot[l][e] && collided(lobbyClients[clientId].player, loot[l][e])) {
+      for (let e = loot[l].length-1; e >= 0; --e) {
+        // TODO undefined check is a band-aid fix
+        if (loot[l][e] !== undefined && collided(lobbyClients[clientId].player, loot[l][e])) {
           takenLoot.push(loot[l][e].id);
-          console.log('loot taken: ', JSON.stringify(loot[l][e].id));
-          //TODO apply powerup to player
-          delete loot[l][e];
-
+          console.log('loot taken: ', l,  JSON.stringify(loot[l][e].id));
+          //TODO apply power-up to player
+          loot[l].splice(e, 1);
         }
       }
     }
   }
-
-  if (takenLoot.length !== 0)
-    io.emit(NetworkIds.LOOT_UPDATE, { takenLoot });
 }
 
 function updateClient(elapsedTime) {
@@ -508,15 +507,23 @@ function updateClient(elapsedTime) {
       client.socket.emit(NetworkIds.MISSILE_HIT, hits[hit]);
     }
 
+    if (takenLoot.length !== 0) {
+      console.log('updating loot');
+      client.socket.emit(NetworkIds.LOOT_UPDATE, { takenLoot });
+    }
+
   }
 
   for (let clientId in lobbyClients) {
     lobbyClients[clientId].player.reportUpdate = false;
   }
 
-  hits.length = 0;
-  //Reset time since last update so we know when to put out next update
+  // Reset time since last update so we know when to put out next update
   lastUpdate = 0;
+  // Reset the loot taken array
+  takenLoot.length = 0;
+  // Reset the hits array
+  hits.length = 0;
 
 }
 
