@@ -51,6 +51,14 @@ function nextCircleVector(scale) {
   };
 }
 
+function nextCircleVectorRange(min, max) {
+  var angle = nextDoubleRange(min, max);
+  return {
+    x: Math.cos(angle),
+    y: Math.sin(angle)
+  };
+}
+
 // ------------------------------------------------------------------
 //
 // Generate a normally distributed random number.
@@ -90,4 +98,5 @@ module.exports.nextDouble = nextDouble;
 module.exports.nextRange = nextRange;
 module.exports.nextDoubleRange = nextDoubleRange;
 module.exports.nextCircleVector = nextCircleVector;
+module.exports.nextCircleVectorRange = nextCircleVectorRange;
 module.exports.nextGaussian = nextGaussian;

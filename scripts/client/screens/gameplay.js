@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets, components, socket) {
+Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particleSystem, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -342,6 +342,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       spriteCount: 16,
       spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
     });
+
+    particleSystem.newGravity({position:data.position});
 
     //
     // When we receive a hit notification, go ahead and remove the
@@ -759,6 +761,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // TODO: go here
     if (playerSelf.model.health > 0)
       graphics.viewport.update(playerSelf.model);
+
+    particleSystem.update(elapsedTime);
   }
 
   //------------------------------------------------------------------
@@ -803,6 +807,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
+    particleSystem.render();
+
     //TODO 100 is the max health and shield
     graphics.drawHealth(playerSelf.model.health, 100, playerSelf.model.shield, 100);
     graphics.drawAmmo(playerSelf.model.ammo);
@@ -842,4 +848,4 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     run
   };
 
-}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.assets, Game.components, Game.network.socket));
+}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.ParticleSystem, Game.assets, Game.components, Game.network.socket));

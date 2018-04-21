@@ -30,7 +30,7 @@ Game.loader = (function() {
         message: 'Network Ids\t\tloaded',
         onComplete: null,
       }, {
-        scripts: ['../shared/queue'],
+        scripts: ['../shared/queue', '../shared/random'],
         message: 'Utilities\t\tloaded',
         onComplete: null,
       }, {
@@ -71,7 +71,8 @@ Game.loader = (function() {
           'rendering/missile',
           'rendering/player',
           'rendering/player-remote',
-          'rendering/tiled'
+          'rendering/tiled',
+          'rendering/particle-system'
         ],
         message: 'Graphics\t\tloaded',
         onComplete: null
@@ -152,6 +153,9 @@ Game.loader = (function() {
     }, {
       key: 'asteroid',
       source: 'assets/asteroid.png'
+    }, {
+      key: 'splat',
+      source: 'assets/splat.png'
     }
     ]; // end assetOrder
 

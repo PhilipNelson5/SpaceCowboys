@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------
 'use strict';
 
-const r = require ('./random');
+const r = require ('../shared/random');
 
 const type = Object.freeze({
   health   :1,
@@ -18,6 +18,7 @@ const type = Object.freeze({
 });
 
 function genLoot(n) {
+  n *= 5;
 
   let loot = {
       health    : [], // n  - 50pts
