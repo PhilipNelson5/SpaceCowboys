@@ -25,8 +25,17 @@ Game.components.Player = function() {
 
   let direction = 0;
   let rotateRate = 0;
-  let health = 1;
   let speed = 0.0002;
+
+  // STATS
+
+  let health = 1;
+  let shield = 0;
+  let ammo   = 0;
+  let score = {
+	place : 0,
+	kills : 0
+  };
 
   Object.defineProperty(that, 'position', {
     get: () => position
@@ -51,11 +60,7 @@ Game.components.Player = function() {
     set: value => { rotateRate = value; }
   });
 
-  Object.defineProperty(that, 'health', {
-    get: () => health,
-    set: value => health = value
-  });
-
+  
   Object.defineProperty(that, 'target', {
     get: () => target,
     set: (value) => {
@@ -63,7 +68,30 @@ Game.components.Player = function() {
       target.y=value.y;
     }
   });
+  
+  // STATS OBJECTS	
+  Object.defineProperty(that, 'health', {
+    get: () => health,
+    set: value => health = value
+  });
 
+  Object.defineProperty(that, 'shield', {
+	get: () => shield,
+	set: value => shield = value
+  });
+
+  Object.defineProperty(that, 'ammo', {
+    get: () => ammo,
+    set: value => ammo = value
+  });
+
+  Object.defineProperty(that, 'score', {
+    get: () => score,
+    set: (value) => {
+	 score.place = value.place;
+	 score.kills = value.kills;
+	}
+  });
   //------------------------------------------------------------------
   //
   // Public functions that move the player in the specified direction.

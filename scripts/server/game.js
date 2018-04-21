@@ -265,8 +265,11 @@ function initializeSocketIO(httpServer) {
               position: newPlayer.position,
               size: newPlayer.size,
               rotateRate: newPlayer.rotateRate,
-              speed: newPlayer.speed,
-              health: newPlayer.health
+              speed : newPlayer.speed,
+              health: newPlayer.health,
+			  shield: newPlayer.shield,
+			  ammo  : newPlayer.ammo,
+			  score : newPlayer.score
             });
 
             for (let id2 in lobbyClients) {
@@ -276,8 +279,11 @@ function initializeSocketIO(httpServer) {
                   position: newPlayer.position,
                   size: newPlayer.size,
                   rotateRate: newPlayer.rotateRate,
-                  speed: newPlayer.speed,
+                  speed : newPlayer.speed,
                   health: newPlayer.health,
+				  shield: newPlayer.shield,
+				  ammo  : newPlayer.ammo,
+				  score : newPlayer.score,
                   clientId: id
                 });
               }
@@ -457,6 +463,9 @@ function updateClient(elapsedTime) {
       direction : client.player.direction,
       position: client.player.position,
       health: client.player.health,
+	  shield: client.player.shield,
+	  ammo  : client.player.ammo,
+	  score : client.player.score,
       updateWindow: lastUpdate,
       vector: vector
     };
