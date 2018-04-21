@@ -11,7 +11,8 @@ const present = require('present'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
   Missile = require('./missile'),
-  Loot = require('./loot.js');
+  Loot = require('./loot.js'),
+  Asteroids = require('./asteroids.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
@@ -28,6 +29,7 @@ let inputQueue = Queue.create();
 let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
+let asteroids = [];
 let hits = [];
 let vector = null;
 let loot = {};
@@ -76,6 +78,7 @@ function fireWeapon(clientId, playerModel) {
   if (playerModel.hasWeapon && playerModel.ammo > 0) {
     createMissile(clientId, playerModel);
     playerModel.ammo -= 1;
+    playerModel.reportUpdate = true;
   }
 }
 
@@ -268,6 +271,8 @@ function initializeSocketIO(httpServer) {
 
         loot = Loot.genLoot(numLobbyClients);
 
+        asteroids = Asteroids.getAsteroids();
+
         setTimeout( () => {
           for (let id in lobbyClients) {
             let newPlayer = Player.create();
@@ -304,6 +309,7 @@ function initializeSocketIO(httpServer) {
 
           for (let id in lobbyClients) {
             io.to(id).emit(NetworkIds.STARTING_LOOT, {loot});
+            io.to(id).emit(NetworkIds.STARTING_ASTEROIDS, {asteroids});
             io.to(id).emit(NetworkIds.START_GAME);
           }
 
@@ -327,7 +333,7 @@ function initializeSocketIO(httpServer) {
     });
 
     /**
-     * Enqueues inputs from clients to be processed
+     * Enqueue inputs from clients to be processed
      */
     socket.on(NetworkIds.INPUT, data => {
       inputQueue.enqueue({
@@ -351,6 +357,7 @@ function processInput(/* elapsedTime */) {
   while (!processMe.empty) {
     let input =  processMe.dequeue();
     let client = lobbyClients[input.clientId];
+    // let move = true;
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
     case NetworkIds.INPUT_MOVE_UP:
@@ -413,6 +420,7 @@ function update(elapsedTime, currentTime) {
     }
   }
   activeMissiles = keepMissiles;
+
   // Check to see if any missiles collide with any players (no friendly fire)
   keepMissiles = [];
   let client;
@@ -455,6 +463,28 @@ function update(elapsedTime, currentTime) {
       keepMissiles.push(activeMissiles[missile]);
     }
   }
+
+  // check to see if any missiles collided with asteroids
+  // TODO: there is an error here... gotta take care of
+  activeMissiles = keepMissiles;
+  keepMissiles = [];
+  for (let missile = 0; missile < activeMissiles.length; ++missile) {
+    let hit = false;
+    for (let i = 0; i < asteroids.length; i++) {
+      if (collided(activeMissiles[missile], asteroids[i])) {
+        hit = true;
+        hits.push({
+          clientId: 0,
+          missileId: activeMissiles[missile].id,
+          position: activeMissiles[missile].position
+        });
+      }
+    }
+    if (!hit) {
+      keepMissiles.push(activeMissiles[missile]);
+    }
+  }
+
   activeMissiles = keepMissiles;
 
   // collision for loot

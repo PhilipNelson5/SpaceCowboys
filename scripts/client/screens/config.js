@@ -31,13 +31,6 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     }
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.keyCode === 32)
-    {
-      e.preventDefault();
-    }
-  });
-
   document.addEventListener('keyup', e => {
     if (e.keyCode === 32)
     {

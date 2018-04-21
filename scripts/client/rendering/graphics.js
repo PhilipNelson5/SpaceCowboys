@@ -405,7 +405,7 @@ Game.graphics = (function(assets) {
     );
   }
 
-  function drawMini(map, position, worldWidth, worldHeight) {
+  function drawMini(map, position, worldWidth, worldHeight, asteroids) {
     let x = (3 * canvas.width)/ 4;
     let y = 5;
     let width = canvas.width/4 - 5;
@@ -416,6 +416,18 @@ Game.graphics = (function(assets) {
     context.strokeRect(x, y, width, height);
     context.drawImage(map, x+1, y+1, width-2, height-2);
     context.stroke();
+
+    for (let i = 0; i < asteroids.length; i++) {
+      let a = asteroids[i];
+      let aposX = (a.position.x) / worldWidth * (width - 2) + x;
+      let aposY = (a.position.y) / worldHeight * (height - 2) + y;
+      let radius = (a.size.width / 2) / worldWidth * (width - 2);
+      context.beginPath();
+      context.moveTo(aposX + radius, aposY);
+      context.arc(aposX, aposY, radius, 0, 2*Math.PI);
+      context.closePath();
+      context.fill();
+    }
 
     context.beginPath();
     context.moveTo(posX + 3, posY);

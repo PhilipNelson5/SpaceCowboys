@@ -1,6 +1,5 @@
 Game.keyBindings = (function() {
-	
-  
+
   let keys = {
     keysChanged : false,
     forward : {key : 87, id : 0},
@@ -14,8 +13,6 @@ Game.keyBindings = (function() {
     oldR    : {key :  0, id : 3},
     oldFire : {key : undefined, id : 4},
   };
-
-  
 
   return {
     keys : keys,

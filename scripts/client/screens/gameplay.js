@@ -28,6 +28,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     speedUp   : []
   };
 
+  let asteroids = [];
+
   // let mouseCapture = false,
   let myMouse = input.Mouse(),
     myKeyboard = input.Keyboard(),
@@ -132,6 +134,26 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       data: data
     });
   });
+
+  socket.on(NetworkIds.STARTING_ASTEROIDS, data=> {
+    networkQueue.enqueue({
+      type: NetworkIds.STARTING_ASTEROIDS,
+      data: data
+    });
+  });
+
+  //------------------------------------------------------------------
+  //
+  // collision function
+  //
+  //------------------------------------------------------------------
+  function collided(obj1, obj2) {
+    let distance = Math.sqrt(Math.pow(obj1.position.x - obj2.position.x, 2)
+      + Math.pow(obj1.position.y - obj2.position.y, 2));
+    let radii = obj1.radius + obj2.radius;
+
+    return distance < radii;
+  }
 
   //------------------------------------------------------------------
   //
@@ -415,76 +437,187 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       case NetworkIds.LOOT_UPDATE:
         lootUpdate(message.data);
         break;
+      case NetworkIds.STARTING_ASTEROIDS:
+        asteroids = message.data.asteroids;
+        break;
       }
     }
   }
 
   function registerControls() {
-
+    // MOVE UP
     myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveUp(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.y <= world.buffer.top || playerSelf.texture.center.y <= world.buffer.top) {
+      let player = {
+        position: {
+          x: playerSelf.model.position.x,
+          y: playerSelf.model.position.y - (elapsedTime * playerSelf.model.speed)
+        },
+        texture: {
+          x: playerSelf.texture.center.x,
+          y: playerSelf.texture.center.y - (elapsedTime * playerSelf.model.speed)
+        },
+        radius: playerSelf.model.radius
+      };
+
+      if (player.position.y <= world.buffer.top || player.texture.y <= world.buffer.top) {
         playerSelf.model.position.y = world.buffer.top;
         playerSelf.texture.center.y = world.buffer.top;
       } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_UP
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
+        let move = true;
+        for (let i = 0; i < asteroids.length; i++) {
+          if (collided(player, asteroids[i])) move = false;
+        }
+        if (move) {
+          playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_UP
+          };
+          socket.emit(NetworkIds.INPUT, message);
+          messageHistory.enqueue(message);
+        } else {
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_DOWN
+          };
+          playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
+          socket.emit(NetworkIds.INPUT, message);
+        }
       }
     },
     myKeys.forward.key, myKeys.forward.id,true);
 
+    // MOVE DOWN
     myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveDown(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.y >= world.buffer.bottom || playerSelf.texture.center.y >= world.buffer.bottom) {
+      let player = {
+        position: {
+          x: playerSelf.model.position.x,
+          y: playerSelf.model.position.y + (elapsedTime * playerSelf.model.speed)
+        },
+        texture: {
+          x: playerSelf.texture.center.x,
+          y: playerSelf.texture.center.y + (elapsedTime * playerSelf.model.speed)
+        },
+        radius: playerSelf.model.radius
+      };
+
+      if (player.position.y >= world.buffer.bottom || player.texture.y >= world.buffer.bottom) {
         playerSelf.model.position.y = world.buffer.bottom;
         playerSelf.texture.center.y = world.buffer.bottom;
       } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_DOWN
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
+        let move = true;
+        for (let i = 0; i < asteroids.length; i++) {
+          if (collided(player, asteroids[i])) move = false;
+        }
+        if (move) {
+          playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_DOWN
+          };
+          socket.emit(NetworkIds.INPUT, message);
+          messageHistory.enqueue(message);
+        } else {
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_UP
+          };
+          playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
+          socket.emit(NetworkIds.INPUT, message);
+        }
       }
     },
     myKeys.back.key, myKeys.back.id,true);
 
+    // MOVE RIGHT
     myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveRight(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.x >= world.buffer.right || playerSelf.texture.center.x >= world.buffer.right) {
+      let player = {
+        position: {
+          x: playerSelf.model.position.x + (elapsedTime * playerSelf.model.speed),
+          y: playerSelf.model.position.y
+        },
+        texture: {
+          x: playerSelf.texture.center.x + (elapsedTime * playerSelf.model.speed),
+          y: playerSelf.texture.center.y
+        },
+        radius: playerSelf.model.radius
+      };
+
+      if (player.position.x >= world.buffer.right || player.texture.x >= world.buffer.right) {
         playerSelf.model.position.x = world.buffer.right;
         playerSelf.texture.center.x = world.buffer.right;
       } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_RIGHT
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
+        let move = true;
+        for (let i = 0; i < asteroids.length; i++) {
+          if (collided(player, asteroids[i])) move = false;
+        }
+        if (move) {
+          playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_RIGHT
+          };
+          socket.emit(NetworkIds.INPUT, message);
+          messageHistory.enqueue(message);
+        } else {
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_LEFT
+          };
+          playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
+          socket.emit(NetworkIds.INPUT, message);
+        }
       }
     },
     myKeys.right.key, myKeys.right.id,true);
 
+    // MOVE LEFT
     myKeyboard.registerHandler(elapsedTime => {
-      playerSelf.model.moveLeft(playerSelf.texture,elapsedTime);
-      if (playerSelf.model.position.x <= world.buffer.left || playerSelf.texture.center.x <= world.buffer.left) {
+      let player = {
+        position: {
+          x: playerSelf.model.position.x - (elapsedTime * playerSelf.model.speed),
+          y: playerSelf.model.position.y
+        },
+        texture: {
+          x: playerSelf.texture.center.x - (elapsedTime * playerSelf.model.speed),
+          y: playerSelf.texture.center.y
+        },
+        radius: playerSelf.model.radius
+      };
+
+      if (player.position.x <= world.buffer.left || player.texture.x <= world.buffer.left) {
         playerSelf.model.position.x = world.buffer.left;
         playerSelf.texture.center.x = world.buffer.left;
       } else {
-        let message = {
-          id: messageId++,
-          elapsedTime: elapsedTime,
-          type: NetworkIds.INPUT_MOVE_LEFT
-        };
-        socket.emit(NetworkIds.INPUT, message);
-        messageHistory.enqueue(message);
+        let move = true;
+        player.position.y -= 0.001;
+        for (let i = 0; i < asteroids.length; i++) {
+          if (collided(player, asteroids[i])) move = false;
+        }
+        if (move) {
+          playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_LEFT
+          };
+          socket.emit(NetworkIds.INPUT, message);
+          messageHistory.enqueue(message);
+        } else {
+          let message = {
+            id: messageId++,
+            elapsedTime: elapsedTime,
+            type: NetworkIds.INPUT_MOVE_RIGHT
+          };
+          playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
+          socket.emit(NetworkIds.INPUT, message);
+        }
       }
     },
     myKeys.left.key, myKeys.left.id,true);
@@ -551,9 +684,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       assetKey: backgroundKey
     });
 
-
     registerControls();
-
   }
 
   //------------------------------------------------------------------
@@ -662,6 +793,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       graphics.AnimatedSprite.render(explosions[id]);
     }
 
+    for (let a in asteroids) {
+      if (asteroids[a].position != undefined) {
+        graphics.drawImage(assets['asteroid'], asteroids[a].position, asteroids[a].size, true);
+      }
+    }
+
+    //draw Buildings AFTER clip or else they be underneath it
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
@@ -669,7 +807,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     graphics.drawHealth(playerSelf.model.health, 100, playerSelf.model.shield, 100);
     graphics.drawAmmo(playerSelf.model.ammo);
     graphics.drawWeapon(playerSelf.model.hasWeapon);
-    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height);
+    graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
 
   }
 

@@ -149,6 +149,9 @@ Game.loader = (function() {
     }, {
       key: 'no-icon',
       source: 'assets/no-icon.png'
+    }, {
+      key: 'asteroid',
+      source: 'assets/asteroid.png'
     }
     ]; // end assetOrder
 
