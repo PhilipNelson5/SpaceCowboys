@@ -10,7 +10,9 @@ const present = require('present'),
   NetworkIds = require('../shared/network-ids'),
   Queue = require('../shared/queue.js'),
   login = require('./login.js'),
-  Missile = require('./missile');
+  Missile = require('./missile'),
+  Utils = require('./utils.js'),
+  Asteroids = require('./asteroids.js')
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
@@ -27,6 +29,7 @@ let inputQueue = Queue.create();
 let missileId = 0;
 let newMissiles = [];
 let activeMissiles = [];
+let asteroids = []; 
 let hits = [];
 let vector = null;
 
@@ -256,6 +259,9 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
+        let loot = Utils.genLoot(numLobbyClients);
+        asteroids = Asteroids.getAsteroids();
+
         setTimeout( () => {
           for (let id in lobbyClients) {
             let newPlayer = Player.create();
@@ -290,8 +296,11 @@ function initializeSocketIO(httpServer) {
             }
           }
 
-          for (let id in lobbyClients)
+          for (let id in lobbyClients) {
+            io.to(id).emit(NetworkIds.STARTING_LOOT, {loot});
+            io.to(id).emit(NetworkIds.STARTING_ASTEROIDS, {asteroids});
             io.to(id).emit(NetworkIds.START_GAME);
+          }
 
           gameLoop(present(), 0);
 
@@ -337,6 +346,7 @@ function processInput(/* elapsedTime */) {
   while (!processMe.empty) {
     let input =  processMe.dequeue();
     let client = lobbyClients[input.clientId];
+    let move = true;
     client.lastMessageId = input.message.id;
     switch (input.message.type) {
     case NetworkIds.INPUT_MOVE_UP:
@@ -397,6 +407,7 @@ function update(elapsedTime, currentTime) {
     }
   }
   activeMissiles = keepMissiles;
+
   // Check to see if any missiles collide with any players (no friendly fire)
   keepMissiles = [];
   for (let missile = 0; missile < activeMissiles.length; ++missile) {
@@ -421,8 +432,29 @@ function update(elapsedTime, currentTime) {
       keepMissiles.push(activeMissiles[missile]);
     }
   }
+
+  // check to see if any missiles collided with asteroids
+  // TODO: there is an error here... gotta take care of
   activeMissiles = keepMissiles;
-  //TODO: other things for collisions
+  keepMissiles = [];
+  for (let missile = 0; missile < activeMissiles.length; ++missile) {
+    let hit = false;
+    for (let i = 0; i < asteroids.length; i++) {
+      if (collided(activeMissiles[missile], asteroids[i])) {
+        hit = true;
+        hits.push({
+          clientId: 0,
+          missileId: activeMissiles[missile].id,
+          position: activeMissiles[missile].position
+        });
+      }
+    }
+    if (!hit) {
+      keepMissiles.push(activeMissiles[missile]);
+    }
+  }
+
+  activeMissiles = keepMissiles;
 }
 
 function updateClient(elapsedTime) {

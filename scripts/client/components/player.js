@@ -13,6 +13,8 @@ Game.components.Player = function() {
     y: 0
   };
 
+  let radius = 0.02;
+
   let size = {
     width: 0.05,
     height: 0.05
@@ -85,13 +87,18 @@ Game.components.Player = function() {
     set: value => ammo = value
   });
 
+  Object.defineProperty(that, 'radius', {
+    get: () => radius
+  });
+
   Object.defineProperty(that, 'score', {
     get: () => score,
     set: (value) => {
-	 score.place = value.place;
-	 score.kills = value.kills;
-	}
+	    score.place = value.place;
+	    score.kills = value.kills;
+	  }
   });
+
   //------------------------------------------------------------------
   //
   // Public functions that move the player in the specified direction.

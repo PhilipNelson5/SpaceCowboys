@@ -50,7 +50,13 @@ Game.loader = (function() {
         message: 'World\tComponents\tlaoded',
         onComplete: null
       }, {
-        scripts: ['components/player', 'components/player-remote', 'components/missile', 'components/animated-sprite', 'components/animated-sprite-remote'],
+        scripts: [
+          'components/player',
+          'components/player-remote',
+          'components/missile',
+          'components/animated-sprite',
+          'components/animated-sprite-remote'
+        ],
         message: 'Player models\tloaded',
         onComplete: null
       }, {
@@ -58,7 +64,15 @@ Game.loader = (function() {
         message: 'Renderer\t\tloaded',
         onComplete: null
       }, {
-        scripts: ['rendering/animated-sprite', 'rendering/animated-sprite-remote', 'rendering/missile', 'rendering/player','rendering/player-remote', 'rendering/tiled'],
+        scripts: [
+          'rendering/animated-sprite',
+          'rendering/animated-sprite-remote',
+          'rendering/loot',
+          'rendering/missile',
+          'rendering/player',
+          'rendering/player-remote',
+          'rendering/tiled'
+        ],
         message: 'Graphics\t\tloaded',
         onComplete: null
       }, {
@@ -97,8 +111,32 @@ Game.loader = (function() {
       key: 'clouds-dark',
       source: 'assets/clouds_dark.png'
     }, {
+      key: 'loot-health',
+      source: 'assets/loot-health.png'
+    }, {
+      key: 'loot-shield',
+      source: 'assets/loot-shield.png'
+    }, {
+      key: 'loot-ammo',
+      source: 'assets/loot-ammo.png'
+    }, {
+      key: 'loot-weapon',
+      source: 'assets/loot-weapon.png'
+    }, {
+      key: 'loot-rangeUp',
+      source: 'assets/loot-rangeUp.png'
+    }, {
+      key: 'loot-damageUp',
+      source: 'assets/loot-damageUp.png'
+    }, {
+      key: 'loot-speedUp',
+      source: 'assets/loot-speedUp.png'
+    }, {
       key: 'background-mini',
       source: 'assets/background/cropped.jpg'
+    }, {
+      key: 'asteroid',
+      source: 'assets/asteroid.png'
     }]; // end assetOrder
 
   //------------------------------------------------------------------

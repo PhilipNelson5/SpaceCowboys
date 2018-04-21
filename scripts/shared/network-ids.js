@@ -147,6 +147,14 @@
     'MISSILE_HIT_YOU': {
       value: 'missile_hit_you',
       writable: false
+    },
+    'STARTING_LOOT': {
+      value: 'starting-loot',
+      writable: false
+    },
+    'STARTING_ASTEROIDS': {
+      value: 'starting-asteroids',
+      writable: false
     }
 
   });
