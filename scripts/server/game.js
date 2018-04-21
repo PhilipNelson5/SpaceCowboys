@@ -431,8 +431,7 @@ function update(elapsedTime, currentTime) {
   for (let clientId in lobbyClients) {
     for (let l in loot) {
       for (let e = loot[l].length-1; e >= 0; --e) {
-        // TODO undefined check is a band-aid fix
-        if (loot[l][e] !== undefined && collided(lobbyClients[clientId].player, loot[l][e])) {
+        if (collided(lobbyClients[clientId].player, loot[l][e])) {
           takenLoot.push(loot[l][e].id);
           console.log('loot taken: ', l,  JSON.stringify(loot[l][e].id));
           //TODO apply power-up to player
