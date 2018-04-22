@@ -337,17 +337,18 @@ Game.ParticleSystem = (function (graphics, assets) {
       position: { x: spec.position.x, y: spec.position.y},
       duration : 100,
       fade : 500,
-      fill : { w: 50, h: 10 },
-      image : './textures/splat.png',
+      fill : { w: 0.05, h: 0.05 },
+      image : assets['splat2'],
       lifetime : {mean: 1000, stdev: 250},
       particleRate : 3000,
-      size : {mean: 10, stdev: 5},
-      speed : {mean: .1, stdev: .1},
+      size : {mean: 0.05, stdev: 0.0001},
+      speed : {mean: 0.0001, stdev: 0.0001},
       spread : {mean: 0, stdev: 0},
     });
   }
 
   function newGravity(spec) {
+    console.log(JSON.stringify(spec));
     createGravityPoint({
       position: { x: spec.position.x, y: spec.position.y},
       duration : 10,
