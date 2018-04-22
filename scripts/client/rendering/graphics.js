@@ -417,6 +417,10 @@ Game.graphics = (function(assets) {
     context.drawImage(map, x+1, y+1, width-2, height-2);
     context.stroke();
 
+    // bounding to show where can move in map -- hopefully temporary
+    // TODO
+    context.strokeRect(x+(0.5/worldWidth * (width-2)), y+(0.5/worldWidth * (width-2)), width-(1/worldWidth * (width-2)), height-(1/worldWidth * (width-2)));
+
     for (let i = 0; i < asteroids.length; i++) {
       let a = asteroids[i];
       let aposX = (a.position.x) / worldWidth * (width - 2) + x;
@@ -431,6 +435,7 @@ Game.graphics = (function(assets) {
 
     context.beginPath();
     context.moveTo(posX + 3, posY);
+    context.fillStyle = "blue";
     context.arc(posX, posY, 3, 0, 2*Math.PI);
     context.closePath();
     context.fill();

@@ -48,7 +48,8 @@ function createPlayer() {
   };
 
   Object.defineProperty(that, 'position', {
-    get: () => position
+    get: () => position,
+    set: value => position = value
   });
 
   Object.defineProperty(that, 'size', {

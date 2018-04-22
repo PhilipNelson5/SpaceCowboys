@@ -82,6 +82,7 @@ Game.loader = (function() {
           'screens/gamelobby',
           'screens/config',
           'screens/about',
+          'screens/map',
           'screens/gameplay',
           'screens/help',
           'screens/highscores',
@@ -153,6 +154,7 @@ Game.loader = (function() {
       key: 'asteroid',
       source: 'assets/asteroid.png'
     }
+
     ]; // end assetOrder
 
   //------------------------------------------------------------------

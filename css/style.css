@@ -259,6 +259,7 @@ form {
 
 #messages li:nth-child(odd) { 
 	background: #FFFFFF; 
+}
 
 .red-text {
   font-family: Arial, sans-serif;
@@ -266,4 +267,13 @@ form {
   font-weight: 300;
   color: #ff0000;
   text-align: center;
+}
+
+#map-body {
+  width: 400px;
+  height: 400px;
+  background-color: white;
+  background-image: url("../assets/background/cropped.jpg");
+  background-size: 400px 400px;
+  margin: auto;
 }
