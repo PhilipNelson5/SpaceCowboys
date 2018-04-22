@@ -337,6 +337,28 @@ Game.graphics = (function(assets) {
     );
   }
 
+  function drawKills(kills) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + width/3; //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['kills-icon'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(kills,x+30,y+20);
+  }
+
+
+
   function drawHealth(health, maxH, shield, maxS) {
     // SHIELD
     let percentS = shield/maxS;
@@ -509,6 +531,7 @@ Game.graphics = (function(assets) {
   //
   //------------------------------------------------------------------
   function drawText(spec) {
+    context.save();
     context.font = spec.font;
     context.fillStyle = spec.fill;
     context.textBaseline = 'top';
@@ -518,6 +541,7 @@ Game.graphics = (function(assets) {
       world.left + spec.position.x * world.size,
       world.top + spec.position.y * world.size
     );
+    context.restore();
   }
 
   //------------------------------------------------------------------
@@ -654,6 +678,7 @@ Game.graphics = (function(assets) {
     drawWeapon,
     drawAmmo,
     drawHealth,
+    drawKills,
     drawMini,
     toggleFullScreen,
     drawText,
