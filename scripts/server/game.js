@@ -269,9 +269,9 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        loot = Loot.genLoot(numLobbyClients);
-
         asteroids = Asteroids.getAsteroids();
+
+        loot = Loot.genLoot(numLobbyClients, asteroids);
 
         setTimeout( () => {
           for (let id in lobbyClients) {
@@ -449,8 +449,24 @@ function update(elapsedTime, currentTime) {
           }
           else {
             client.player.health = client.player.health - activeMissiles[missile].damage;
-            if (client.player.health < 0)
+            if (client.player.health <= 0) {
+              lobbyClients[activeMissiles[missile].clientId].player.score.kills += 1;
               client.player.health = 0;
+              let update = {
+                clientId : clientId,
+                lastMessageId: client.lastMessageId,
+                direction : client.player.direction,
+                position: client.player.position,
+                health: client.player.health,
+                shield: client.player.shield,
+                ammo: client.player.ammo,
+                hasWeapon: client.player.hasWeapon,
+                score : client.player.score,
+                updateWindow: lastUpdate,
+                vector: vector
+              };
+              client.socket.emit(NetworkIds.UPDATE_SELF, update);
+            }
           }
           client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
             health : client.player.health,
