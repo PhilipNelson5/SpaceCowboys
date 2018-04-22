@@ -808,6 +808,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     graphics.drawAmmo(playerSelf.model.ammo);
     graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
+    graphics.drawKills(playerSelf.model.score.kills);
 
   }
 
