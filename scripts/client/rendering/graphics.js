@@ -231,10 +231,12 @@ Game.graphics = (function(assets) {
     context.stroke();
     */
 
+    let minCanvasDim = Math.min(canvas.width,canvas.height);
+
     context.beginPath();
-    context.moveTo(Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2 );
-    context.arc(0, 0, Math.min(canvas.width,canvas.height)/10, 7/4*Math.PI, 5/4* Math.PI, false);
-    context.lineTo(-Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2);
+    context.moveTo(minCanvasDim, -minCanvasDim*2 );
+    context.arc(0, 0, minCanvasDim/10, 7/4*Math.PI, 5/4* Math.PI, false);
+    context.lineTo(-minCanvasDim, -minCanvasDim*2);
     context.closePath();
 
     context.strokeStyle='#FFFF00';
@@ -259,12 +261,13 @@ Game.graphics = (function(assets) {
     context.translate(canvas.width/2,canvas.height/2);
     context.rotate(angle);
 
+    let minCanvasDim = Math.min(canvas.width,canvas.height);
     //Path function, creates a polygon that the image will fill
     context.beginPath();
     context.moveTo(-canvas.width,-canvas.height*2);
-    context.lineTo(-Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2); //should technically be -canvas.height*sqrt(2) but this is faster because no root
-    context.arc(0, 0, Math.min(canvas.width,canvas.height)/10, 5/4*Math.PI, 7/4* Math.PI, true);
-    context.lineTo(Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2);
+    context.lineTo(-minCanvasDim, -minCanvasDim*2); //should technically be -canvas.height*sqrt(2) but this is faster because no root
+    context.arc(0, 0, minCanvasDim/10, 5/4*Math.PI, 7/4* Math.PI, true);
+    context.lineTo(minCanvasDim, -minCanvasDim*2);
     context.lineTo(canvas.width, -canvas.height*2 );
     context.lineTo(canvas.width, canvas.height*2 );
     context.lineTo(-canvas.width, canvas.height*2 );
