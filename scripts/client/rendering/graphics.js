@@ -187,6 +187,7 @@ Game.graphics = (function(assets) {
       true
     );
   }
+
   //------------------------------------------------------------------
   //
   // Draw a circle into the local canvas coordinate system.
@@ -220,17 +221,21 @@ Game.graphics = (function(assets) {
     context.translate(canvas.width/2,canvas.height/2);
     context.rotate(angle);
 
+    /*
+     * THE CIRCLE OF BLUE
     context.beginPath();
     context.arc(0, 0, 25, 2*Math.PI, 0, false);
     context.closePath();
     context.strokeStyle='#0000FF';
     context.lineWidth=10;
     context.stroke();
+    */
 
     context.beginPath();
-    context.moveTo(300, -canvas.height/2 );
-    context.arc(0, 0, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
-    context.lineTo(-300, -canvas.height/2);
+    context.moveTo(Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2 );
+    context.arc(0, 0, Math.min(canvas.width,canvas.height)/10, 7/4*Math.PI, 5/4* Math.PI, false);
+    context.lineTo(-Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2);
+    context.closePath();
 
     context.strokeStyle='#FFFF00';
     context.lineWidth=10;
@@ -256,14 +261,14 @@ Game.graphics = (function(assets) {
 
     //Path function, creates a polygon that the image will fill
     context.beginPath();
-    context.moveTo(-canvas.width,-canvas.height);
-    context.lineTo(-300, -canvas.height/2);
-    context.arc(0, 0, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
-    context.lineTo(300, -canvas.height/2);
-    context.lineTo(canvas.width, -canvas.height );
-    context.lineTo(canvas.width, canvas.height );
-    context.lineTo(-canvas.width, canvas.height );
-    context.lineTo(-canvas.width,-canvas.height );
+    context.moveTo(-canvas.width,-canvas.height*2);
+    context.lineTo(-Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2); //should technically be -canvas.height*sqrt(2) but this is faster because no root
+    context.arc(0, 0, Math.min(canvas.width,canvas.height)/10, 5/4*Math.PI, 7/4* Math.PI, true);
+    context.lineTo(Math.min(canvas.width,canvas.height), -Math.min(canvas.width,canvas.height)*2);
+    context.lineTo(canvas.width, -canvas.height*2 );
+    context.lineTo(canvas.width, canvas.height*2 );
+    context.lineTo(-canvas.width, canvas.height*2 );
+    context.lineTo(-canvas.width,-canvas.height*2 );
     context.closePath();
 
     //Debug to view fog draw
