@@ -283,9 +283,9 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        loot = Loot.genLoot(numLobbyClients);
-
         asteroids = Asteroids.getAsteroids();
+
+        loot = Loot.genLoot(numLobbyClients, asteroids);
 
         setTimeout( () => {
           for (let id in lobbyClients) {
