@@ -94,10 +94,10 @@ function genLoot(n, asteroids) {
     }
   }
 
-  tot = 3*n;
+  tot = 5*n;
   num = 0;
   while (num < tot) {
-    val = Math.floor(r.nextGaussian(35,10));
+    val = Math.floor(r.nextGaussian(50,15));
     val = val > 5 ? val : 5;
     next = {
       position : {
@@ -117,7 +117,7 @@ function genLoot(n, asteroids) {
     }
   }
 
-  tot = n;
+  tot = Math.floor(1.5*n);
   num = 0;
   while (num < tot) {
     next = {
@@ -192,7 +192,7 @@ function genLoot(n, asteroids) {
         y:r.nextDoubleRange(MIN, MAX),
       },
       radius: 0.02,
-      val: 0.0001,
+      val: 0.0002,
       type: type.speedUp,
       id : id
     };
