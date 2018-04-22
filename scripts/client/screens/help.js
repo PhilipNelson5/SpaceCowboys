@@ -14,7 +14,7 @@ Game.screens['help'] = (function(menu, keyBindings) {
       <h1>Help</h1>
             <ul id = "ree"></ul>
       <ul class = "menu">
-<p>A Battle Royal! Be the last person to survive to win the game! When you spawn in the world, make sure you pick up a weapon! Grab some ammo, shields, and survive!</p>
+<p>A Battle Royal! Be the last person to survive to win the game! When you spawn in the world, make sure you pick up a weapon! Grab some ammo, shields, power ups, git gud and survive!</p>
 	  <table style = "width:40%" class = "inlineTable">
 	    <caption>Controls</caption>
 		<tr>
@@ -34,27 +34,40 @@ Game.screens['help'] = (function(menu, keyBindings) {
 		  <th id = "right-input">a</th>
 		</tr>
         <tr>
-		  <th>Shoot Projectiles</th>
+		  <th>Shoot</th>
 		  <th id = "fire-input">a</th>
 		</tr>
 	  </table>
 	  <table style = "width:40%" class = "inlineTable">
 	    <caption>Items</caption>
 		<tr>
-		  <th>Gun</th>
-		  <th>Weapon Pickup</th>
+		  <th><img src = "../../../assets/loot-weapon.png" width = "30%" height = "30%"/></th>
+		  <th>Blaster</th>
 		</tr>
 		<tr>
-		  <th>Energy</th>
-		  <th>Use to get ammo</th>
+		  <th><img src = "../../../assets/loot-ammo.png" width = "30%" height = "70%"/></th>
+		  <th>Energy Cells</th>
 		</tr>
 		<tr>
-		  <th>Space Time Refractor</th>
-		  <th>Use to make bullets travel faster</th>
+		  <th><img src = "../../../assets/loot-health.png" width = "30%" height = "70%"/></th>
+		  <th>Repair Kit</th>
 		</tr>
 		<tr>
-		  <th>Health</th>
-		  <th>Use to repair your ship</th>
+		  <th><img src = "../../../assets/loot-shield.png" width = "30%" height = "70%"/></th>
+		  <th>Hyper Shield</th>
+		</tr>
+		<tr>
+		  <th><img src = "../../../assets/loot-speedUp.png" width = "30%" height = "70%"/></th>
+		  <th>Hyper Speed</th>
+		</tr>
+		<tr>
+		  <th><img src = "../../../assets/loot-rangeUp.png" width = "30%" height = "70%"/></th>
+		  <th>Increased Weapon Range</th>
+		</tr>
+		<tr>
+		  <th><img src = "../../../assets/loot-damageUp.png" width = "30%" height = "70%"/></th>
+		  <th>Increased Weapon Damage</th>
+		</tr>
 	  </table>
         <li><button id = "id-help-back">Back</button></li>
 
