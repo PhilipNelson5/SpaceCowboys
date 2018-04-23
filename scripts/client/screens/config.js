@@ -117,7 +117,6 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     document.getElementById('id-config-keyUp').addEventListener(
       'click',
       function() {
-        console.log(keyBindings.keys.forward.key);
         keyBindings.keys.oldF.key = keyBindings.keys.forward.key;
         up = true;
         document.getElementById('id-config-keyLeft').disabled = true;
