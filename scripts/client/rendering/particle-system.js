@@ -163,30 +163,27 @@ Game.ParticleSystem = (function (graphics, assets) {
   function createPoint(spec) {
     let that = {done:false, duration:spec.duration};
     let particles = [];
-    let image = new Image();
-    image.onload = function () {
-      that.render = function() {
-        let p = null,
-          alpha = 1;
-        for (let i = 0; i < particles.length; ++i) {
-          p = particles[i];
-          if (p.alive >= p.spread) {
-            if (p.lifetime-p.alive <= 500) {
-              alpha = (p.lifetime - p.alive)/spec.fade;
-            }
-            graphics.drawImage(
-              p.position,
-              p.size,
-              p.rotation,
-              alpha,
-              image
-            );
+    that.render = function() {
+      let p = null,
+        alpha = 1;
+      for (let i = 0; i < particles.length; ++i) {
+        p = particles[i];
+        if (p.alive >= p.spread) {
+          if (p.lifetime-p.alive <= 500) {
+            alpha = (p.lifetime - p.alive)/spec.fade;
           }
+          graphics.saveContext();
+          graphics.rotateCanvas(p.position, p.rotation);
+          graphics.drawImage(
+            spec.image,
+            p.position,
+            p.size,
+            true
+          );
+          graphics.restoreContext();
         }
-      };
+      }
     };
-    image.src = spec.image;
-
     that.update = function(dt) {
       if (particles.length === 0 && that.duration <= 0) {
         that.done = true;
@@ -224,8 +221,6 @@ Game.ParticleSystem = (function (graphics, assets) {
       }
       particles = keepMe;
     };
-
-    that.render = function() {};
 
     effects.push(that);
   }
@@ -332,13 +327,13 @@ Game.ParticleSystem = (function (graphics, assets) {
     });
   }
 
-  function twinkle(spec) {
+  function newTwinkle(spec) {
     createPoint({
       position: { x: spec.position.x, y: spec.position.y},
       duration : 100,
       fade : 500,
       fill : { w: 0.05, h: 0.05 },
-      image : assets['splat2'],
+      image : assets['splat'],
       lifetime : {mean: 1000, stdev: 250},
       particleRate : 3000,
       size : {mean: 0.05, stdev: 0.0001},
@@ -370,9 +365,9 @@ Game.ParticleSystem = (function (graphics, assets) {
     update,
     createPoint,
     createFill,
+    newTwinkle,
     newGravity,
     explodeBrick,
-    twinkle,
     clear,
   };
 

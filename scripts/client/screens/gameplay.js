@@ -343,7 +343,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
       spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
     });
 
-    particleSystem.newGravity({position:data.position});
+    particleSystem.newTwinkle({position:data.position});
 
     //
     // When we receive a hit notification, go ahead and remove the
