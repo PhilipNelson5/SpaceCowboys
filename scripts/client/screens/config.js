@@ -19,11 +19,27 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     )
     {
       document.getElementById('rebind').innerHTML = 'Key Already bound!';
-      up = false;
-      down = false;
-      right = false;
-      left = false;
-      fire = false;
+	
+	  if (up === true) {
+        keyBindings.keys.forward.key = keyBindings.keys.oldF.key;
+        up = false;
+      }
+      if (down === true) {
+        keyBindings.keys.back.key = keyBindings.keys.oldD.key;
+        down = false;
+      }
+      if (left === true) {
+        keyBindings.keys.left.key = keyBindings.keys.oldL.key;
+        left = false;
+      }
+      if (right === true) {
+        keyBindings.keys.right.key = keyBindings.keys.oldR.key;
+		right = false;
+      }
+      if (fire === true) {
+        keyBindings.keys.fire.key = keyBindings.keys.oldFire.key;
+        fire = false;
+      }
     }
     else {
       document.getElementById('rebind').innerHTML = 'Please Press a Button to Rebind';
