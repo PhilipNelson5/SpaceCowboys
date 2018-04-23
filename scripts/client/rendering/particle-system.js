@@ -177,7 +177,7 @@ Game.ParticleSystem = (function (graphics, assets) {
           graphics.drawImage(
             spec.image,
             p.position,
-            p.size,
+            {width:p.size, height:p.size},
             true
           );
           graphics.restoreContext();
@@ -332,11 +332,10 @@ Game.ParticleSystem = (function (graphics, assets) {
       position: { x: spec.position.x, y: spec.position.y},
       duration : 100,
       fade : 500,
-      fill : { w: 0.05, h: 0.05 },
       image : assets['splat'],
-      lifetime : {mean: 1000, stdev: 250},
+      lifetime : {mean: 5000, stdev: 250},
       particleRate : 3000,
-      size : {mean: 0.05, stdev: 0.0001},
+      size : {mean: 0.01, stdev: 0.0001},
       speed : {mean: 0.0001, stdev: 0.0001},
       spread : {mean: 0, stdev: 0},
     });

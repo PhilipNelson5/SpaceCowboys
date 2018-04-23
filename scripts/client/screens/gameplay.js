@@ -807,14 +807,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
-    particleSystem.render();
-
     //TODO 100 is the max health and shield
     graphics.drawHealth(playerSelf.model.health, 100, playerSelf.model.shield, 100);
     graphics.drawAmmo(playerSelf.model.ammo);
     graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
 
+    particleSystem.render();
   }
 
   //------------------------------------------------------------------
