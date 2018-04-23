@@ -11,11 +11,11 @@ const r = require('./random');
 function getAsteroids() {
 
   let asteroids = [];
-  const NUM = 6;
+  const NUM = 20;
   const MIN_SIZE = 0.2;
   const MAX_SIZE = 0.7;
   const MIN_POS = 0.52;
-  const MAX_POS = 3.48;
+  const MAX_POS = 7.48;
 
   for (let i = 0; i < NUM; i++) {
     let size = r.nextDoubleRange(MIN_SIZE, MAX_SIZE);
