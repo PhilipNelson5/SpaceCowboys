@@ -457,7 +457,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
                 size: { width: 0.5, height: 0.5},
                 position: { x: world.left + 0.25 + i * 0.5, y: world.top + 0.25 + j * 0.5},
                 drawOnMap: false
-              }
+              };
               asteroids.push(asteroid);
             }
           }
