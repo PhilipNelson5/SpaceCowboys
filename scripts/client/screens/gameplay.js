@@ -368,6 +368,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // TODO: Some effect to alert the player that they were hit
     playerSelf.model.health = data.health;
     playerSelf.model.shield = data.shield;
+	Game.assets['audio-impact'].play();
   }
 
   function initLoot(data) {
@@ -387,6 +388,35 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       for (let l in loot) {
         for (let e = 0; e < loot[l].length; ++e) {
           if (id === loot[l][e].id) {
+			if(loot[l][e].type === 1) {
+			  //play health sound
+			  Game.assets['audio-health'].play();
+			}
+			if(loot[l][e].type === 2) {
+			  //play shield sound
+			  Game.assets['audio-hypershield'].play();
+			}
+			if(loot[l][e].type === 3) {
+			  //play ammo sound	
+			  Game.assets['audio-ammo'].play();
+			}
+			if(loot[l][e].type === 4) {
+			  //play weapon pick up sound
+			  //Game.assets['audio-'].play();
+			}
+			if(loot[l][e].type === 5) {
+			  //play weapon range sound
+			  Game.assets['audio-weaponrange'].play();
+			}
+			if(loot[l][e].type === 6) {
+			  //play weapon damage sound
+			  Game.assets['audio-weapondamage'].play();
+			}
+			if(loot[l][e].type === 7) {
+			  //play weapon speed up sound
+			  Game.assets['audio-hyperspeed'].play();
+			}
+
             loot[l].splice(e, 1);
             found = true;
             break;
