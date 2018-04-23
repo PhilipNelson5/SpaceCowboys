@@ -485,6 +485,23 @@ Game.graphics = (function(assets) {
     context.fill();
   }
 
+
+  function displayDeathScreen(kills,place) {
+    context.save();
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(1/10*canvas.width, 1/20*canvas.height, 8/10*canvas.width, 15/20*canvas.height);
+
+    context.fillStyle = '#FF0000';
+    context.font = '40px sans serif';
+    context.textAlign = 'center';
+    context.fillText('You have been killed',canvas.width/2, 5/20*canvas.height);
+    context.font = '23px sans serif';
+    context.fillStyle = '#000000';
+    context.fillText('You Placed ' + place + '!',canvas.width/2, 9/20*canvas.height);
+    context.fillText('Kills: ' + kills,canvas.width/2, 11/20*canvas.height);
+    context.restore();
+  }
+
   /**
    * write text given the top right coordinate
    * spec {
@@ -700,6 +717,7 @@ Game.graphics = (function(assets) {
     drawKills,
     drawPlayersAlive,
     drawMini,
+    displayDeathScreen,
     toggleFullScreen,
     drawText,
     measureTextHeight,
