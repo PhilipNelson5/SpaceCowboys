@@ -155,6 +155,9 @@ Game.loader = (function() {
     }, {
       key: 'kills-icon',
       source: 'assets/kills-icon.png'
+    }, {
+      key: 'players-left',
+      source: 'assets/players-left.png'
     }
     ]; // end assetOrder
 
