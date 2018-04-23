@@ -296,6 +296,7 @@ form {
   height: 400px;
   background-color: white;
   background-image: url("../assets/background/map.png");
+  opacity: 0.75;
   background-size: 400px 400px;
   margin: auto;
 }
