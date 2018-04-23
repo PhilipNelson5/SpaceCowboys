@@ -337,6 +337,47 @@ Game.graphics = (function(assets) {
     );
   }
 
+  function drawKills(kills) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + (8/30*width); //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['kills-icon'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(kills,x+30,y+20);
+  }
+
+  function drawPlayersAlive(num) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + (2/3*width); //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['players-left'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(num,x+30,y+20);
+  }
+
+
   function drawHealth(health, maxH, shield, maxS) {
     // SHIELD
     let percentS = shield/maxS;
@@ -449,6 +490,23 @@ Game.graphics = (function(assets) {
     context.fill();
   }
 
+
+  function displayDeathScreen(kills,place) {
+    context.save();
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(1/10*canvas.width, 1/20*canvas.height, 8/10*canvas.width, 15/20*canvas.height);
+
+    context.fillStyle = '#FF0000';
+    context.font = '40px sans serif';
+    context.textAlign = 'center';
+    context.fillText('You have been killed',canvas.width/2, 5/20*canvas.height);
+    context.font = '23px sans serif';
+    context.fillStyle = '#000000';
+    context.fillText('You Placed ' + place + '!',canvas.width/2, 9/20*canvas.height);
+    context.fillText('Kills: ' + kills,canvas.width/2, 11/20*canvas.height);
+    context.restore();
+  }
+
   /**
    * write text given the top right coordinate
    * spec {
@@ -514,6 +572,7 @@ Game.graphics = (function(assets) {
   //
   //------------------------------------------------------------------
   function drawText(spec) {
+    context.save();
     context.font = spec.font;
     context.fillStyle = spec.fill;
     context.textBaseline = 'top';
@@ -523,6 +582,7 @@ Game.graphics = (function(assets) {
       world.left + spec.position.x * world.size,
       world.top + spec.position.y * world.size
     );
+    context.restore();
   }
 
   //------------------------------------------------------------------
@@ -659,7 +719,10 @@ Game.graphics = (function(assets) {
     drawWeapon,
     drawAmmo,
     drawHealth,
+    drawKills,
+    drawPlayersAlive,
     drawMini,
+    displayDeathScreen,
     toggleFullScreen,
     drawText,
     measureTextHeight,

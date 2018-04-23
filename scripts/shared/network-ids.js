@@ -171,6 +171,10 @@
     'PLAYER_POSITION': {
       value: 'player-position',
       writable: false
+    },
+    'UPDATE_ALIVE_PLAYERS': {
+      value: 'update-alive-players',
+      writable: false
     }
 
   });

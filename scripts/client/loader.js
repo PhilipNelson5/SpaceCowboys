@@ -153,6 +153,12 @@ Game.loader = (function() {
     }, {
       key: 'asteroid',
       source: 'assets/asteroid.png'
+    }, {
+      key: 'kills-icon',
+      source: 'assets/kills-icon.png'
+    }, {
+      key: 'players-left',
+      source: 'assets/players-left.png'
     }
 
     ]; // end assetOrder

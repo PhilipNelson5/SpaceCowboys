@@ -34,6 +34,8 @@ let asteroids = [];
 let hits = [];
 let vector = null;
 let loot = {};
+let playersAlive = LOBBY_MAX;
+let updatePlayerCount = true;
 
 //------------------------------------------------------------------
 //
@@ -391,6 +393,8 @@ function processInput(/* elapsedTime */) {
       break;
     case NetworkIds.DIE:
       client.player.die();
+      playersAlive--;
+      updatePlayerCount = true;
       break;
     }
   }
@@ -460,8 +464,25 @@ function update(elapsedTime, currentTime) {
           }
           else {
             client.player.health = client.player.health - activeMissiles[missile].damage;
-            if (client.player.health < 0)
+            if (client.player.health <= 0) {
+              lobbyClients[activeMissiles[missile].clientId].player.score.kills += 1;
               client.player.health = 0;
+              client.player.score.place = playersAlive;
+              let update = {
+                clientId : clientId,
+                lastMessageId: client.lastMessageId,
+                direction : client.player.direction,
+                position: client.player.position,
+                health: client.player.health,
+                shield: client.player.shield,
+                ammo: client.player.ammo,
+                hasWeapon: client.player.hasWeapon,
+                score : client.player.score,
+                updateWindow: lastUpdate,
+                vector: vector
+              };
+              client.socket.emit(NetworkIds.UPDATE_SELF, update);
+            }
           }
           client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
             health : client.player.health,
@@ -510,6 +531,19 @@ function update(elapsedTime, currentTime) {
           }
         }
       }
+    }
+  }
+
+  //a player has died, update each of the players with the new player count
+  if (updatePlayerCount) {
+    updatePlayerCount = false;
+    for (let clientId in lobbyClients) {
+      let client = lobbyClients[clientId];
+      let update = {
+        playersAlive: playersAlive
+      };
+      //TODO: actually do the right socket emission
+      client.socket.emit(NetworkIds.UPDATE_ALIVE_PLAYERS, update);
     }
   }
 }

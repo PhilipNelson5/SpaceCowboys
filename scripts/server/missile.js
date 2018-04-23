@@ -51,7 +51,7 @@ function createMissile(spec) {
   });
 
   Object.defineProperty(that, 'timeRemaining', {
-    get: () => timeRemaining.range
+    get: () => timeRemaining
   });
 
   Object.defineProperty(that, 'damage', {

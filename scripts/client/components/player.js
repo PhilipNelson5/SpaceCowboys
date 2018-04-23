@@ -31,6 +31,7 @@ Game.components.Player = function() {
 
   // STATS
 
+  let dead = false;
   let health = 1;
   let shield = 0;
   let ammo   = 0;
@@ -91,13 +92,20 @@ Game.components.Player = function() {
     get: () => radius
   });
 
+  Object.defineProperty(that, 'dead', {
+    get: () => dead,
+    set: value => dead = value
+  });
+
   Object.defineProperty(that, 'score', {
     get: () => score,
     set: (value) => {
       score.place = value.place;
       score.kills = value.kills;
     }
+
   });
+
 
   //------------------------------------------------------------------
   //

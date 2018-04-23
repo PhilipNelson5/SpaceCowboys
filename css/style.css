@@ -26,7 +26,7 @@ body {
   font-size: 40px;
   background-image: url("../assets/signin.jpg");
   background-repeat: no-repeat;
-  background-size: auto;
+  background-size: cover;
   background-position: center;
 }
 
@@ -46,6 +46,12 @@ body {
   padding-top: 1em;
   cursor: default;
   font-size: 0.75em;
+}
+
+.inlineTable {
+	display: inline-block;
+	padding: 0;
+	color: #ffffea;
 }
 
 ul.menu {
@@ -143,6 +149,22 @@ input {
   border-radius: 3px;
   outline: none;
   box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
+}
+
+#help {
+  overflow: auto;
+}
+
+#config {
+  overflow: auto;
+}
+
+#high-scores {
+  overflow: auto;
+}
+
+#about {
+  overflow: auto;
 }
 
 #lobby-container {
