@@ -155,6 +155,18 @@ input {
   overflow: auto;
 }
 
+#config {
+  overflow: auto;
+}
+
+#high-scores {
+  overflow: auto;
+}
+
+#about {
+  overflow: auto;
+}
+
 #lobby-container {
 	width: 100%;
 	height: 100%;
