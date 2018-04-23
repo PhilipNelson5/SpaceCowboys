@@ -160,6 +160,18 @@
       value: 'starting-asteroids',
       writable: false
     },
+    'ENTER_MAP': {
+      value: 'enter-map',
+      writable: false
+    },
+    'START_TIMER_MAP': {
+      value: 'start-timer-map',
+      writable: false
+    },
+    'PLAYER_POSITION': {
+      value: 'player-position',
+      writable: false
+    },
     'UPDATE_ALIVE_PLAYERS': {
       value: 'update-alive-players',
       writable: false

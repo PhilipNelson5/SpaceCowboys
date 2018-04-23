@@ -14,6 +14,18 @@ Game.graphics.Loot = (function(graphics, assets) {
   // ------------------------------------------------------------------
   that.render = function(loot) {
     for (let e of loot.ammo) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-ammo'],
         e.position,
@@ -22,6 +34,18 @@ Game.graphics.Loot = (function(graphics, assets) {
       );
     }
     for (let e of loot.damageUp) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-damageUp'],
         e.position,
@@ -30,6 +54,18 @@ Game.graphics.Loot = (function(graphics, assets) {
       );
     }
     for (let e of loot.health) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-health'],
         e.position,
@@ -38,6 +74,18 @@ Game.graphics.Loot = (function(graphics, assets) {
       );
     }
     for (let e of loot.rangeUp) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-rangeUp'],
         e.position,
@@ -46,6 +94,18 @@ Game.graphics.Loot = (function(graphics, assets) {
       );
     }
     for (let e of loot.shield) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-shield'],
         e.position,
@@ -54,6 +114,18 @@ Game.graphics.Loot = (function(graphics, assets) {
       );
     }
     for (let e of loot.speedUp) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-speedUp'],
         e.position,
@@ -62,6 +134,18 @@ Game.graphics.Loot = (function(graphics, assets) {
       );
     }
     for (let e of loot.weapon) {
+      graphics.drawCircle(
+        e.position,
+        0.025,
+        "#000000",
+        true
+      );
+      graphics.drawCircle(
+        e.position,
+        0.02,
+        "#FFFFFF",
+        true
+      );
       graphics.drawImage(
         assets['loot-weapon'],
         e.position,

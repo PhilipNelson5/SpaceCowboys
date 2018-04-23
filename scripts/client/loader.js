@@ -82,6 +82,7 @@ Game.loader = (function() {
           'screens/gamelobby',
           'screens/config',
           'screens/about',
+          'screens/map',
           'screens/gameplay',
           'screens/help',
           'screens/highscores',
@@ -159,6 +160,7 @@ Game.loader = (function() {
       key: 'players-left',
       source: 'assets/players-left.png'
     }
+
     ]; // end assetOrder
 
   //------------------------------------------------------------------

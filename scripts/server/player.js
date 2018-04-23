@@ -15,14 +15,11 @@ let random = require ('./random');
 //------------------------------------------------------------------
 function createPlayer() {
 
-  const MIN = 0.52;
-  const MAX = 3.48;
-
   let that = {};
 
   let position = {
-    x: random.nextDoubleRange(MIN, MAX),
-    y: random.nextDoubleRange(MIN, MAX)
+    x: 0.52,
+    y: 0.52
   };
 
   let size = {
@@ -36,7 +33,7 @@ function createPlayer() {
   let health        = 100;      // initial health
   let shield        = 0;        // initial shield
   let reportUpdate  = false;    // Indicates if this model was updated during the last update
-  let missileSpeed  = .0005;    // How fast missiles fired by this player travel
+  let missileSpeed  = .0007;    // How fast missiles fired by this player travel
   let missileDamage = 10;       // How much damage a missile will do
   let missileRange  = 1500;     // Time that a missile will travel
   let hasWeapon     = false;    // Players do not start out with a gun
@@ -48,7 +45,8 @@ function createPlayer() {
   };
 
   Object.defineProperty(that, 'position', {
-    get: () => position
+    get: () => position,
+    set: value => position = value
   });
 
   Object.defineProperty(that, 'size', {

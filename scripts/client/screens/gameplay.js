@@ -449,6 +449,19 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         break;
       case NetworkIds.STARTING_ASTEROIDS:
         asteroids = message.data.asteroids;
+        // TODO: the wall
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            if (i == 0 || i == 7 || j == 0 || j==7) {
+              let asteroid = {
+                size: { width: 0.5, height: 0.5},
+                position: { x: world.left + 0.25 + i * 0.5, y: world.top + 0.25 + j * 0.5},
+                drawOnMap: false
+              }
+              asteroids.push(asteroid);
+            }
+          }
+        }
         break;
       case NetworkIds.UPDATE_ALIVE_PLAYERS:
         playersAlive = message.data.playersAlive;
