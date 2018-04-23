@@ -828,7 +828,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
 
     if (playerSelf.model.dead) {
-      graphics.displayDeathScreen(playerSelf.model.score.kills, playersAlive);
+      graphics.displayDeathScreen(playerSelf.model.score.kills, playerSelf.model.score.place);
 
     }
 

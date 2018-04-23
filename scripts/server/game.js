@@ -456,7 +456,7 @@ function update(elapsedTime, currentTime) {
             if (client.player.health <= 0) {
               lobbyClients[activeMissiles[missile].clientId].player.score.kills += 1;
               client.player.health = 0;
-              client.player.score.place = playersAlive+1;
+              client.player.score.place = playersAlive;
               let update = {
                 clientId : clientId,
                 lastMessageId: client.lastMessageId,
