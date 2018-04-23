@@ -7,6 +7,23 @@
 
 const r = require ('../shared/random');
 
+function collided(obj1, obj2) {
+  let distance = Math.sqrt(Math.pow(obj1.position.x - obj2.position.x, 2)
+    + Math.pow(obj1.position.y - obj2.position.y, 2));
+  let radii = obj1.radius + obj2.radius;
+
+  return distance <= radii;
+}
+
+function goodPlacement (next, asteroids) {
+  for (let asteroid of asteroids) {
+    if (collided (next, asteroid)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 const type = Object.freeze({
   health   :1,
   shield   :2,
@@ -17,7 +34,7 @@ const type = Object.freeze({
   speedUp  :7
 });
 
-function genLoot(n) {
+function genLoot(n, asteroids) {
   n *= 5;
 
   let loot = {
@@ -31,13 +48,14 @@ function genLoot(n) {
     },
     id = 0;
 
-  let tot, val;
+  let tot, val, next, num;
   const MIN = 0.5,
     MAX = 3.5;
 
-  tot = n;
-  for (let i = 0; i < tot; ++i) {
-    loot.health.push({
+  tot = Math.floor(n*1.5);
+  num = 0;
+  while (num < tot) {
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
@@ -45,13 +63,20 @@ function genLoot(n) {
       radius: 0.02,
       val: 50,
       type: type.health,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.health.push(next);
+      ++id;
+      ++num;
+    }
   }
 
   tot = 2*n;
-  for (let i = 0; i < tot; ++i) {
-    loot.shield.push({
+  num = 0;
+  while (num < tot) {
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
@@ -59,15 +84,22 @@ function genLoot(n) {
       radius: 0.02,
       val: 25,
       type: type.shield,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.shield.push(next);
+      ++id;
+      ++num;
+    }
   }
 
-  tot = 3*n;
-  for (let i = 0; i < tot; ++i) {
-    val = Math.floor(r.nextGaussian(35,10));
+  tot = 5*n;
+  num = 0;
+  while (num < tot) {
+    val = Math.floor(r.nextGaussian(50,15));
     val = val > 5 ? val : 5;
-    loot.ammo.push({
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
@@ -75,13 +107,20 @@ function genLoot(n) {
       radius: 0.02,
       val: val,
       type: type.ammo,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.ammo.push(next);
+      ++id;
+      ++num;
+    }
   }
 
-  tot = n;
-  for (let i = 0; i < tot; ++i) {
-    loot.weapon.push( {
+  tot = Math.floor(1.5*n);
+  num = 0;
+  while (num < tot) {
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
@@ -89,14 +128,21 @@ function genLoot(n) {
       radius: 0.02,
       val: 0,
       type: type.weapon,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.weapon.push( next);
+      ++id;
+      ++num;
+    }
   }
 
   tot = Math.floor(n/3);
   tot = (tot === 0) ? 1 : tot;
-  for (let i = 0; i < tot; ++i) {
-    loot.rangeUp.push({
+  num = 0;
+  while (num < tot) {
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
@@ -104,14 +150,21 @@ function genLoot(n) {
       radius: 0.02,
       val: 750,
       type: type.rangeUp,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.rangeUp.push(next);
+      ++id;
+      ++num;
+    }
   }
 
   tot = Math.floor(n/3);
   tot = (tot === 0) ? 1 : tot;
-  for (let i = 0; i < tot; ++i) {
-    loot.damageUp.push({
+  num = 0;
+  while (num < tot) {
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
@@ -119,23 +172,36 @@ function genLoot(n) {
       radius: 0.02,
       val: 10,
       type: type.damageUp,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.damageUp.push(next);
+      ++id;
+      ++num;
+    }
   }
 
   tot = Math.floor(n/3);
   tot = (tot === 0) ? 1 : tot;
-  for (let i = 0; i < tot; ++i) {
-    loot.speedUp.push( {
+  num = 0;
+  while (num < tot) {
+    next = {
       position : {
         x:r.nextDoubleRange(MIN, MAX),
         y:r.nextDoubleRange(MIN, MAX),
       },
       radius: 0.02,
-      val: 0.0001,
+      val: 0.0002,
       type: type.speedUp,
-      id : ++id
-    });
+      id : id
+    };
+
+    if (goodPlacement(next, asteroids)) {
+      loot.speedUp.push(next);
+      ++id;
+      ++num;
+    }
   }
 
   return loot;
@@ -145,13 +211,11 @@ function apply(loot, player) {
   switch (loot.type) {
   case type.health:
     if (player.health >= 100) return false; // don't pickup health if at max
-    console.log(player.health);
     player.health = player.health + loot.val;
     if (player.health > 100) player.health = 100;
     break;
   case type.shield:
     if (player.shield >= 100) return false; // don't pickup shield if at max
-    console.log(player.shield);
     player.shield = player.shield + loot.val;
     if (player.shield > 100) player.shield = 100;
     break;
@@ -160,7 +224,6 @@ function apply(loot, player) {
     break;
   case type.weapon:
     if (player.hasWeapon) return false; // only have one weapon
-    console.log(player.hasWeapon);
     player.hasWeapon = true;
     break;
   case type.rangeUp:

@@ -16,7 +16,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
     nextExplosionId = 1,
     missiles = {},
     explosions = {},
-    networkQueue = Queue.create();
+    networkQueue = Queue.create(),
+    playersAlive = 0;
 
   let loot = {
     health    : [],
@@ -135,9 +136,16 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
     });
   });
 
-  socket.on(NetworkIds.STARTING_ASTEROIDS, data=> {
+  socket.on(NetworkIds.STARTING_ASTEROIDS, data => {
     networkQueue.enqueue({
       type: NetworkIds.STARTING_ASTEROIDS,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.UPDATE_ALIVE_PLAYERS, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.UPDATE_ALIVE_PLAYERS,
       data: data
     });
   });
@@ -181,6 +189,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
 
     model.score.place = data.score.place;
     model.score.kills = data.score.kills;
+
+    model.dead = false;
 
     playerSelf = {
       model: model,
@@ -441,7 +451,24 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
         break;
       case NetworkIds.STARTING_ASTEROIDS:
         asteroids = message.data.asteroids;
+        // TODO: the wall
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            if (i == 0 || i == 7 || j == 0 || j==7) {
+              let asteroid = {
+                size: { width: 0.5, height: 0.5},
+                position: { x: world.left + 0.25 + i * 0.5, y: world.top + 0.25 + j * 0.5},
+                drawOnMap: false
+              }
+              asteroids.push(asteroid);
+            }
+          }
+        }
         break;
+      case NetworkIds.UPDATE_ALIVE_PLAYERS:
+        playersAlive = message.data.playersAlive;
+        break;
+      
       }
     }
   }
@@ -696,7 +723,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
   //------------------------------------------------------------------
   function update(elapsedTime) {
 
-    if (playerSelf.model.health <= 0 ) {
+    if (playerSelf.model.health <= 0 && !playerSelf.model.dead ) {
+      playerSelf.model.dead = true;
       let message = {
         id: messageId++,
         elapsedTime: elapsedTime,
@@ -812,6 +840,14 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
     graphics.drawAmmo(playerSelf.model.ammo);
     graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
+    graphics.drawKills(playerSelf.model.score.kills);
+    graphics.drawPlayersAlive(playersAlive);
+
+
+    if (playerSelf.model.dead) {
+      graphics.displayDeathScreen(playerSelf.model.score.kills, playerSelf.model.score.place);
+
+    }
 
     particleSystem.render();
   }

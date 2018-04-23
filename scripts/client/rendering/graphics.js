@@ -187,6 +187,7 @@ Game.graphics = (function(assets) {
       true
     );
   }
+
   //------------------------------------------------------------------
   //
   // Draw a circle into the local canvas coordinate system.
@@ -220,17 +221,23 @@ Game.graphics = (function(assets) {
     context.translate(canvas.width/2,canvas.height/2);
     context.rotate(angle);
 
+    /*
+     * THE CIRCLE OF BLUE
     context.beginPath();
     context.arc(0, 0, 25, 2*Math.PI, 0, false);
     context.closePath();
     context.strokeStyle='#0000FF';
     context.lineWidth=10;
     context.stroke();
+    */
+
+    let minCanvasDim = Math.min(canvas.width,canvas.height);
 
     context.beginPath();
-    context.moveTo(300, -canvas.height/2 );
-    context.arc(0, 0, 2 * 50, 7/4*Math.PI, 5/4* Math.PI, false);
-    context.lineTo(-300, -canvas.height/2);
+    context.moveTo(minCanvasDim, -minCanvasDim*2 );
+    context.arc(0, 0, minCanvasDim/10, 7/4*Math.PI, 5/4* Math.PI, false);
+    context.lineTo(-minCanvasDim, -minCanvasDim*2);
+    context.closePath();
 
     context.strokeStyle='#FFFF00';
     context.lineWidth=10;
@@ -254,16 +261,17 @@ Game.graphics = (function(assets) {
     context.translate(canvas.width/2,canvas.height/2);
     context.rotate(angle);
 
+    let minCanvasDim = Math.min(canvas.width,canvas.height);
     //Path function, creates a polygon that the image will fill
     context.beginPath();
-    context.moveTo(-canvas.width,-canvas.height);
-    context.lineTo(-300, -canvas.height/2);
-    context.arc(0, 0, 2*50, 5/4*Math.PI, 7/4* Math.PI, true);
-    context.lineTo(300, -canvas.height/2);
-    context.lineTo(canvas.width, -canvas.height );
-    context.lineTo(canvas.width, canvas.height );
-    context.lineTo(-canvas.width, canvas.height );
-    context.lineTo(-canvas.width,-canvas.height );
+    context.moveTo(-canvas.width,-canvas.height*2);
+    context.lineTo(-minCanvasDim, -minCanvasDim*2); //should technically be -canvas.height*sqrt(2) but this is faster because no root
+    context.arc(0, 0, minCanvasDim/10, 5/4*Math.PI, 7/4* Math.PI, true);
+    context.lineTo(minCanvasDim, -minCanvasDim*2);
+    context.lineTo(canvas.width, -canvas.height*2 );
+    context.lineTo(canvas.width, canvas.height*2 );
+    context.lineTo(-canvas.width, canvas.height*2 );
+    context.lineTo(-canvas.width,-canvas.height*2 );
     context.closePath();
 
     //Debug to view fog draw
@@ -328,6 +336,47 @@ Game.graphics = (function(assets) {
       25
     );
   }
+
+  function drawKills(kills) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + (8/30*width); //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['kills-icon'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(kills,x+30,y+20);
+  }
+
+  function drawPlayersAlive(num) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + (2/3*width); //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['players-left'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(num,x+30,y+20);
+  }
+
 
   function drawHealth(health, maxH, shield, maxS) {
     // SHIELD
@@ -417,23 +466,47 @@ Game.graphics = (function(assets) {
     context.drawImage(map, x+1, y+1, width-2, height-2);
     context.stroke();
 
+    // bounding to show where can move in map -- hopefully temporary
+    // TODO
+    context.strokeRect(x+(0.5/worldWidth * (width-2)), y+(0.5/worldWidth * (width-2)), width-(1/worldWidth * (width-2)), height-(1/worldWidth * (width-2)));
+
     for (let i = 0; i < asteroids.length; i++) {
       let a = asteroids[i];
-      let aposX = (a.position.x) / worldWidth * (width - 2) + x;
-      let aposY = (a.position.y) / worldHeight * (height - 2) + y;
-      let radius = (a.size.width / 2) / worldWidth * (width - 2);
-      context.beginPath();
-      context.moveTo(aposX + radius, aposY);
-      context.arc(aposX, aposY, radius, 0, 2*Math.PI);
-      context.closePath();
-      context.fill();
+      if (a.drawOnMap) {
+        let aposX = (a.position.x) / worldWidth * (width - 2) + x;
+        let aposY = (a.position.y) / worldHeight * (height - 2) + y;
+        let radius = (a.size.width / 2) / worldWidth * (width - 2);
+        context.beginPath();
+        context.moveTo(aposX + radius, aposY);
+        context.arc(aposX, aposY, radius, 0, 2*Math.PI);
+        context.closePath();
+        context.fill();
+      }
     }
 
     context.beginPath();
     context.moveTo(posX + 3, posY);
+    context.fillStyle = "blue";
     context.arc(posX, posY, 3, 0, 2*Math.PI);
     context.closePath();
     context.fill();
+  }
+
+
+  function displayDeathScreen(kills,place) {
+    context.save();
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(1/10*canvas.width, 1/20*canvas.height, 8/10*canvas.width, 15/20*canvas.height);
+
+    context.fillStyle = '#FF0000';
+    context.font = '40px sans serif';
+    context.textAlign = 'center';
+    context.fillText('You have been killed',canvas.width/2, 5/20*canvas.height);
+    context.font = '23px sans serif';
+    context.fillStyle = '#000000';
+    context.fillText('You Placed ' + place + '!',canvas.width/2, 9/20*canvas.height);
+    context.fillText('Kills: ' + kills,canvas.width/2, 11/20*canvas.height);
+    context.restore();
   }
 
   /**
@@ -497,10 +570,11 @@ Game.graphics = (function(assets) {
 
   //------------------------------------------------------------------
   //
-  // Renders text based on provided spec
+  // Renders text based on provided spec - world coordinates
   //
   //------------------------------------------------------------------
   function drawText(spec) {
+    context.save();
     context.font = spec.font;
     context.fillStyle = spec.fill;
     context.textBaseline = 'top';
@@ -510,8 +584,9 @@ Game.graphics = (function(assets) {
       world.left + spec.position.x * world.size,
       world.top + spec.position.y * world.size
     );
+    context.restore();
   }
-
+ 
   //------------------------------------------------------------------
   //
   // Returns the height of specified font, in world units
@@ -646,7 +721,10 @@ Game.graphics = (function(assets) {
     drawWeapon,
     drawAmmo,
     drawHealth,
+    drawKills,
+    drawPlayersAlive,
     drawMini,
+    displayDeathScreen,
     toggleFullScreen,
     drawText,
     measureTextHeight,

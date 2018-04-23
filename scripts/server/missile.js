@@ -13,7 +13,7 @@
 function createMissile(spec) {
   let that = {};
 
-  let radius = 0.0025;
+  let radius = 0.0035;
 
   // unit distance traveled per millisecond
   let speed = spec.speed;
@@ -51,7 +51,7 @@ function createMissile(spec) {
   });
 
   Object.defineProperty(that, 'timeRemaining', {
-    get: () => timeRemaining.range
+    get: () => timeRemaining
   });
 
   Object.defineProperty(that, 'damage', {

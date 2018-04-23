@@ -17,6 +17,7 @@ const present = require('present'),
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
 const LOBBY_MAX = 1;             // max player count for lobby
+const TIMER_MS_MAP = 1000;      // timer countdown in milliseconds for positional
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -33,6 +34,8 @@ let asteroids = [];
 let hits = [];
 let vector = null;
 let loot = {};
+let playersAlive = LOBBY_MAX;
+let updatePlayerCount = true;
 
 //------------------------------------------------------------------
 //
@@ -249,6 +252,19 @@ function initializeSocketIO(httpServer) {
       io.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients, user);
     });
 
+    socket.on(NetworkIds.ENTER_MAP, function() {
+      socket.emit(NetworkIds.START_TIMER_MAP, TIMER_MS_MAP);
+      setTimeout( () => {
+        socket.emit(NetworkIds.START_GAME);
+        gameLoop(present(), 0);
+      }, TIMER_MS_MAP );
+
+    });
+
+    socket.on(NetworkIds.PLAYER_POSITION, function(data) {
+      lobbyClients[socket.id].player.position = data;
+    });
+
     /**
      * When the client requests to enter the lobby
      * Adds client to lobbyClient list and sends user
@@ -269,9 +285,9 @@ function initializeSocketIO(httpServer) {
           io.to(client).emit(NetworkIds.START_TIMER, TIMER_MS);
         }
 
-        loot = Loot.genLoot(numLobbyClients);
-
         asteroids = Asteroids.getAsteroids();
+
+        loot = Loot.genLoot(numLobbyClients, asteroids);
 
         setTimeout( () => {
           for (let id in lobbyClients) {
@@ -310,11 +326,8 @@ function initializeSocketIO(httpServer) {
           for (let id in lobbyClients) {
             io.to(id).emit(NetworkIds.STARTING_LOOT, {loot});
             io.to(id).emit(NetworkIds.STARTING_ASTEROIDS, {asteroids});
-            io.to(id).emit(NetworkIds.START_GAME);
+            io.to(id).emit(NetworkIds.ENTER_MAP);
           }
-
-          gameLoop(present(), 0);
-
         }, TIMER_MS);
       }
     });
@@ -380,6 +393,8 @@ function processInput(/* elapsedTime */) {
       break;
     case NetworkIds.DIE:
       client.player.die();
+      playersAlive--;
+      updatePlayerCount = true;
       break;
     }
   }
@@ -449,8 +464,25 @@ function update(elapsedTime, currentTime) {
           }
           else {
             client.player.health = client.player.health - activeMissiles[missile].damage;
-            if (client.player.health < 0)
+            if (client.player.health <= 0) {
+              lobbyClients[activeMissiles[missile].clientId].player.score.kills += 1;
               client.player.health = 0;
+              client.player.score.place = playersAlive;
+              let update = {
+                clientId : clientId,
+                lastMessageId: client.lastMessageId,
+                direction : client.player.direction,
+                position: client.player.position,
+                health: client.player.health,
+                shield: client.player.shield,
+                ammo: client.player.ammo,
+                hasWeapon: client.player.hasWeapon,
+                score : client.player.score,
+                updateWindow: lastUpdate,
+                vector: vector
+              };
+              client.socket.emit(NetworkIds.UPDATE_SELF, update);
+            }
           }
           client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
             health : client.player.health,
@@ -499,6 +531,19 @@ function update(elapsedTime, currentTime) {
           }
         }
       }
+    }
+  }
+
+  //a player has died, update each of the players with the new player count
+  if (updatePlayerCount) {
+    updatePlayerCount = false;
+    for (let clientId in lobbyClients) {
+      let client = lobbyClients[clientId];
+      let update = {
+        playersAlive: playersAlive
+      };
+      //TODO: actually do the right socket emission
+      client.socket.emit(NetworkIds.UPDATE_ALIVE_PLAYERS, update);
     }
   }
 }
