@@ -16,7 +16,7 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
-const LOBBY_MAX = 2;             // max player count for lobby
+const LOBBY_MAX = 3;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -33,6 +33,8 @@ let asteroids = [];
 let hits = [];
 let vector = null;
 let loot = {};
+let playersAlive = LOBBY_MAX;
+let updatePlayerCount = true;
 
 //------------------------------------------------------------------
 //
@@ -380,6 +382,8 @@ function processInput(/* elapsedTime */) {
       break;
     case NetworkIds.DIE:
       client.player.die();
+      playersAlive--;
+      updatePlayerCount = true;
       break;
     }
   }
@@ -452,6 +456,7 @@ function update(elapsedTime, currentTime) {
             if (client.player.health <= 0) {
               lobbyClients[activeMissiles[missile].clientId].player.score.kills += 1;
               client.player.health = 0;
+              client.player.score.place = playersAlive;
               let update = {
                 clientId : clientId,
                 lastMessageId: client.lastMessageId,
@@ -515,6 +520,19 @@ function update(elapsedTime, currentTime) {
           }
         }
       }
+    }
+  }
+
+  //a player has died, update each of the players with the new player count
+  if (updatePlayerCount) {
+    updatePlayerCount = false;
+    for (let clientId in lobbyClients) {
+      let client = lobbyClients[clientId];
+      let update = {
+        playersAlive: playersAlive
+      };
+      //TODO: actually do the right socket emission
+      client.socket.emit(NetworkIds.UPDATE_ALIVE_PLAYERS, update);
     }
   }
 }

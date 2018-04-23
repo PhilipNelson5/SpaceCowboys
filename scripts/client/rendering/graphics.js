@@ -343,7 +343,7 @@ Game.graphics = (function(assets) {
     let width = canvas.width/4 - 5;
     let height = canvas.width/4 - 5;
 
-    let x = ((3/4 * canvas.width) + 5) + width/3; //pos of map + offset into map
+    let x = ((3/4 * canvas.width) + 5) + (8/30*width); //pos of map + offset into map
     let y = height + 15; //height past mini map
     context.drawImage(
       assets['kills-icon'],
@@ -357,6 +357,25 @@ Game.graphics = (function(assets) {
     context.fillText(kills,x+30,y+20);
   }
 
+  function drawPlayersAlive(num) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + (2/3*width); //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['players-left'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(num,x+30,y+20);
+  }
 
 
   function drawHealth(health, maxH, shield, maxS) {
@@ -464,6 +483,23 @@ Game.graphics = (function(assets) {
     context.arc(posX, posY, 3, 0, 2*Math.PI);
     context.closePath();
     context.fill();
+  }
+
+
+  function displayDeathScreen(kills,place) {
+    context.save();
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(1/10*canvas.width, 1/20*canvas.height, 8/10*canvas.width, 15/20*canvas.height);
+
+    context.fillStyle = '#FF0000';
+    context.font = '40px sans serif';
+    context.textAlign = 'center';
+    context.fillText('You have been killed',canvas.width/2, 5/20*canvas.height);
+    context.font = '23px sans serif';
+    context.fillStyle = '#000000';
+    context.fillText('You Placed ' + place + '!',canvas.width/2, 9/20*canvas.height);
+    context.fillText('Kills: ' + kills,canvas.width/2, 11/20*canvas.height);
+    context.restore();
   }
 
   /**
@@ -679,7 +715,9 @@ Game.graphics = (function(assets) {
     drawAmmo,
     drawHealth,
     drawKills,
+    drawPlayersAlive,
     drawMini,
+    displayDeathScreen,
     toggleFullScreen,
     drawText,
     measureTextHeight,
