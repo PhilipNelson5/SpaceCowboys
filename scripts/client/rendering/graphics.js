@@ -343,7 +343,7 @@ Game.graphics = (function(assets) {
     let width = canvas.width/4 - 5;
     let height = canvas.width/4 - 5;
 
-    let x = ((3/4 * canvas.width) + 5) + width/3; //pos of map + offset into map
+    let x = ((3/4 * canvas.width) + 5) + (8/30*width); //pos of map + offset into map
     let y = height + 15; //height past mini map
     context.drawImage(
       assets['kills-icon'],
@@ -357,6 +357,25 @@ Game.graphics = (function(assets) {
     context.fillText(kills,x+30,y+20);
   }
 
+  function drawPlayersAlive(num) {
+
+    //height and width of minimap
+    let width = canvas.width/4 - 5;
+    let height = canvas.width/4 - 5;
+
+    let x = ((3/4 * canvas.width) + 5) + (2/3*width); //pos of map + offset into map
+    let y = height + 15; //height past mini map
+    context.drawImage(
+      assets['players-left'],
+      x,
+      y,
+      26,
+      26
+    );
+
+    context.font = '23px sans serif';
+    context.fillText(num,x+30,y+20);
+  }
 
 
   function drawHealth(health, maxH, shield, maxS) {
@@ -679,6 +698,7 @@ Game.graphics = (function(assets) {
     drawAmmo,
     drawHealth,
     drawKills,
+    drawPlayersAlive,
     drawMini,
     toggleFullScreen,
     drawText,
