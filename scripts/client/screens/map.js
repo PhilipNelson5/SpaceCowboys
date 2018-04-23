@@ -1,4 +1,4 @@
-Game.screens['map'] = (function(menu, socket) {
+Game.screens['map'] = (function(menu, socket, assets) {
   'use strict';
 
   function initialize() {
@@ -25,13 +25,13 @@ Game.screens['map'] = (function(menu, socket) {
       offsetLeft = $('#map-body').offset().left;
       offsetTop = $('#map-body').offset().top;
 
-      posX = ((event.clientX - offsetLeft) / 100);
-      posY = ((event.clientY - offsetTop) / 100);
+      posX = ((event.clientX - offsetLeft) / 50);
+      posY = ((event.clientY - offsetTop) / 50);
       
       if (posX <= 0.52) posX = 0.52;
-      if (posX >= 3.48) posX = 3.48;
+      if (posX >= 7.48) posX = 7.48;
       if (posY <= 0.52) posY = 0.52;
-      if (posY >= 3.48) posY = 3.48;  
+      if (posY >= 7.48) posY = 7.48;  
 
       // TODO -- see if this helps fix the invisible start bug
       socket.emit(NetworkIds.PLAYER_POSITION, {x: posX, y: posY});
@@ -42,8 +42,8 @@ Game.screens['map'] = (function(menu, socket) {
       time -= newTime - lastTime;
 
       document.getElementById('map-timer').innerHTML = 'Timer: ' + (time/1000).toFixed(1) + ' sec';
-      document.getElementById('xpos').innerHTML = 'X: ' + (posX*100).toFixed(2);
-      document.getElementById('ypos').innerHTML = 'Y: ' + (posY*100).toFixed(2);
+      document.getElementById('xpos').innerHTML = 'X: ' + (posX*50).toFixed(2);
+      document.getElementById('ypos').innerHTML = 'Y: ' + (posY*50).toFixed(2);
       
       if (time > 0) {
         requestAnimationFrame( () => timer(time, newTime) );
@@ -62,6 +62,7 @@ Game.screens['map'] = (function(menu, socket) {
   }
 
   function run() {
+    $('#map-body').css("background-image", "url("+assets['map-image']+")");
     socket.emit(NetworkIds.ENTER_MAP);
   };
 
@@ -70,4 +71,4 @@ Game.screens['map'] = (function(menu, socket) {
     run
   };
 
-}(Game.menu, Game.network.socket));
+}(Game.menu, Game.network.socket, Game.assets));

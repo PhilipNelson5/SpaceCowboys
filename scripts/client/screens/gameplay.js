@@ -41,8 +41,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   let world = {
     get left() { return 0; },
     get top() { return 0; },
-    get width() { return 4.0; },
-    get height() { return 4.0; },
+    get width() { return 8.0; },
+    get height() { return 8.0; },
     get bufferSize() { return 0.52; }
   };
 
@@ -450,9 +450,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       case NetworkIds.STARTING_ASTEROIDS:
         asteroids = message.data.asteroids;
         // TODO: the wall
-        for (let i = 0; i < 8; i++) {
-          for (let j = 0; j < 8; j++) {
-            if (i == 0 || i == 7 || j == 0 || j==7) {
+        for (let i = 0; i < 16; i++) {
+          for (let j = 0; j < 16; j++) {
+            if (i == 0 || i == 15 || j == 0 || j==15) {
               let asteroid = {
                 size: { width: 0.5, height: 0.5},
                 position: { x: world.left + 0.25 + i * 0.5, y: world.top + 0.25 + j * 0.5},
@@ -495,13 +495,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           if (collided(player, asteroids[i])) move = false;
         }
         if (move) {
-          playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
           let message = {
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_UP
           };
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
           messageHistory.enqueue(message);
         } else {
           let message = {
@@ -509,8 +509,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_DOWN
           };
-          playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
         }
       }
     },
@@ -539,13 +539,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           if (collided(player, asteroids[i])) move = false;
         }
         if (move) {
-          playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
           let message = {
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_DOWN
           };
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveDown(playerSelf.texture, elapsedTime);
           messageHistory.enqueue(message);
         } else {
           let message = {
@@ -553,8 +553,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_UP
           };
-          playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveUp(playerSelf.texture, elapsedTime);
         }
       }
     },
@@ -583,13 +583,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           if (collided(player, asteroids[i])) move = false;
         }
         if (move) {
-          playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
           let message = {
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_RIGHT
           };
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
           messageHistory.enqueue(message);
         } else {
           let message = {
@@ -597,8 +597,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_LEFT
           };
-          playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
         }
       }
     },
@@ -628,13 +628,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
           if (collided(player, asteroids[i])) move = false;
         }
         if (move) {
-          playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
           let message = {
             id: messageId++,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_LEFT
           };
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveLeft(playerSelf.texture, elapsedTime);
           messageHistory.enqueue(message);
         } else {
           let message = {
@@ -642,8 +642,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
             elapsedTime: elapsedTime,
             type: NetworkIds.INPUT_MOVE_RIGHT
           };
-          playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
           socket.emit(NetworkIds.INPUT, message);
+          playerSelf.model.moveRight(playerSelf.texture, elapsedTime);
         }
       }
     },
