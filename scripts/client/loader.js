@@ -159,6 +159,9 @@ Game.loader = (function() {
     }, {
       key: 'players-left',
       source: 'assets/players-left.png'
+    }, {
+      key: 'map-image',
+      source: 'assets/background/map.png'
     }
 
     ]; // end assetOrder
