@@ -5,25 +5,25 @@ Game.screens['map'] = (function(menu, socket) {
     menu.addScreen('map',
       `
       <div id="map-body">
+        <p id="map-tag">Pick A Position</p>
         <p id="map-timer">Timer: 0.0 sec</p>
-        <br/>
         <p id="xpos">X: </p>
-        <br/>
         <p id="ypos">Y: </p>
-      </div>
-      `
+      </div>`
     );
 
     var posX = 0.52;
     var posY = 0.52;
+    var offsetLeft = $('#map-body').offset().left;
+    var offsetTop = $('#map-body').offset().top;
 
     document.getElementById('map-body').addEventListener(
       'click', getMousePosition
     );
 
     function getMousePosition(event) {
-      let offsetLeft = $('#map-body').offset().left;
-      let offsetTop = $('#map-body').offset().top;
+      offsetLeft = $('#map-body').offset().left;
+      offsetTop = $('#map-body').offset().top;
 
       posX = ((event.clientX - offsetLeft) / 100);
       posY = ((event.clientY - offsetTop) / 100);
@@ -32,6 +32,9 @@ Game.screens['map'] = (function(menu, socket) {
       if (posX >= 3.48) posX = 3.48;
       if (posY <= 0.52) posY = 0.52;
       if (posY >= 3.48) posY = 3.48;  
+
+      // TODO -- see if this helps fix the invisible start bug
+      socket.emit(NetworkIds.PLAYER_POSITION, {x: posX, y: posY});
     }
 
     function timer(time, lastTime) {
@@ -39,8 +42,8 @@ Game.screens['map'] = (function(menu, socket) {
       time -= newTime - lastTime;
 
       document.getElementById('map-timer').innerHTML = 'Timer: ' + (time/1000).toFixed(1) + ' sec';
-      document.getElementById('xpos').innerHTML = 'X: ' + posX.toFixed(2);
-      document.getElementById('ypos').innerHTML = 'Y: ' + posY.toFixed(2);
+      document.getElementById('xpos').innerHTML = 'X: ' + (posX*100).toFixed(2);
+      document.getElementById('ypos').innerHTML = 'Y: ' + (posY*100).toFixed(2);
       
       if (time > 0) {
         requestAnimationFrame( () => timer(time, newTime) );

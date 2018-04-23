@@ -295,7 +295,21 @@ form {
   width: 400px;
   height: 400px;
   background-color: white;
-  background-image: url("../assets/background/cropped.jpg");
+  background-image: url("../assets/background/map.png");
   background-size: 400px 400px;
   margin: auto;
+}
+
+#map-timer, #xpos, #ypos, #map-tag {
+  padding-top: 1em;
+  padding-left: 1em;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0px;
+  color: #000000;
+}
+
+#map-tag {
+  width: 400px;
+  text-align: center;
 }

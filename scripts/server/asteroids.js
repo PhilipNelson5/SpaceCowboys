@@ -28,7 +28,8 @@ function getAsteroids() {
         x: r.nextDoubleRange(MIN_POS, MAX_POS),
         y: r.nextDoubleRange(MIN_POS, MAX_POS)
       },
-      radius: (size / 2)
+      radius: (size / 2),
+      drawOnMap: true
     };
     asteroids.push(asteroid);
   }
