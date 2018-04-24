@@ -1,6 +1,8 @@
 # :space_invader: :alien: SpaceCowboys :gun: :cowboy_hat_face:
 A battle royale, space cowboy themed!
 
+Made by Ammon Hepworth, Hailee Maxwell, Philip Nelson, Raul Ramirez
+
 | Criteria | Location |
 | --- | --- |
 | **Node.js server-based solution:** All files served to the browser from a server. |`./server.js` `./scripts/client/loader`|
