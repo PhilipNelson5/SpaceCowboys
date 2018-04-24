@@ -40,7 +40,7 @@ function createPlayer() {
   let ammo          = 0;        // Player ammo, starts with none
   let loot = [];
   let score  = {
-    place : 0,
+    place : 1,
     kills : 0
   };
 

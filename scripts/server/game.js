@@ -17,7 +17,7 @@ const present = require('present'),
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 3000;           // timer countdown in milliseconds for lobby
 const TIMER_MS_MAP = 10000;      // timer countdown in milliseconds for positional
-const LOBBY_MAX = 2;             // max player count for lobby
+const LOBBY_MAX = 3;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -36,6 +36,7 @@ let vector = null;
 let loot = {};
 let playersAlive = LOBBY_MAX;
 let updatePlayerCount = true;
+let playerStats = [];
 
 //------------------------------------------------------------------
 //
@@ -482,6 +483,27 @@ function update(elapsedTime, currentTime) {
                 vector: vector
               };
               client.socket.emit(NetworkIds.UPDATE_SELF, update);
+
+              //Did the player who got the kill just win?
+              //If the players alive when they got the kill was 2, then yes
+              //This is really bad and shouldnt be here but we gotta get it DONE
+              if (playersAlive == 2) {
+                lobbyClients[activeMissiles[missile].clientId].socket.emit(NetworkIds.WIN);
+                let i = 0;
+                for (let id in lobbyClients) {
+                  playerStats[i] = {
+                    username: lobbyClients[id].username,
+                    place: lobbyClients[id].player.score.place,
+                    kills: lobbyClients[id].player.score.kills,
+                    accuracy: 0,
+                    damage: 0
+                  };
+                  i++;
+                }
+                for (let id in lobbyClients) {
+                  lobbyClients[id].socket.emit(NetworkIds.GET_GAME_STATS, playerStats);
+                }
+              }
             }
           }
           client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
@@ -542,7 +564,6 @@ function update(elapsedTime, currentTime) {
       let update = {
         playersAlive: playersAlive
       };
-      //TODO: actually do the right socket emission
       client.socket.emit(NetworkIds.UPDATE_ALIVE_PLAYERS, update);
     }
   }

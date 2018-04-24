@@ -86,7 +86,8 @@ Game.loader = (function() {
           'screens/gameplay',
           'screens/help',
           'screens/highscores',
-          'screens/mainmenu'
+          'screens/mainmenu',
+          'screens/endgame'
         ],
         message: 'Screens\t\t\tloaded',
         onComplete: null,

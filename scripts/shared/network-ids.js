@@ -175,6 +175,14 @@
     'UPDATE_ALIVE_PLAYERS': {
       value: 'update-alive-players',
       writable: false
+    },
+    'WIN': {
+      value: 'win',
+      writable: false
+    },
+    'GET_GAME_STATS': {
+      value: 'get-game-stats',
+      writable: false
     }
 
   });
