@@ -160,10 +160,39 @@ Game.loader = (function() {
       key: 'players-left',
       source: 'assets/players-left.png'
     }, {
+      key: 'audio-health',
+      source: 'assets/soundEffects/health.wav'
+    }, {
+      key: 'audio-ammo',
+      source: 'assets/soundEffects/ammo.wav'
+    }, {
+      key: 'audio-death',
+      source: 'assets/soundEffects/death.wav'
+    }, {
+      key: 'audio-impact',
+      source: 'assets/soundEffects/impact.wav'
+    }, {
+      key: 'audio-laser',
+      source: 'assets/soundEffects/laser.wav'
+    }, {
+      key: 'audio-hypershield',
+      source: 'assets/soundEffects/shield.wav'
+    }, {
+      key: 'audio-hyperspeed',
+      source: 'assets/soundEffects/hyperSpeed.wav'
+    }, {
+      key: 'audio-weapondamage',
+      source: 'assets/soundEffects/weaponDamage.wav'
+    }, {
+      key: 'audio-weaponrange',
+      source: 'assets/soundEffects/weaponRange.wav'
+    }, {
+      key: 'audio-weaponpickup',
+      source: 'assets/soundEffects/weaponPickup.wav'
+    }, {
       key: 'map-image',
       source: 'assets/background/map.png'
     }
-
     ]; // end assetOrder
 
   //------------------------------------------------------------------
@@ -298,7 +327,7 @@ Game.loader = (function() {
         if (xhr.status === 200) {
           if (fileExtension === 'png' || fileExtension === 'jpg') {
             asset = new Image();
-          } else if (fileExtension === 'mp3') {
+          } else if (fileExtension === 'wav') {
             asset = new Audio();
           } else {
             if (onError) { onError('Unknown file extension: ' + fileExtension); }
