@@ -769,7 +769,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       tileSize: assets[backgroundKey].tileSize,
       assetKey: backgroundKey
     });
-
+    
+	keyBindings.init();
     registerControls();
   }
 
@@ -796,10 +797,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       playerSelf.texture.update(elapsedTime);
 
 
-    if (myKeys.keysChanged === true)
+    if (keyBindings.keysChanged === true)
     {
       unRegisterControls();
-      myKeys.keysChanged = false;
+      keyBindings.keysChanged = false;
     }
 
     // rotates the player if needed and updates server

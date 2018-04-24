@@ -1,7 +1,8 @@
 Game.keyBindings = (function() {
 
+  let keysChanged = false;
+
   let keys = {
-    keysChanged : false,
     forward : {key : 87, id : 0},
     back    : {key : 83, id : 1},
     left    : {key : 65, id : 2},
@@ -11,7 +12,7 @@ Game.keyBindings = (function() {
     oldB    : {key :  0, id : 1},
     oldL    : {key :  0, id : 2},
     oldR    : {key :  0, id : 3},
-    oldFire : {key : undefined, id : 4},
+    oldFire : {key :  0, id : 4},
   };
 
   function getBinding(key) {
@@ -366,9 +367,26 @@ Game.keyBindings = (function() {
     }
   }
 
+  function updateClient() {
+	localStorage['clientSide'] = JSON.stringify(keys);
+	console.log(keys);
+  }
+  
+  function init() {
+	let tempKeys = localStorage.getItem('clientSide');
+	if (tempKeys !== null)
+	{
+		console.log(tempKeys);
+		keys = JSON.parse(tempKeys);
+		console.log(keys);
+	}
+  }
+
   return {
     keys : keys,
-    getBinding
+    getBinding,
+	updateClient,
+	init,
   };
 
 }());

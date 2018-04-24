@@ -1,4 +1,4 @@
-Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
+Game.screens['config'] = (function(menu, keyBindings) {
   'use strict';
 
   let up = false;
@@ -48,7 +48,7 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     }
     else {
       document.getElementById('rebind').innerHTML = 'Please Press a Button to Rebind';
-      keyBindings.keys.keysChanged = true;
+      keyBindings.keysChanged = true;
     }
   }
 
@@ -59,26 +59,31 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     if (up === true) {
       keyBindings.keys.forward.key = e.keyCode;
       document.getElementById('up').innerHTML = keyBindings.getBinding(e.keyCode);
+	  keyBindings.updateClient();
       up = false;
     }
     if (down === true) {
       keyBindings.keys.back.key = e.keyCode;
       document.getElementById('down').innerHTML = keyBindings.getBinding(e.keyCode);
+	  keyBindings.updateClient();
       down = false;
     }
     if (left === true) {
       keyBindings.keys.left.key = e.keyCode;
       document.getElementById('left').innerHTML = keyBindings.getBinding(e.keyCode);
+	  keyBindings.updateClient();
       left = false;
     }
     if (right === true) {
       keyBindings.keys.right.key = e.keyCode;
       document.getElementById('right').innerHTML = keyBindings.getBinding(e.keyCode);
+	  keyBindings.updateClient();
       right = false;
     }
     if (fire === true) {
       keyBindings.keys.fire.key = e.keyCode;
       document.getElementById('fire').innerHTML = keyBindings.getBinding(e.keyCode);
+	  keyBindings.updateClient();
       fire = false;
     }
     document.getElementById('id-config-keyUp').disabled = false;
@@ -188,6 +193,7 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
   function run() {
     document.addEventListener('keyup', noSpace);
     document.addEventListener('keydown', noSpace);
+	console.log(JSON.stringify(keyBindings.keys));
 
     document.getElementById('up').innerHTML = keyBindings.getBinding(keyBindings.keys.forward.key);
     document.getElementById('down').innerHTML = keyBindings.getBinding(keyBindings.keys.back.key);
@@ -202,4 +208,4 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     keydown,
   };
 
-}(Game.menu,Game.keyBindings,Game.input));
+}(Game.menu,Game.keyBindings));
