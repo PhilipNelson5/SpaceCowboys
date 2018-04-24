@@ -5,6 +5,8 @@ Made by Ammon Hepworth, Hailee Maxwell, Philip Nelson, Raul Ramirez
 
 change lobby size with `const LOBY_MAX` in `./scripts/server/game.js:20`
 
+repo at `https://github.com/PhilipNelson5/SpaceCowboys`
+
 | Criteria | Location |
 | --- | --- |
 | **Node.js server-based solution:** All files served to the browser from a server. |`./server.js` `./scripts/client/loader`|
