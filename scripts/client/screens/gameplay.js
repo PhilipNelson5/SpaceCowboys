@@ -913,9 +913,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
     graphics.drawKills(playerSelf.model.score.kills);
     graphics.drawPlayersAlive(playersAlive);
 
-
     if (playerSelf.model.dead) {
       graphics.displayDeathScreen(playerSelf.model.score.kills, playerSelf.model.score.place);
+    }
+
+    if (playersAlive == 1) {
+      cancelNextRequest = true;
+      menu.showScreen('endgame');
     }
 
   }

@@ -314,3 +314,22 @@ form {
   width: 400px;
   text-align: center;
 }
+
+#endgame-stat-table {
+  background-color: white;
+  margin: 0 auto;
+  border: solid;
+
+}
+#endgame-stat-table th td {
+  background-color: white;
+  margin: 0 auto;
+  border: solid;
+  border-collapse: collapse;
+  padding: 15px;
+
+}
+
+th, td {
+  padding: 15px;
+}

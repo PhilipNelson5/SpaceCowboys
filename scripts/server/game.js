@@ -16,8 +16,8 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 3000;           // timer countdown in milliseconds
-const LOBBY_MAX = 2;             // max player count for lobby
 const TIMER_MS_MAP = 10000;      // timer countdown in milliseconds for positional
+const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -37,6 +37,7 @@ let vector = null;
 let loot = {};
 let playersAlive = LOBBY_MAX;
 let updatePlayerCount = true;
+let playerStats = [];
 
 //------------------------------------------------------------------
 //
@@ -73,6 +74,8 @@ function createMissile(clientId, playerModel) {
     damage: playerModel.missileDamage,
     range : playerModel.missileRange
   });
+
+  lobbyClients[clientId].player.score.shotsFired += 1;
 
   newMissiles.push(missile);
 }
@@ -454,6 +457,11 @@ function update(elapsedTime, currentTime) {
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
+
+          //Increase the damage dealt by the person who fired and the number of their shots that landed
+          lobbyClients[activeMissiles[missile].clientId].player.score.damage += activeMissiles[missile].damage;
+          lobbyClients[activeMissiles[missile].clientId].player.score.shotsLanded += 1;
+          
           //
           // take damage from shield first
           if (client.player.shield > 0) {
@@ -486,6 +494,28 @@ function update(elapsedTime, currentTime) {
               for (clientId in lobbyClients) {
                 if (clientId !== client.socket.id) {
                   lobbyClients[clientId].socket.emit(NetworkIds.PLAYER_DEATH, {position: client.player.position});
+                }
+              }
+
+              //Did the player who got the kill just win?
+              //If the players alive when they got the kill was 2, then yes
+              //This is really bad and shouldnt be here but we gotta get it DONE
+              if (playersAlive == 2) {
+                lobbyClients[activeMissiles[missile].clientId].socket.emit(NetworkIds.WIN);
+                let i = 0;
+                for (let id in lobbyClients) {
+                  playerStats[i] = {
+                    username: lobbyClients[id].username,
+                    place:    lobbyClients[id].player.score.place,
+                    kills:    lobbyClients[id].player.score.kills,
+                    accuracy: lobbyClients[id].player.score.shotsLanded/lobbyClients[id].player.score.shotsFired,
+                    damage:   lobbyClients[id].player.score.damage
+                  };
+                  if (lobbyClients[id].player.score.shotsFired == 0) playerStats[i].accuracy=0;
+                  i++;
+                }
+                for (let id in lobbyClients) {
+                  lobbyClients[id].socket.emit(NetworkIds.GET_GAME_STATS, playerStats);
                 }
               }
             }
@@ -552,7 +582,6 @@ function update(elapsedTime, currentTime) {
       let update = {
         playersAlive: playersAlive
       };
-      //TODO: actually do the right socket emission
       client.socket.emit(NetworkIds.UPDATE_ALIVE_PLAYERS, update);
     }
   }
