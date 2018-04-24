@@ -493,6 +493,7 @@ function update(elapsedTime, currentTime) {
     let hit = false;
     for (let i = 0; i < asteroids.length; i++) {
       if (collided(activeMissiles[missile], asteroids[i])) {
+		
         hit = true;
         hits.push({
           clientId: 0,

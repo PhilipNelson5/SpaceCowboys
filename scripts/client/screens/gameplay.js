@@ -351,6 +351,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function missileHit(data) {
+	let distance = Math.sqrt(Math.pow(playerSelf.model.position.x - data.position.x, 2)
+	  + Math.pow(playerSelf.model.position.y - data.position.y,2));
+	if (distance < .52)
+	{
+	  Game.assets['audio-impact'].currentTime = 0;
+	  Game.assets['audio-impact'].play();
+	}
     explosions[nextExplosionId] = components.AnimatedSprite({
       id: nextExplosionId++,
       spriteSheet: Game.assets['explosion'],
