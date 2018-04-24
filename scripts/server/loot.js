@@ -37,6 +37,8 @@ const type = Object.freeze({
 function genLoot(n, asteroids) {
   n *= 2;
 
+  n*=2;
+
   let loot = {
       health    : [], // n  - 50pts
       shield    : [], // 2n - 25pts
@@ -49,8 +51,8 @@ function genLoot(n, asteroids) {
     id = 0;
 
   let tot, val, next, num;
-  const MIN = 0.5,
-    MAX = 3.5;
+  const MIN = 0.52,
+    MAX = 7.48;
 
   tot = Math.floor(n*1.5);
   num = 0;
