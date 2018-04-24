@@ -317,6 +317,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
   //
   //------------------------------------------------------------------
   function updatePlayerOther(data) {
+    console.log('update other');
     if (playerOthers.hasOwnProperty(data.clientId)) {
       let model = playerOthers[data.clientId].model;
       let player = playerOthers[data.clientId].texture;
