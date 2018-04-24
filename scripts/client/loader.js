@@ -185,7 +185,11 @@ Game.loader = (function() {
 	}, {
 	  key: 'audio-weaponrange',
 	  source: 'assets/soundEffects/weaponRange.wav'
+	}, {
+	  key: 'audio-weaponpickup',
+	  source: 'assets/soundEffects/weaponPickup.wav'
 	}
+
     ]; // end assetOrder
 
   //------------------------------------------------------------------

@@ -163,7 +163,12 @@
     'UPDATE_ALIVE_PLAYERS': {
       value: 'update-alive-players',
       writable: false
+    },
+    'PICKED_UP_LOOT': {
+      value: 'picked-up-loot',
+      writable: false
     }
+
 
   });
 

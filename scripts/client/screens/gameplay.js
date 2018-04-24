@@ -149,7 +149,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       data: data
     });
   });
-
+  
+  socket.on(NetworkIds.PICKED_UP_LOOT, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.PICKED_UP_LOOT,
+      data: data
+    });
+  });
   //------------------------------------------------------------------
   //
   // collision function
@@ -336,6 +342,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       },
       timeRemaining: data.timeRemaining
     });
+	
   }
 
   //------------------------------------------------------------------
@@ -368,7 +375,15 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // TODO: Some effect to alert the player that they were hit
     playerSelf.model.health = data.health;
     playerSelf.model.shield = data.shield;
-	Game.assets['audio-impact'].play();
+	if(playerSelf.model.health <= 0)
+	{
+	  Game.assets['audio-impact'].currentTime = 0;
+	  Game.assets['audio-death'].play();
+	}
+	else {
+	  Game.assets['audio-impact'].currentTime = 0;
+	  Game.assets['audio-impact'].play();
+	}
   }
 
   function initLoot(data) {
@@ -381,6 +396,33 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     loot.speedUp   = data.loot.speedUp;
   }
 
+  function pickedUpLoot(data) {
+	switch (data.type) {
+	case 1:
+	  Game.assets['audio-health'].play();
+	  break;
+	case 2:
+	  Game.assets['audio-hypershield'].play();
+	  break;
+	case 3:
+	  Game.assets['audio-ammo'].play();
+	  break;
+	case 4:
+	  Game.assets['audio-weaponpickup'].play();
+	  break;
+	case 5:
+	  Game.assets['audio-weaponrange'].play();
+	  break;
+	case 6:
+	  Game.assets['audio-weapondamage'].play();
+	  break;
+	case 7:
+	  Game.assets['audio-hyperspeed'].play();
+	  break;
+
+	}
+  }
+
   function lootUpdate(data) {
     let found = false;
     for (let id of data.takenLoot) {
@@ -388,35 +430,6 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       for (let l in loot) {
         for (let e = 0; e < loot[l].length; ++e) {
           if (id === loot[l][e].id) {
-			if(loot[l][e].type === 1) {
-			  //play health sound
-			  Game.assets['audio-health'].play();
-			}
-			if(loot[l][e].type === 2) {
-			  //play shield sound
-			  Game.assets['audio-hypershield'].play();
-			}
-			if(loot[l][e].type === 3) {
-			  //play ammo sound	
-			  Game.assets['audio-ammo'].play();
-			}
-			if(loot[l][e].type === 4) {
-			  //play weapon pick up sound
-			  //Game.assets['audio-'].play();
-			}
-			if(loot[l][e].type === 5) {
-			  //play weapon range sound
-			  Game.assets['audio-weaponrange'].play();
-			}
-			if(loot[l][e].type === 6) {
-			  //play weapon damage sound
-			  Game.assets['audio-weapondamage'].play();
-			}
-			if(loot[l][e].type === 7) {
-			  //play weapon speed up sound
-			  Game.assets['audio-hyperspeed'].play();
-			}
-
             loot[l].splice(e, 1);
             found = true;
             break;
@@ -483,7 +496,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       case NetworkIds.UPDATE_ALIVE_PLAYERS:
         playersAlive = message.data.playersAlive;
         break;
-      
+	  case NetworkIds.PICKED_UP_LOOT:
+		pickedUpLoot(message.data);
+		break; 
       }
     }
   }
@@ -674,6 +689,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
+	  if(playerSelf.model.ammo > 0 && playerSelf.model.hasWeapon === true) {
+	    Game.assets['audio-laser'].currentTime = 0;
+	    Game.assets['audio-laser'].play();
+	  }
     },
     myKeys.fire.key, myKeys.fire.id,false);
 
@@ -685,7 +704,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         type: NetworkIds.INPUT_FIRE
       };
       socket.emit(NetworkIds.INPUT, message);
-
+	  if(playerSelf.model.ammo > 0 && playerSelf.model.hasWeapon === true) {
+	    Game.assets['audio-laser'].currentTime = 0;
+	    Game.assets['audio-laser'].play();
+	  }
     }, true);
 
     // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
