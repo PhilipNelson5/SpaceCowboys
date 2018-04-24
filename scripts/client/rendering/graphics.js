@@ -73,6 +73,21 @@ Game.graphics = (function(assets) {
     }
   }
 
+  function BLACKNESS() {
+    var maskCanvas = document.createElement('canvas');
+    maskCanvas.width = canvas.width;
+    maskCanvas.height = canvas.height;
+    var maskCtx = maskCanvas.getContext('2d');
+
+    maskCtx.fillStyle = "black";
+    maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+    maskCtx.globalCompositeOperation = 'xor';
+    maskCtx.fillRect(world.left, world.top, world.size, world.size);
+    maskCtx.fill();
+
+    context.drawImage(maskCanvas, 0, 0);
+  }
+
   //------------------------------------------------------------------
   //
   // Quick allow other code to be notified when a resize even occurs
@@ -743,7 +758,8 @@ Game.graphics = (function(assets) {
     notifyResize,
     writeLowerRight,
     writeCenter,
-    get viewport() { return viewport; }
+    get viewport() { return viewport; },
+    BLACKNESS
 
 
   };

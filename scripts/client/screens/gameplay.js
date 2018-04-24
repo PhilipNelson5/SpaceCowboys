@@ -905,14 +905,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
 
-    //TODO 100 is the max health and shield
+    graphics.BLACKNESS();
     graphics.drawHealth(playerSelf.model.health, 100, playerSelf.model.shield, 100);
     graphics.drawAmmo(playerSelf.model.ammo);
-    graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawMini(assets['background-mini'], playerSelf.model.position, world.width, world.height, asteroids);
+    graphics.drawWeapon(playerSelf.model.hasWeapon);
     graphics.drawKills(playerSelf.model.score.kills);
     graphics.drawPlayersAlive(playersAlive);
-
 
     if (playerSelf.model.dead) {
       graphics.displayDeathScreen(playerSelf.model.score.kills, playerSelf.model.score.place);
