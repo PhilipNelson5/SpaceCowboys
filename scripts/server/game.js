@@ -15,12 +15,13 @@ const present = require('present'),
   Asteroids = require('./asteroids.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
-const TIMER_MS = 5000;           // timer countdown in milliseconds
+const TIMER_MS = 3000;           // timer countdown in milliseconds
 const LOBBY_MAX = 2;             // max player count for lobby
 const TIMER_MS_MAP = 10000;      // timer countdown in milliseconds for positional
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
+let totalUpdate = 0;
 let quit = false;
 let numActiveClients = 0;
 let activeClients = {};
@@ -557,6 +558,12 @@ function update(elapsedTime, currentTime) {
   }
 }
 
+function inProximity(pos1, pos2) {
+  let distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2)
+    + Math.pow(pos1.y - pos2.y, 2));
+  return distance < .75;
+}
+
 function updateClient(elapsedTime) {
   lastUpdate += elapsedTime;
   // if (lastUpdate < STATE_UPDATE_RATE_MS) {
@@ -605,12 +612,17 @@ function updateClient(elapsedTime) {
     if (client.player.reportUpdate) {
       client.socket.emit(NetworkIds.UPDATE_SELF, update);
 
-      //Notify all other connected clients about every
-      //other connected client status .... but only if they are updated.
+      // Notify all other connected clients about every
+      // other connected client status .... but only if they are updated,
+      // and if they are close to each other, individualized game updates.
       for (let otherId in lobbyClients) {
-        if (otherId !== clientId) {
+        if (otherId !== clientId &&
+          (inProximity(lobbyClients[otherId].player.position, client.player.position) ||
+          totalUpdate >= 1000)
+        ){
           lobbyClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
         }
+        // send an update to all clients every second to remove the ghosts
       }
     }
 
@@ -641,6 +653,8 @@ function updateClient(elapsedTime) {
   // Reset the hits array
   hits.length = 0;
 
+  totalUpdate %= 1000;
+  totalUpdate += elapsedTime;
 }
 
 function gameLoop(currentTime, elapsedTime) {
