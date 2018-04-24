@@ -504,7 +504,7 @@ function update(elapsedTime, currentTime) {
     let hit = false;
     for (let i = 0; i < asteroids.length; i++) {
       if (collided(activeMissiles[missile], asteroids[i])) {
-		
+
         hit = true;
         hits.push({
           clientId: 0,
@@ -527,8 +527,8 @@ function update(elapsedTime, currentTime) {
       for (let e = loot[l].length-1; e >= 0; --e) {
         if (collided(lobbyClients[clientId].player, loot[l][e])) {
           if (Loot.apply(loot[l][e], lobbyClients[clientId].player)) {
-		    // send msg to client that you picked up an item
-			lobbyClients[clientId].socket.emit(NetworkIds.PICKED_UP_LOOT, {type:loot[l][e].type})
+            // send msg to client that you picked up an item
+            lobbyClients[clientId].socket.emit(NetworkIds.PICKED_UP_LOOT, {type:loot[l][e].type});
             takenLoot.push(loot[l][e].id);
             loot[l].splice(e, 1);
           }

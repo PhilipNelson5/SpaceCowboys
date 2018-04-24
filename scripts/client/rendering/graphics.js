@@ -486,7 +486,7 @@ Game.graphics = (function(assets) {
 
     context.beginPath();
     context.moveTo(posX + 3, posY);
-    context.fillStyle = "blue";
+    context.fillStyle = 'blue';
     context.arc(posX, posY, 3, 0, 2*Math.PI);
     context.closePath();
     context.fill();

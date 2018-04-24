@@ -2,10 +2,10 @@ Game.screens['help'] = (function(menu, keyBindings) {
   'use strict';
 
   let forward,
-  back,
-  left,
-  right,
-  fire;
+    back,
+    left,
+    right,
+    fire;
   
   
   function initialize() {
@@ -75,7 +75,7 @@ Game.screens['help'] = (function(menu, keyBindings) {
     `);
 
     
-	document.getElementById('id-help-back').addEventListener(
+    document.getElementById('id-help-back').addEventListener(
       'click',
       function() { menu.showScreen('main-menu'); });
   }
@@ -83,17 +83,17 @@ Game.screens['help'] = (function(menu, keyBindings) {
 
   function run() {
     // TODO: Query the game and get the key bindings
-	forward = keyBindings.getBinding(keyBindings.keys.forward.key);
+    forward = keyBindings.getBinding(keyBindings.keys.forward.key);
     left = keyBindings.getBinding(keyBindings.keys.left.key);
     back = keyBindings.getBinding(keyBindings.keys.back.key);
     right = keyBindings.getBinding(keyBindings.keys.right.key);
     fire = keyBindings.getBinding(keyBindings.keys.fire.key);
 	
-	document.getElementById('forward-input').innerHTML = forward;
-	document.getElementById('left-input').innerHTML = left;
-	document.getElementById('back-input').innerHTML = back;
-	document.getElementById('right-input').innerHTML = right;
-	document.getElementById('fire-input').innerHTML = fire;
+    document.getElementById('forward-input').innerHTML = forward;
+    document.getElementById('left-input').innerHTML = left;
+    document.getElementById('back-input').innerHTML = back;
+    document.getElementById('right-input').innerHTML = right;
+    document.getElementById('fire-input').innerHTML = fire;
   }
 
   return {
