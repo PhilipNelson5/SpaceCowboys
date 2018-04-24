@@ -23,15 +23,15 @@ Game.screens['endgame'] = (function(menu, socket) {
 
     socket.on(NetworkIds.GET_GAME_STATS, function(playerStats) {
       let table = document.getElementById('endgame-stat-table');
-      playerStats.sort( (obj) => obj.place );
+      playerStats.sort( (objA, objB) => objA.place-objB.place );
       console.log(JSON.stringify(playerStats));
       for (let id in playerStats) {
         let row = table.insertRow(-1);
         row.insertCell(-1).innerHTML = playerStats[id].place;
         row.insertCell(-1).innerHTML = playerStats[id].username;
         row.insertCell(-1).innerHTML = playerStats[id].kills;
-        row.insertCell(-1).innerHTML = playerStats[id].accuracy;
         row.insertCell(-1).innerHTML = playerStats[id].damage;
+        row.insertCell(-1).innerHTML = Math.floor(playerStats[id].accuracy*100) + '%';
       }
     });
   }

@@ -457,8 +457,9 @@ function update(elapsedTime, currentTime) {
             position: activeClients[clientId].player.position
           });
 
-          //Increase the damage dealt by the person who fired
+          //Increase the damage dealt by the person who fired and the number of their shots that landed
           lobbyClients[activeMissiles[missile].clientId].player.score.damage += activeMissiles[missile].damage;
+          lobbyClients[activeMissiles[missile].clientId].player.score.shotsLanded += 1;
           
           //
           // take damage from shield first
@@ -499,11 +500,12 @@ function update(elapsedTime, currentTime) {
                 for (let id in lobbyClients) {
                   playerStats[i] = {
                     username: lobbyClients[id].username,
-                    place: lobbyClients[id].player.score.place,
-                    kills: lobbyClients[id].player.score.kills,
-                    accuracy: 0,
-                    damage: 0
+                    place:    lobbyClients[id].player.score.place,
+                    kills:    lobbyClients[id].player.score.kills,
+                    accuracy: lobbyClients[id].player.score.shotsLanded/lobbyClients[id].player.score.shotsFired,
+                    damage:   lobbyClients[id].player.score.damage
                   };
+                  if (lobbyClients[id].player.score.shotsFired == 0) playerStats[i].accuracy=0;
                   i++;
                 }
                 for (let id in lobbyClients) {
