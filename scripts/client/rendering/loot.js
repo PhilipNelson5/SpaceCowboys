@@ -17,13 +17,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(
@@ -37,13 +37,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(
@@ -57,13 +57,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(
@@ -77,13 +77,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(
@@ -97,13 +97,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(
@@ -117,13 +117,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(
@@ -137,13 +137,13 @@ Game.graphics.Loot = (function(graphics, assets) {
       graphics.drawCircle(
         e.position,
         0.025,
-        "#000000",
+        '#000000',
         true
       );
       graphics.drawCircle(
         e.position,
         0.02,
-        "#FFFFFF",
+        '#FFFFFF',
         true
       );
       graphics.drawImage(

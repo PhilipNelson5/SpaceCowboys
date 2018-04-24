@@ -179,8 +179,11 @@
     'PLAYER_DEATH': {
       value: 'player-death',
       writable: false
+    },
+    'PICKED_UP_LOOT': {
+      value: 'picked-up-loot',
+      writable: false
     }
-
   });
 
 })(typeof exports === 'undefined' ? this['NetworkIds'] = {} : exports);
