@@ -618,7 +618,7 @@ function updateClient(elapsedTime) {
       for (let otherId in lobbyClients) {
         if (otherId !== clientId &&
           (inProximity(lobbyClients[otherId].player.position, client.player.position) ||
-          totalUpdate >= 1000)
+          totalUpdate >= 500)
         ){
           lobbyClients[otherId].socket.emit(NetworkIds.UPDATE_OTHER, update);
         }
