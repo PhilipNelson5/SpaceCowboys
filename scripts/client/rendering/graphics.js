@@ -79,7 +79,7 @@ Game.graphics = (function(assets) {
     maskCanvas.height = canvas.height;
     var maskCtx = maskCanvas.getContext('2d');
 
-    maskCtx.fillStyle = "black";
+    maskCtx.fillStyle = "white";
     maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
     maskCtx.globalCompositeOperation = 'xor';
     maskCtx.fillRect(world.left, world.top, world.size, world.size);
