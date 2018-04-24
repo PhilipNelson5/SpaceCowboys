@@ -3,6 +3,8 @@ A battle royale, space cowboy themed!
 
 Made by Ammon Hepworth, Hailee Maxwell, Philip Nelson, Raul Ramirez
 
+change lobby size with `const LOBY_MAX` in `./scripts/server/game.js:20`
+
 | Criteria | Location |
 | --- | --- |
 | **Node.js server-based solution:** All files served to the browser from a server. |`./server.js` `./scripts/client/loader`|
