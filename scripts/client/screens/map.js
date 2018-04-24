@@ -12,8 +12,8 @@ Game.screens['map'] = (function(menu, socket, assets) {
       </div>`
     );
 
-    var posX = 0.52;
-    var posY = 0.52;
+    var posX = 0.62;
+    var posY = 0.62;
     var offsetLeft = $('#map-body').offset().left;
     var offsetTop = $('#map-body').offset().top;
 
@@ -28,10 +28,10 @@ Game.screens['map'] = (function(menu, socket, assets) {
       posX = ((event.clientX - offsetLeft) / 50);
       posY = ((event.clientY - offsetTop) / 50);
       
-      if (posX <= 0.52) posX = 0.52;
-      if (posX >= 7.48) posX = 7.48;
-      if (posY <= 0.52) posY = 0.52;
-      if (posY >= 7.48) posY = 7.48;  
+      if (posX <= 0.62) posX = 0.62;
+      if (posX >= 7.38) posX = 7.38;
+      if (posY <= 0.62) posY = 0.62;
+      if (posY >= 7.38) posY = 7.38;  
 
       // TODO -- see if this helps fix the invisible start bug
       socket.emit(NetworkIds.PLAYER_POSITION, {x: posX, y: posY});
