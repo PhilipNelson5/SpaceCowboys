@@ -43,7 +43,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
     get top() { return 0; },
     get width() { return 8.0; },
     get height() { return 8.0; },
-    get bufferSize() { return 0.52; }
+    get bufferSize() { return 0.62; }
   };
 
   let worldBuffer = {
