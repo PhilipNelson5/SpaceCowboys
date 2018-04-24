@@ -41,7 +41,11 @@ function createPlayer() {
   let loot = [];
   let score  = {
     place : 1,
-    kills : 0
+    kills : 0,
+    damage: 0,
+    shotsFired: 0,
+    shotsLanded: 0,
+    accuracy: 100
   };
 
   Object.defineProperty(that, 'position', {

@@ -74,6 +74,8 @@ function createMissile(clientId, playerModel) {
     range : playerModel.missileRange
   });
 
+  lobbyClients[clientId].player.score.shotsFired += 1;
+
   newMissiles.push(missile);
 }
 
@@ -454,6 +456,10 @@ function update(elapsedTime, currentTime) {
             missileId: activeMissiles[missile].id,
             position: activeClients[clientId].player.position
           });
+
+          //Increase the damage dealt by the person who fired
+          lobbyClients[activeMissiles[missile].clientId].player.score.damage += activeMissiles[missile].damage;
+          
           //
           // take damage from shield first
           if (client.player.shield > 0) {
