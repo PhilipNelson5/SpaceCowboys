@@ -6,7 +6,7 @@
 
 'use strict';
 
-const r = require('./random');
+const r = require('../shared/random');
 
 function getAsteroids() {
 

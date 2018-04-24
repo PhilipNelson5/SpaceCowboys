@@ -5,7 +5,7 @@
 // ------------------------------------------------------------------
 'use strict';
 
-const r = require ('./random');
+const r = require ('../shared/random');
 
 function collided(obj1, obj2) {
   let distance = Math.sqrt(Math.pow(obj1.position.x - obj2.position.x, 2)
@@ -35,6 +35,7 @@ const type = Object.freeze({
 });
 
 function genLoot(n, asteroids) {
+  n *= 2;
 
   n*=2;
 

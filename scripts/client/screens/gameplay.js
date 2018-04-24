@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets, components, socket) {
+Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particleSystem, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -13,7 +13,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     playerOthers = {},
     messageHistory = Queue.create(),
     messageId = 1,
-    nextExplosionId = 1,
+    // nextExplosionId = 1,
     missiles = {},
     explosions = {},
     networkQueue = Queue.create(),
@@ -150,12 +150,20 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     });
   });
 
+  socket.on(NetworkIds.PLAYER_DEATH, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.PLAYER_DEATH,
+      data: data
+    });
+  });
+
   socket.on(NetworkIds.PICKED_UP_LOOT, data => {
     networkQueue.enqueue({
       type: NetworkIds.PICKED_UP_LOOT,
       data: data
     });
   });
+
   //------------------------------------------------------------------
   //
   // collision function
@@ -351,6 +359,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function missileHit(data) {
+    particleSystem.newMissileExplosion({position:data.position});
+
     let distance = Math.sqrt(Math.pow(playerSelf.model.position.x - data.position.x, 2)
     + Math.pow(playerSelf.model.position.y - data.position.y,2));
     if (distance < .52)
@@ -358,14 +368,6 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       Game.assets['audio-impact'].currentTime = 0;
       Game.assets['audio-impact'].play();
     }
-    explosions[nextExplosionId] = components.AnimatedSprite({
-      id: nextExplosionId++,
-      spriteSheet: Game.assets['explosion'],
-      spriteSize: { width: 0.07, height: 0.07 },
-      spriteCenter: data.position,
-      spriteCount: 16,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
-    });
 
     //
     // When we receive a hit notification, go ahead and remove the
@@ -447,6 +449,11 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     }
   }
 
+  function playerElimination(data) {
+    console.log(JSON.stringify(data));
+    particleSystem.newPlayerDeath({position:data.position});
+  }
+
   //------------------------------------------------------------------
   //
   // Process the registered input handlers here.
@@ -515,6 +522,9 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         break;
       case NetworkIds.UPDATE_ALIVE_PLAYERS:
         playersAlive = message.data.playersAlive;
+        break;
+      case NetworkIds.PLAYER_DEATH:
+        playerElimination(message.data);
         break;
       case NetworkIds.PICKED_UP_LOOT:
         pickedUpLoot(message.data);
@@ -846,6 +856,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // TODO: go here
     if (playerSelf.model.health > 0)
       graphics.viewport.update(playerSelf.model);
+
+    particleSystem.update(elapsedTime);
   }
 
   //------------------------------------------------------------------
@@ -886,6 +898,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       }
     }
 
+    particleSystem.render(playerSelf.model.position);
+
     //draw Buildings AFTER clip or else they be underneath it
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
@@ -901,7 +915,6 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
 
     if (playerSelf.model.dead) {
       graphics.displayDeathScreen(playerSelf.model.score.kills, playerSelf.model.score.place);
-
     }
 
   }
@@ -937,4 +950,4 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     run
   };
 
-}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.assets, Game.components, Game.network.socket));
+}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.ParticleSystem, Game.assets, Game.components, Game.network.socket));

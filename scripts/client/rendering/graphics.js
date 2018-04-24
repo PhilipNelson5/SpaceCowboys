@@ -151,6 +151,15 @@ Game.graphics = (function(assets) {
 
   //------------------------------------------------------------------
   //
+  // Simple pass-through to set alpha
+  //
+  //------------------------------------------------------------------
+  function alpha(alpha) {
+    context.globalAlpha = alpha;
+  }
+
+  //------------------------------------------------------------------
+  //
   // Rotate the canvas to prepare it for rendering of a rotated object.
   //
   //------------------------------------------------------------------
@@ -712,6 +721,7 @@ Game.graphics = (function(assets) {
     saveContext,
     restoreContext,
     rotateCanvas,
+    alpha,
     drawImage,
     drawImageSpriteSheet,
     drawCircle,
