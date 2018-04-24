@@ -15,9 +15,9 @@ const present = require('present'),
   Asteroids = require('./asteroids.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
-const TIMER_MS = 1000;           // timer countdown in milliseconds
+const TIMER_MS = 5000;           // timer countdown in milliseconds
 const LOBBY_MAX = 2;             // max player count for lobby
-const TIMER_MS_MAP = 1000;      // timer countdown in milliseconds for positional
+const TIMER_MS_MAP = 10000;      // timer countdown in milliseconds for positional
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;

@@ -35,7 +35,7 @@ const type = Object.freeze({
 });
 
 function genLoot(n, asteroids) {
-  n *= 5;
+  n *= 2;
 
   let loot = {
       health    : [], // n  - 50pts

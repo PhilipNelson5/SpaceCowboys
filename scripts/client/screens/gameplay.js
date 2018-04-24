@@ -836,11 +836,11 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
       graphics.Missile.render(missiles[missile]);
     }
 
+    particleSystem.render(playerSelf.model.position);
+
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
-
-    particleSystem.render(playerSelf.model.position);
 
     for (let a in asteroids) {
       if (asteroids[a].position != undefined) {
