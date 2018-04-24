@@ -490,6 +490,11 @@ function update(elapsedTime, currentTime) {
                 vector: vector
               };
               client.socket.emit(NetworkIds.UPDATE_SELF, update);
+              for (clientId in lobbyClients) {
+                if (clientId !== client.socket.id) {
+                  lobbyClients[clientId].socket.emit(NetworkIds.PLAYER_DEATH, {position: client.player.position});
+                }
+              }
 
               //Did the player who got the kill just win?
               //If the players alive when they got the kill was 2, then yes
@@ -514,6 +519,7 @@ function update(elapsedTime, currentTime) {
               }
             }
           }
+
           client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
             health : client.player.health,
             shield : client.player.shield
@@ -534,6 +540,7 @@ function update(elapsedTime, currentTime) {
     let hit = false;
     for (let i = 0; i < asteroids.length; i++) {
       if (collided(activeMissiles[missile], asteroids[i])) {
+
         hit = true;
         hits.push({
           clientId: 0,
@@ -556,6 +563,8 @@ function update(elapsedTime, currentTime) {
       for (let e = loot[l].length-1; e >= 0; --e) {
         if (collided(lobbyClients[clientId].player, loot[l][e])) {
           if (Loot.apply(loot[l][e], lobbyClients[clientId].player)) {
+            // send msg to client that you picked up an item
+            lobbyClients[clientId].socket.emit(NetworkIds.PICKED_UP_LOOT, {type:loot[l][e].type});
             takenLoot.push(loot[l][e].id);
             loot[l].splice(e, 1);
           }

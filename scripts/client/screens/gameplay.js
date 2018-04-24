@@ -1,4 +1,4 @@
-Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets, components, socket) {
+Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particleSystem, assets, components, socket) {
   'use strict';
 
   //let Queue = require('../../shared/queue.js');
@@ -13,7 +13,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     playerOthers = {},
     messageHistory = Queue.create(),
     messageId = 1,
-    nextExplosionId = 1,
+    // nextExplosionId = 1,
     missiles = {},
     explosions = {},
     networkQueue = Queue.create(),
@@ -146,6 +146,20 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   socket.on(NetworkIds.UPDATE_ALIVE_PLAYERS, data => {
     networkQueue.enqueue({
       type: NetworkIds.UPDATE_ALIVE_PLAYERS,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.PLAYER_DEATH, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.PLAYER_DEATH,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.PICKED_UP_LOOT, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.PICKED_UP_LOOT,
       data: data
     });
   });
@@ -336,6 +350,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       },
       timeRemaining: data.timeRemaining
     });
+
   }
 
   //------------------------------------------------------------------
@@ -344,14 +359,15 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
   //
   //------------------------------------------------------------------
   function missileHit(data) {
-    explosions[nextExplosionId] = components.AnimatedSprite({
-      id: nextExplosionId++,
-      spriteSheet: Game.assets['explosion'],
-      spriteSize: { width: 0.07, height: 0.07 },
-      spriteCenter: data.position,
-      spriteCount: 16,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
-    });
+    particleSystem.newMissileExplosion({position:data.position});
+
+    let distance = Math.sqrt(Math.pow(playerSelf.model.position.x - data.position.x, 2)
+    + Math.pow(playerSelf.model.position.y - data.position.y,2));
+    if (distance < .52)
+    {
+      Game.assets['audio-impact'].currentTime = 0;
+      Game.assets['audio-impact'].play();
+    }
 
     //
     // When we receive a hit notification, go ahead and remove the
@@ -368,6 +384,15 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // TODO: Some effect to alert the player that they were hit
     playerSelf.model.health = data.health;
     playerSelf.model.shield = data.shield;
+    if (playerSelf.model.health <= 0)
+    {
+      Game.assets['audio-impact'].currentTime = 0;
+      Game.assets['audio-death'].play();
+    }
+    else {
+      Game.assets['audio-impact'].currentTime = 0;
+      Game.assets['audio-impact'].play();
+    }
   }
 
   function initLoot(data) {
@@ -378,6 +403,33 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     loot.rangeUp   = data.loot.rangeUp;
     loot.damageUp  = data.loot.damageUp;
     loot.speedUp   = data.loot.speedUp;
+  }
+
+  function pickedUpLoot(data) {
+    switch (data.type) {
+    case 1:
+      Game.assets['audio-health'].play();
+      break;
+    case 2:
+      Game.assets['audio-hypershield'].play();
+      break;
+    case 3:
+      Game.assets['audio-ammo'].play();
+      break;
+    case 4:
+      Game.assets['audio-weaponpickup'].play();
+      break;
+    case 5:
+      Game.assets['audio-weaponrange'].play();
+      break;
+    case 6:
+      Game.assets['audio-weapondamage'].play();
+      break;
+    case 7:
+      Game.assets['audio-hyperspeed'].play();
+      break;
+
+    }
   }
 
   function lootUpdate(data) {
@@ -395,6 +447,11 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         if (found) break;
       }
     }
+  }
+
+  function playerElimination(data) {
+    console.log(JSON.stringify(data));
+    particleSystem.newPlayerDeath({position:data.position});
   }
 
   //------------------------------------------------------------------
@@ -466,7 +523,12 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       case NetworkIds.UPDATE_ALIVE_PLAYERS:
         playersAlive = message.data.playersAlive;
         break;
-      
+      case NetworkIds.PLAYER_DEATH:
+        playerElimination(message.data);
+        break;
+      case NetworkIds.PICKED_UP_LOOT:
+        pickedUpLoot(message.data);
+        break;
       }
     }
   }
@@ -657,6 +719,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       };
       socket.emit(NetworkIds.INPUT, message);
       messageHistory.enqueue(message);
+      if (playerSelf.model.ammo > 0 && playerSelf.model.hasWeapon === true) {
+        Game.assets['audio-laser'].currentTime = 0;
+        Game.assets['audio-laser'].play();
+      }
     },
     myKeys.fire.key, myKeys.fire.id,false);
 
@@ -668,7 +734,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
         type: NetworkIds.INPUT_FIRE
       };
       socket.emit(NetworkIds.INPUT, message);
-
+      if (playerSelf.model.ammo > 0 && playerSelf.model.hasWeapon === true) {
+        Game.assets['audio-laser'].currentTime = 0;
+        Game.assets['audio-laser'].play();
+      }
     }, true);
 
     // myMouse.registerCommand('mouseup', function(e, elapsedTime) {
@@ -787,6 +856,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     // TODO: go here
     if (playerSelf.model.health > 0)
       graphics.viewport.update(playerSelf.model);
+
+    particleSystem.update(elapsedTime);
   }
 
   //------------------------------------------------------------------
@@ -827,6 +898,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
       }
     }
 
+    particleSystem.render(playerSelf.model.position);
+
     //draw Buildings AFTER clip or else they be underneath it
 
     graphics.drawFog(playerSelf.model.direction + Math.PI/2);
@@ -846,7 +919,6 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     if (playersAlive == 1) {
       cancelNextRequest = true;
       menu.showScreen('endgame');
-
     }
 
   }
@@ -882,4 +954,4 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, assets,
     run
   };
 
-}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.assets, Game.components, Game.network.socket));
+}(Game.menu, Game.input, Game.keyBindings, Game.graphics, Game.ParticleSystem, Game.assets, Game.components, Game.network.socket));

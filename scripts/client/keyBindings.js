@@ -360,14 +360,15 @@ Game.keyBindings = (function() {
 
     case 224:
       return 'Meta';
-	case 400:
-	  return 'Mouse Right';
+
+    case 400:
+      return 'Mouse Right';
     }
   }
 
   return {
     keys : keys,
-	getBinding
+    getBinding
   };
 
 }());

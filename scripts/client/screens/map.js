@@ -62,9 +62,9 @@ Game.screens['map'] = (function(menu, socket, assets) {
   }
 
   function run() {
-    $('#map-body').css("background-image", "url("+assets['map-image']+")");
+    $('#map-body').css('background-image', 'url('+assets['map-image']+')');
     socket.emit(NetworkIds.ENTER_MAP);
-  };
+  }
 
   return {
     initialize,
