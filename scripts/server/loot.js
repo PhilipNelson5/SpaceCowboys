@@ -36,6 +36,8 @@ const type = Object.freeze({
 
 function genLoot(n, asteroids) {
 
+  n*=2;
+
   let loot = {
       health    : [], // n  - 50pts
       shield    : [], // 2n - 25pts
@@ -48,8 +50,8 @@ function genLoot(n, asteroids) {
     id = 0;
 
   let tot, val, next, num;
-  const MIN = 0.5,
-    MAX = 3.5;
+  const MIN = 0.52,
+    MAX = 7.48;
 
   tot = Math.floor(n*1.5);
   num = 0;
@@ -69,7 +71,6 @@ function genLoot(n, asteroids) {
       loot.health.push(next);
       ++id;
       ++num;
-      console.log(num);
     }
   }
 
@@ -94,10 +95,10 @@ function genLoot(n, asteroids) {
     }
   }
 
-  tot = 3*n;
+  tot = 5*n;
   num = 0;
   while (num < tot) {
-    val = Math.floor(r.nextGaussian(35,10));
+    val = Math.floor(r.nextGaussian(50,15));
     val = val > 5 ? val : 5;
     next = {
       position : {
@@ -117,7 +118,7 @@ function genLoot(n, asteroids) {
     }
   }
 
-  tot = n;
+  tot = Math.floor(1.5*n);
   num = 0;
   while (num < tot) {
     next = {
@@ -192,7 +193,7 @@ function genLoot(n, asteroids) {
         y:r.nextDoubleRange(MIN, MAX),
       },
       radius: 0.02,
-      val: 0.0001,
+      val: 0.0002,
       type: type.speedUp,
       id : id
     };
@@ -211,13 +212,11 @@ function apply(loot, player) {
   switch (loot.type) {
   case type.health:
     if (player.health >= 100) return false; // don't pickup health if at max
-    console.log(player.health);
     player.health = player.health + loot.val;
     if (player.health > 100) player.health = 100;
     break;
   case type.shield:
     if (player.shield >= 100) return false; // don't pickup shield if at max
-    console.log(player.shield);
     player.shield = player.shield + loot.val;
     if (player.shield > 100) player.shield = 100;
     break;
@@ -226,7 +225,6 @@ function apply(loot, player) {
     break;
   case type.weapon:
     if (player.hasWeapon) return false; // only have one weapon
-    console.log(player.hasWeapon);
     player.hasWeapon = true;
     break;
   case type.rangeUp:

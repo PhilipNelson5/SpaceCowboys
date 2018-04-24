@@ -9,6 +9,11 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
 
   // This is 100% garbage, but this is how the page listens.
 
+  function noSpace(e) {
+    if (e.keyCode === 32)
+      e.preventDefault();
+  }
+
   function checkKeys(key)
   {
     if (key === keyBindings.keys.forward.key
@@ -19,8 +24,8 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
     )
     {
       document.getElementById('rebind').innerHTML = 'Key Already bound!';
-	
-	  if (up === true) {
+
+      if (up === true) {
         keyBindings.keys.forward.key = keyBindings.keys.oldF.key;
         up = false;
       }
@@ -34,7 +39,7 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
       }
       if (right === true) {
         keyBindings.keys.right.key = keyBindings.keys.oldR.key;
-		right = false;
+        right = false;
       }
       if (fire === true) {
         keyBindings.keys.fire.key = keyBindings.keys.oldFire.key;
@@ -46,13 +51,6 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
       keyBindings.keys.keysChanged = true;
     }
   }
-
-  document.addEventListener('keyup', e => {
-    if (e.keyCode === 32)
-    {
-      e.preventDefault();
-    }
-  });
 
   function keydown(e) {
     if (!e) e = event;
@@ -110,12 +108,15 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
 
     document.getElementById('id-config-back').addEventListener(
       'click',
-      function() { menu.showScreen('main-menu'); });
+      function() {
+        menu.showScreen('main-menu');
+        document.removeEventListener('keyup', noSpace);
+        document.removeEventListener('keydown', noSpace);
+      });
 
     document.getElementById('id-config-keyUp').addEventListener(
       'click',
       function() {
-        console.log(keyBindings.keys.forward.key);
         keyBindings.keys.oldF.key = keyBindings.keys.forward.key;
         up = true;
         document.getElementById('id-config-keyLeft').disabled = true;
@@ -185,7 +186,9 @@ Game.screens['config'] = (function(menu, keyBindings /*, input*/ ) {
   }
 
   function run() {
-    // This is empty, there isn't anything to do.
+    document.addEventListener('keyup', noSpace);
+    document.addEventListener('keydown', noSpace);
+
     document.getElementById('up').innerHTML = keyBindings.getBinding(keyBindings.keys.forward.key);
     document.getElementById('down').innerHTML = keyBindings.getBinding(keyBindings.keys.back.key);
     document.getElementById('left').innerHTML = keyBindings.getBinding(keyBindings.keys.left.key);

@@ -15,8 +15,9 @@ const present = require('present'),
   Asteroids = require('./asteroids.js');
 
 const SIMULATION_UPDATE_RATE_MS = 50;
-const TIMER_MS = 1000;           // timer countdown in milliseconds
-const LOBBY_MAX = 3;             // max player count for lobby
+const TIMER_MS = 3000;           // timer countdown in milliseconds for lobby
+const TIMER_MS_MAP = 10000;      // timer countdown in milliseconds for positional
+const LOBBY_MAX = 2;             // max player count for lobby
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
 let lastUpdate = 0;
@@ -251,6 +252,19 @@ function initializeSocketIO(httpServer) {
       io.emit(NetworkIds.LEAVE_LOBBY, numLobbyClients, user);
     });
 
+    socket.on(NetworkIds.ENTER_MAP, function() {
+      socket.emit(NetworkIds.START_TIMER_MAP, TIMER_MS_MAP);
+      setTimeout( () => {
+        socket.emit(NetworkIds.START_GAME);
+        gameLoop(present(), 0);
+      }, TIMER_MS_MAP );
+
+    });
+
+    socket.on(NetworkIds.PLAYER_POSITION, function(data) {
+      lobbyClients[socket.id].player.position = data;
+    });
+
     /**
      * When the client requests to enter the lobby
      * Adds client to lobbyClient list and sends user
@@ -312,11 +326,8 @@ function initializeSocketIO(httpServer) {
           for (let id in lobbyClients) {
             io.to(id).emit(NetworkIds.STARTING_LOOT, {loot});
             io.to(id).emit(NetworkIds.STARTING_ASTEROIDS, {asteroids});
-            io.to(id).emit(NetworkIds.START_GAME);
+            io.to(id).emit(NetworkIds.ENTER_MAP);
           }
-
-          gameLoop(present(), 0);
-
         }, TIMER_MS);
       }
     });

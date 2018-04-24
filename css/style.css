@@ -281,6 +281,7 @@ form {
 
 #messages li:nth-child(odd) { 
 	background: #FFFFFF; 
+}
 
 .red-text {
   font-family: Arial, sans-serif;
@@ -290,3 +291,26 @@ form {
   text-align: center;
 }
 
+#map-body {
+  width: 400px;
+  height: 400px;
+  background-color: white;
+  background-image: url("../assets/background/map.png");
+  opacity: 0.75;
+  background-size: 400px 400px;
+  margin: auto;
+}
+
+#map-timer, #xpos, #ypos, #map-tag {
+  padding-top: 1em;
+  padding-left: 1em;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0px;
+  color: #000000;
+}
+
+#map-tag {
+  width: 400px;
+  text-align: center;
+}

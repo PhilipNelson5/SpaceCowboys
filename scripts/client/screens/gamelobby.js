@@ -157,11 +157,12 @@ Game.screens['gamelobby'] = (function(menu, socket) {
     //----------------------------------------------------------
     // change to gameplay when timer reaches 0
     //----------------------------------------------------------
-    socket.on(NetworkIds.START_GAME, function() {
+    socket.on(NetworkIds.ENTER_MAP, function() {
       document.getElementById('timer').innerHTML = 'Timer: 0.0 sec';
-      menu.showScreen('gameplay');
+      //menu.showScreen('gameplay');
       $('#messages').empty();
       $('#announce-tag').empty();
+      menu.showScreen('map');
     });
   }
 
