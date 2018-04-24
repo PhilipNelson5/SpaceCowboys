@@ -166,6 +166,9 @@ Game.loader = (function() {
     }, {
       key: 'splat',
       source: 'assets/splat.png'
+    }, {
+      key: 'map-image',
+      source: 'assets/background/map.png'
     }
     ]; // end assetOrder
 
