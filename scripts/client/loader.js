@@ -155,16 +155,18 @@ Game.loader = (function() {
       key: 'asteroid',
       source: 'assets/asteroid.png'
     }, {
-      key: 'splat',
-      source: 'assets/splat.png'
-    }, {
       key: 'kills-icon',
       source: 'assets/kills-icon.png'
     }, {
       key: 'players-left',
       source: 'assets/players-left.png'
+    }, {
+      key: 'blue-particle',
+      source: 'assets/blue-particle.png'
+    }, {
+      key: 'splat',
+      source: 'assets/splat.png'
     }
-
     ]; // end assetOrder
 
   //------------------------------------------------------------------

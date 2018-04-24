@@ -13,7 +13,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
     playerOthers = {},
     messageHistory = Queue.create(),
     messageId = 1,
-    nextExplosionId = 1,
+    // nextExplosionId = 1,
     missiles = {},
     explosions = {},
     networkQueue = Queue.create(),
@@ -146,6 +146,13 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
   socket.on(NetworkIds.UPDATE_ALIVE_PLAYERS, data => {
     networkQueue.enqueue({
       type: NetworkIds.UPDATE_ALIVE_PLAYERS,
+      data: data
+    });
+  });
+
+  socket.on(NetworkIds.PLAYER_DEATH, data => {
+    networkQueue.enqueue({
+      type: NetworkIds.PLAYER_DEATH,
       data: data
     });
   });
@@ -344,16 +351,16 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
   //
   //------------------------------------------------------------------
   function missileHit(data) {
-    explosions[nextExplosionId] = components.AnimatedSprite({
-      id: nextExplosionId++,
-      spriteSheet: Game.assets['explosion'],
-      spriteSize: { width: 0.07, height: 0.07 },
-      spriteCenter: data.position,
-      spriteCount: 16,
-      spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
-    });
+  // explosions[nextExplosionId] = components.AnimatedSprite({
+  // id: nextExplosionId++,
+  // spriteSheet: Game.assets['explosion'],
+  // spriteSize: { width: 0.07, height: 0.07 },
+  // spriteCenter: data.position,
+  // spriteCount: 16,
+  // spriteTime: [ 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 ]
+  // });
 
-    particleSystem.newTwinkle({position:data.position});
+    particleSystem.newMissileExplosion({position:data.position});
 
     //
     // When we receive a hit notification, go ahead and remove the
@@ -397,6 +404,11 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
         if (found) break;
       }
     }
+  }
+
+  function playerElimination(data) {
+    console.log(JSON.stringify(data));
+    particleSystem.newPlayerDeath({position:data.position});
   }
 
   //------------------------------------------------------------------
@@ -459,7 +471,7 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
                 size: { width: 0.5, height: 0.5},
                 position: { x: world.left + 0.25 + i * 0.5, y: world.top + 0.25 + j * 0.5},
                 drawOnMap: false
-              }
+              };
               asteroids.push(asteroid);
             }
           }
@@ -468,7 +480,10 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
       case NetworkIds.UPDATE_ALIVE_PLAYERS:
         playersAlive = message.data.playersAlive;
         break;
-      
+      case NetworkIds.PLAYER_DEATH:
+        playerElimination(message.data);
+        break;
+
       }
     }
   }
@@ -825,6 +840,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
       graphics.AnimatedSprite.render(explosions[id]);
     }
 
+    particleSystem.render(playerSelf.model.position);
+
     for (let a in asteroids) {
       if (asteroids[a].position != undefined) {
         graphics.drawImage(assets['asteroid'], asteroids[a].position, asteroids[a].size, true);
@@ -846,10 +863,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
 
     if (playerSelf.model.dead) {
       graphics.displayDeathScreen(playerSelf.model.score.kills, playerSelf.model.score.place);
-
     }
 
-    particleSystem.render();
   }
 
   //------------------------------------------------------------------

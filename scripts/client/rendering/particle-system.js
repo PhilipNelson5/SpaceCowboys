@@ -1,3 +1,7 @@
+/* global nextRange */
+/* global nextGaussian */
+/* global nextCircleVector */
+/* global nextCircleVectorRange */
 Game.ParticleSystem = (function (graphics, assets) {
   'use-strict';
 
@@ -26,9 +30,9 @@ Game.ParticleSystem = (function (graphics, assets) {
    * renders all active effects
    * @return {undefined}
    */
-  function render() {
+  function render(playerPos) {
     for (let i = 0; i < effects.length; ++i)
-      effects[i].render();
+      effects[i].render(playerPos);
   }
 
   /**
@@ -59,14 +63,25 @@ Game.ParticleSystem = (function (graphics, assets) {
   }
 
   /**
+   * @param {double} pos1 - the position of the player
+   * @param {double} pos2 - the position of the particle
+   * @return {boolean} - whether or not the particle is in view of the player
+   */
+  function inView(pos1, pos2) {
+    let distance = Math.sqrt(Math.pow(pos1.x - pos2.x, 2)
+      + Math.pow(pos1.y - pos2.y, 2));
+    return distance < 0.75;
+  }
+
+  /**
    * @param {object} spec {
+   * position     : {x: <px>, y: e<px>},      // center x and y location
+   * image        : '/textures/image',        // path to image
    * duration     : 50 ,                      // duration to create particles
    * fade         : 500,                      // fade at this many ms left in particle life
    * fill         : {w: 50, h: 10},           // The area to fill with the effect
-   * image        : '/textures/image',        // path to image
    * lifetime     : {mean: 1000, stdev: 250}, // ms for particle lifetime
    * particleRate : 3000,                     // particles created per second
-   * position     : {x: <px>, y: e<px>},      // center x and y location
    * size         : {mean: 10, stdev: 5},     // size of particles
    * speed        : {mean: .1, stdev: .025},  // speed of particles
    * spread       : {mean: 0, stdev: 0},      // time when particle starts rendering
@@ -76,30 +91,26 @@ Game.ParticleSystem = (function (graphics, assets) {
   function createFill(spec) {
     let that = {done:false, duration:spec.duration};
     let particles = [];
-    let image = new Image();
-    image.onload = function () {
-      that.render = function() {
-        let p = null,
-          alpha = 1;
-        for (let i = 0; i < particles.length; ++i) {
-          p = particles[i];
-          if (p.alive >= p.spread) {
-            if (p.lifetime-p.alive <= 500) {
-              alpha = (p.lifetime - p.alive)/spec.fade;
-            }
-            else alpha = 1;
-            graphics.drawImage(
-              p.position,
-              p.size,
-              p.rotation,
-              alpha,
-              image
-            );
-          }
+    that.render = function(playerPos) {
+      let p = null,
+        alpha = 1;
+      for (let i = 0; i < particles.length; ++i) {
+        p = particles[i];
+        if (p.alive >= p.spread && inView(playerPos, p.position)) {
+          if (p.lifetime-p.alive <= 500) {
+            alpha = (p.lifetime - p.alive)/spec.fade;
+          } else alpha = 1;
+          graphics.alpha(alpha);
+          graphics.drawImage(
+            spec.image,
+            p.position,
+            {width: p.size, height: p.size},
+            true
+          );
         }
-      };
+      }
+      graphics.alpha(1);
     };
-    image.src = spec.image;
 
     that.update = function(dt) {
       if (particles.length === 0 && that.duration <= 0) {
@@ -141,8 +152,6 @@ Game.ParticleSystem = (function (graphics, assets) {
       particles = keepMe;
     };
 
-    that.render = function() {};
-
     effects.push(that);
   }
 
@@ -161,29 +170,30 @@ Game.ParticleSystem = (function (graphics, assets) {
    * @return {undefined}
    */
   function createPoint(spec) {
+    spec.id = 0;
     let that = {done:false, duration:spec.duration};
     let particles = [];
-    that.render = function() {
+    that.render = function(playerPos) {
       let p = null,
         alpha = 1;
       for (let i = 0; i < particles.length; ++i) {
         p = particles[i];
-        if (p.alive >= p.spread) {
+        if (p.alive >= p.spread && inView(playerPos, p.position)) {
           if (p.lifetime-p.alive <= 500) {
             alpha = (p.lifetime - p.alive)/spec.fade;
-          }
-          graphics.saveContext();
-          graphics.rotateCanvas(p.position, p.rotation);
+          } else alpha = 1;
+          graphics.alpha(alpha);
           graphics.drawImage(
             spec.image,
             p.position,
             {width:p.size, height:p.size},
             true
           );
-          graphics.restoreContext();
         }
       }
+      graphics.alpha(1);
     };
+
     that.update = function(dt) {
       if (particles.length === 0 && that.duration <= 0) {
         that.done = true;
@@ -207,8 +217,9 @@ Game.ParticleSystem = (function (graphics, assets) {
       {
         for (let i = 0; i < spec.particleRate*dt*.001; ++i) {
           p = {
+            id : ++spec.id,
             position: { x: spec.position.x, y: spec.position.y },
-            direction: nextCircleVector(),
+            direction: nextCircleVector(1),
             speed: nextGaussian( spec.speed.mean, spec.speed.stdev ),  // pixels per millisecond
             rotation: 0,
             lifetime: nextGaussian(spec.lifetime.mean, spec.lifetime.stdev),  // milliseconds
@@ -313,31 +324,31 @@ Game.ParticleSystem = (function (graphics, assets) {
     effects.push(that);
   }
 
-  function explodeBrick(spec) {
-    createFill({ // TODO: if time, really fill the brick with particles
+  function newPlayerDeath(spec) {
+    createPoint({
       position: { x: spec.position.x, y: spec.position.y},
-      speed: { mean: 0.1, stdev: 0.025},           // particle speed
-      lifetime: { mean: 1000, stdev: 100 },        // particle lifetime
-      size: { mean: spec.fill.w/10, stdev: spec.fill.w/13 },// particle size
-      spread: { mean: 0, stdev: 0 },               // when particles begin to appear
-      fill: {w: spec.fill.w, h: spec.fill.h },     // the width and height to cover
-      duration: 100,                               // how long the effect lasts
-      particleRate: 750,                           // particles created per second
-      image: spec.texture,                         // particle texture
+      image : assets['splat'],
+      duration : 250,
+      fade : 100,
+      lifetime : {mean: 1000, stdev: 100},
+      particleRate : 500,
+      size : {mean: 0.015, stdev: 0.005},
+      speed : {mean: 0.00005, stdev: 0.00001},
+      spread : {mean: 0.3, stdev: 0.075},
     });
   }
 
-  function newTwinkle(spec) {
+  function newMissileExplosion(spec) {
     createPoint({
       position: { x: spec.position.x, y: spec.position.y},
+      image : assets['blue-particle'],
       duration : 100,
-      fade : 500,
-      image : assets['splat'],
-      lifetime : {mean: 5000, stdev: 250},
-      particleRate : 3000,
-      size : {mean: 0.01, stdev: 0.0001},
-      speed : {mean: 0.0001, stdev: 0.0001},
-      spread : {mean: 0, stdev: 0},
+      fade : 75,
+      lifetime : {mean: 250, stdev: 100},
+      particleRate : 500,
+      size : {mean: 0.01, stdev: 0.005},
+      speed : {mean: 0.0002, stdev: 0.000075},
+      spread : {mean: 0.03, stdev: 0.001},
     });
   }
 
@@ -364,9 +375,9 @@ Game.ParticleSystem = (function (graphics, assets) {
     update,
     createPoint,
     createFill,
-    newTwinkle,
+    newMissileExplosion,
     newGravity,
-    explodeBrick,
+    newPlayerDeath,
     clear,
   };
 

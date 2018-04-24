@@ -175,6 +175,10 @@
     'UPDATE_ALIVE_PLAYERS': {
       value: 'update-alive-players',
       writable: false
+    },
+    'PLAYER_DEATH': {
+      value: 'player-death',
+      writable: false
     }
 
   });

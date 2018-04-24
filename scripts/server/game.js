@@ -16,7 +16,7 @@ const present = require('present'),
 
 const SIMULATION_UPDATE_RATE_MS = 50;
 const TIMER_MS = 1000;           // timer countdown in milliseconds
-const LOBBY_MAX = 1;             // max player count for lobby
+const LOBBY_MAX = 2;             // max player count for lobby
 const TIMER_MS_MAP = 1000;      // timer countdown in milliseconds for positional
 const CHAR_LEN = 300;            // max character length for post; hard coded elsewhere
 let inSession = false;
@@ -482,8 +482,14 @@ function update(elapsedTime, currentTime) {
                 vector: vector
               };
               client.socket.emit(NetworkIds.UPDATE_SELF, update);
+              for (clientId in lobbyClients) {
+                if (clientId !== client.socket.id) {
+                  lobbyClients[clientId].socket.emit(NetworkIds.PLAYER_DEATH, {position: client.player.position});
+                }
+              }
             }
           }
+
           client.socket.emit(NetworkIds.MISSILE_HIT_YOU, {
             health : client.player.health,
             shield : client.player.shield
