@@ -836,8 +836,6 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
       graphics.Missile.render(missiles[missile]);
     }
 
-    particleSystem.render(playerSelf.model.position);
-
     for (let id in explosions) {
       graphics.AnimatedSprite.render(explosions[id]);
     }
@@ -847,6 +845,8 @@ Game.screens['gameplay'] = (function(menu, input, keyBindings, graphics, particl
         graphics.drawImage(assets['asteroid'], asteroids[a].position, asteroids[a].size, true);
       }
     }
+
+    particleSystem.render(playerSelf.model.position);
 
     //draw Buildings AFTER clip or else they be underneath it
 
