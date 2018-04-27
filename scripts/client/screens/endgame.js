@@ -24,7 +24,6 @@ Game.screens['endgame'] = (function(menu, socket) {
     socket.on(NetworkIds.GET_GAME_STATS, function(playerStats) {
       let table = document.getElementById('endgame-stat-table');
       playerStats.sort( (objA, objB) => objA.place-objB.place );
-      console.log(JSON.stringify(playerStats));
       for (let id in playerStats) {
         let row = table.insertRow(-1);
         row.insertCell(-1).innerHTML = playerStats[id].place;
