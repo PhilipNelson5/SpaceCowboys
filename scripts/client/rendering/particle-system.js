@@ -353,7 +353,6 @@ Game.ParticleSystem = (function (graphics, assets) {
   }
 
   function newGravity(spec) {
-    console.log(JSON.stringify(spec));
     createGravityPoint({
       position: { x: spec.position.x, y: spec.position.y},
       duration : 10,

@@ -164,7 +164,6 @@ Game.input.Keyboard = function() {
     // Each entry is an array of handlers to allow multiple handlers per keyboard input
     //if (!handlers.hasOwnProperty(key)) {
     handlers[key] = [];
-    console.log(handlers);
     //}
     handlers[key].push({
       id: id,
@@ -176,9 +175,7 @@ Game.input.Keyboard = function() {
     });
 
     //nextHandlerId += 1;
-    console.log(key + ' ' + handlers[key][handlers[key].length-1].id);
 
-    //console.log(handlers);
     //
     // We return an handler id that client code must track if it is desired
     // to unregister the handler in the future.
@@ -191,12 +188,9 @@ Game.input.Keyboard = function() {
   //
   // ------------------------------------------------------------------
   that.unregisterHandler = function(key, id) {
-    console.log('Unregistering: ' + key + ' At ID: ' + id);
-    console.log(handlers);
     if (handlers.hasOwnProperty(key)) {
       for (let entry = 0; entry < handlers[key].length; entry += 1) {
         if (handlers[key][entry].id === id) {
-          console.log(handlers);
           handlers[key].splice(entry, 1);
           break;
         }
